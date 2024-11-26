@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server'
 import { z } from 'zod'
 import bcrypt from 'bcryptjs'
 import { db } from '@/db'
-import { signIn } from '@/auth'
 
 // Validation schema
 const signInSchema = z.object({
@@ -27,23 +26,15 @@ export async function POST(request: Request) {
 
     const { email, password } = validatedFields.data
 
-    // Attempt to sign in using NextAuth
-    const response = await signIn('credentials', {
-      redirect: false,
-      email,
-      password
-    })
+    // Attempt to sign in using
+    //TODO
+    
 
     // If sign-in is successful, return success response
-    return NextResponse.json(
-      { message: "Sign in successful" }, 
-      { status: 200 }
-    )
+    //TODO
   } catch (error) {
-    console.error('Signin error:', error)
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "An unexpected error occurred" }, 
-      { status: 401 }
-    )
+    // If sign-in fails, return error response
+    //TODO
+    
   }
 }

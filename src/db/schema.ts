@@ -2,28 +2,29 @@
 import { pgTable, serial, varchar, timestamp, text, integer } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
-export const employees = pgTable('employees', {
-  id: serial('id').primaryKey(),
-  first_name: varchar('first_name', { length: 255 }),
-  last_name: varchar('last_name', { length: 255 }).notNull(),
-  email: varchar('email', { length: 255 }).notNull().unique(),
-  position: text('position'),
-  city: varchar('city', { length: 255 }),
-  country: varchar('country', { length: 255 }),
-  hire_date: timestamp('hire_date').notNull(),
-  created_at: timestamp('created_at').defaultNow(),
-  updated_at: timestamp('updated_at').defaultNow(),
-});
-
 export const users = pgTable('users', {
+  // Identification
   id: serial('id').primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
+  clerk_id: varchar('clerk_id', { length: 255 }),
+
+  // Authentication and Authorization
   email_verified: timestamp('email_verified'),
   role: varchar('role', { length: 50 }).notNull().default('user'),
+  last_login: timestamp('last_login'),
+
+  // Employee Information
+  first_name: varchar('first_name', { length: 255 }),
+  last_name: varchar('last_name', { length: 255 }),
+  position: text('position'),
+  city: varchar('city', { length: 255 }),
+  country: varchar('country', { length: 255 }),
+  hire_date: timestamp('hire_date'),
+
+  // Timestamps
   created_at: timestamp('created_at').notNull().defaultNow(),
   updated_at: timestamp('updated_at').notNull().defaultNow(),
-  last_login: timestamp('last_login'),
 });
 
 // Relations and indexes

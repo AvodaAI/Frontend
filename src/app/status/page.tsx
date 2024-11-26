@@ -1,8 +1,8 @@
 // src/app/status/page.tsx
 'use client';
 import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
+import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert';
 import { CheckCircle2, XCircle } from 'lucide-react';
 
 export default function StatusPage() {

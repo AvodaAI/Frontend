@@ -2,49 +2,49 @@
 'use client'
 
 import { useState } from 'react'
-import { Button } from '@/app/components/ui/button'
-import { Input } from '@/app/components/ui/input'
-import { Label } from '@/app/components/ui/label'
-import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert'
+import { Button } from '@components/ui/button'
+import { Input } from '@components/ui/input'
+import { Label } from '@components/ui/label'
+import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/app/components/ui/dialog'
-import { Employee } from '@/types/employee'
+} from '@components/ui/dialog'
+import { User } from '@/types'
 
 interface EditEmployeeModalProps {
-  employee: Employee
+  employee: User
   onClose: () => void
-  onUpdate: (updatedEmployee: Employee) => void
+  onUpdate: (updatedEmployee: User) => void
 }
 
 export function EditEmployeeModal({ employee, onClose, onUpdate }: EditEmployeeModalProps) {
-  const [firstName, setFirstName] = useState(employee.first_name || '')
-  const [lastName, setLastName] = useState(employee.last_name || '')
-  const [email, setEmail] = useState(employee.email)
-  const [position, setPosition] = useState(employee.position || '')
-  const [hireDate, setHireDate] = useState<Date | string>(employee.hire_date || new Date())
+  const [user, setUser] = useState<User>({
+    ...employee
+  })
   const [error, setError] = useState<string | null>(null)
   const [fieldErrors, setFieldErrors] = useState<{[key: string]: string}>({})
 
   const validateFields = () => {
     const errors: {[key: string]: string} = {}
     
-    if (!firstName.trim()) errors.firstName = 'First name is required'
-    if (!lastName.trim()) errors.lastName = 'Last name is required'
-    if (!email.trim()) errors.email = 'Email is required'
-    else if (!email.includes('@')) errors.email = 'Please enter a valid email'
-    
-    const selectedDate = new Date(hireDate)
-    const today = new Date()
-    today.setHours(0, 0, 0, 0) // Reset time to start of day for fair comparison
-    
-    if (!hireDate) errors.hireDate = 'Hire date is required'
-    else if (selectedDate > today) {
-      errors.hireDate = 'Hire date cannot be in the future'
+    if (!user.first_name?.trim()) errors.first_name = 'First name is required'
+    if (!user.last_name?.trim()) errors.last_name = 'Last name is required'
+    if (!user.email?.trim()) errors.email = 'Email is required'
+    else if (!user.email.includes('@')) errors.email = 'Please enter a valid email'
+    if (!user.position?.trim()) errors.position = 'Position is required'
+    if (!user.hire_date) errors.hire_date = 'Hire date is required'
+    else {
+      const selectedDate = new Date(user.hire_date)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      
+      if (selectedDate > today) {
+        errors.hire_date = 'Hire date cannot be in the future'
+      }
     }
 
     setFieldErrors(errors)
@@ -61,53 +61,52 @@ export function EditEmployeeModal({ employee, onClose, onUpdate }: EditEmployeeM
     }
 
     try {
-      const response = await fetch(`/api/employee/edit`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: employee.id, first_name: firstName, last_name: lastName, email, position, hire_date: new Date(hireDate) }),
+      const res = await fetch('/api/employee/edit', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(user),
       })
 
-      const result = await response.json()
+      if (!res.ok) throw new Error('Failed to update employee')
 
-      if (!response.ok) {
-        throw new Error(result.error || 'Failed to update employee')
-      }
-
-      onUpdate({ ...employee, first_name: firstName, last_name: lastName, email, position, hire_date: new Date(hireDate) })
+      onUpdate(user)
+      onClose()
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An unknown error occurred')
     }
   }
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
+    <Dialog open onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Edit Employee</DialogTitle>
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-4" autoComplete='off' noValidate>
           <div>
-            <Label htmlFor="firstName">First Name</Label>
+            <Label htmlFor="first_name">First Name</Label>
             <Input
-              id="firstName"
-              value={firstName}
-              onChange={(e) => setFirstName(e.target.value)}
-              className={fieldErrors.firstName ? 'border-red-500' : ''}
+              id="first_name"
+              value={user.first_name || ''}
+              onChange={(e) => setUser({ ...user, first_name: e.target.value })}
+              className={fieldErrors.first_name ? 'border-red-500' : ''}
             />
-            {fieldErrors.firstName && (
-              <p className="text-sm text-red-500 mt-1">{fieldErrors.firstName}</p>
+            {fieldErrors.first_name && (
+              <p className="text-sm text-red-500 mt-1">{fieldErrors.first_name}</p>
             )}
           </div>
           <div>
-            <Label htmlFor="lastName">Last Name</Label>
+            <Label htmlFor="last_name">Last Name</Label>
             <Input
-              id="lastName"
-              value={lastName}
-              onChange={(e) => setLastName(e.target.value)}
-              className={fieldErrors.lastName ? 'border-red-500' : ''}
+              id="last_name"
+              value={user.last_name || ''}
+              onChange={(e) => setUser({ ...user, last_name: e.target.value })}
+              className={fieldErrors.last_name ? 'border-red-500' : ''}
             />
-            {fieldErrors.lastName && (
-              <p className="text-sm text-red-500 mt-1">{fieldErrors.lastName}</p>
+            {fieldErrors.last_name && (
+              <p className="text-sm text-red-500 mt-1">{fieldErrors.last_name}</p>
             )}
           </div>
           <div>
@@ -115,8 +114,8 @@ export function EditEmployeeModal({ employee, onClose, onUpdate }: EditEmployeeM
             <Input
               id="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              value={user.email || ''}
+              onChange={(e) => setUser({ ...user, email: e.target.value })}
               className={fieldErrors.email ? 'border-red-500' : ''}
             />
             {fieldErrors.email && (
@@ -127,36 +126,40 @@ export function EditEmployeeModal({ employee, onClose, onUpdate }: EditEmployeeM
             <Label htmlFor="position">Position</Label>
             <Input
               id="position"
-              value={position}
-              onChange={(e) => setPosition(e.target.value)}
+              value={user.position || ''}
+              onChange={(e) => setUser({ ...user, position: e.target.value })}
+              className={fieldErrors.position ? 'border-red-500' : ''}
             />
-          </div>
-          <div>
-            <Label htmlFor="hireDate">Hire Date</Label>
-            <Input
-              id="hireDate"
-              type="date"
-              value={new Date(hireDate).toISOString().split('T')[0]}
-              onChange={(e) => setHireDate(e.target.value)}
-              className={fieldErrors.hireDate ? 'border-red-500' : ''}
-            />
-            {fieldErrors.hireDate && (
-              <p className="text-sm text-red-500 mt-1">{fieldErrors.hireDate}</p>
+            {fieldErrors.position && (
+              <p className="text-sm text-red-500 mt-1">{fieldErrors.position}</p>
             )}
           </div>
-          {error && (
-            <Alert variant="destructive">
-              <AlertTitle>Error</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
+          <div>
+            <Label htmlFor="hire_date">Hire Date</Label>
+            <Input
+              id="hire_date"
+              type="date"
+              value={user.hire_date ? new Date(user.hire_date).toISOString().split('T')[0] : ''}
+              onChange={(e) => setUser({ ...user, hire_date: new Date(e.target.value) })}
+              className={fieldErrors.hire_date ? 'border-red-500' : ''}
+            />
+            {fieldErrors.hire_date && (
+              <p className="text-sm text-red-500 mt-1">{fieldErrors.hire_date}</p>
+            )}
+          </div>
           <DialogFooter>
-            <Button type="button" variant="secondary" onClick={onClose}>
+            <Button type="button" variant="outline" onClick={onClose}>
               Cancel
             </Button>
             <Button type="submit">Save Changes</Button>
           </DialogFooter>
         </form>
+        {error && (
+          <Alert variant="destructive" className="mt-4">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
       </DialogContent>
     </Dialog>
   )

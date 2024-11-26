@@ -15,6 +15,13 @@
       "when": 1732553062155,
       "tag": "0001_bumpy_thunderball",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1732584961812,
+      "tag": "0002_awesome_shotgun",
+      "breakpoints": true
     }
   ]
 }

@@ -1,7 +1,8 @@
-// middleware.ts
+//src/middleware.ts
+import { clerkMiddleware } from '@clerk/nextjs/server'
 
-//imports here
+export default clerkMiddleware();
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
-}
+  matcher: ["/((?!.+\\.[\\w]+$|_next).*)", "/", "/(api|trpc)(.*)"],
+};

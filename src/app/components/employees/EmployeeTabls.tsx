@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button } from '@/app/components/ui/button'
+import { Button } from '@components/ui/button'
 import {
   Table,
   TableBody,
@@ -10,15 +10,15 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/app/components/ui/table'
+} from '@components/ui/table'
 import { EditEmployeeModal } from './EditEmployeeModal'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/app/components/ui/alert-dialog'
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@components/ui/alert-dialog'
 
-import { Employee } from '@/types/employee'
+import { User } from '@/types/user'
 
 export function EmployeeTable() {
-  const [employees, setEmployees] = useState<Employee[]>([])
-  const [editingEmployee, setEditingEmployee] = useState<Employee | null>(null)
+  const [employees, setEmployees] = useState<User[]>([])
+  const [editingEmployee, setEditingEmployee] = useState<User | null>(null)
 
   useEffect(() => {
     fetchEmployees()
@@ -47,6 +47,11 @@ export function EmployeeTable() {
     }
   }
 
+  const handleUpdateEmployee = (updatedEmployee: User) => {
+    setEmployees(employees.map(emp => emp.id === updatedEmployee.id ? updatedEmployee : emp))
+    setEditingEmployee(null)
+  }
+
   return (
     <div>
       <Table>
@@ -67,7 +72,15 @@ export function EmployeeTable() {
               <TableCell>{employee.first_name}</TableCell>
               <TableCell>{employee.email}</TableCell>
               <TableCell>{employee.position}</TableCell>
-              <TableCell>{new Date(employee.hire_date).toLocaleDateString()}</TableCell>
+              <TableCell>
+                {employee.hire_date 
+                  ? new Date(employee.hire_date).toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric'
+                    })
+                  : 'N/A'}
+              </TableCell>
               <TableCell>
                 <Button onClick={() => setEditingEmployee(employee)} className="mr-2">
                   Edit
@@ -101,10 +114,7 @@ export function EmployeeTable() {
         <EditEmployeeModal
           employee={editingEmployee}
           onClose={() => setEditingEmployee(null)}
-          onUpdate={(updatedEmployee) => {
-            setEmployees(employees.map(emp => emp.id === updatedEmployee.id ? updatedEmployee : emp))
-            setEditingEmployee(null)
-          }}
+          onUpdate={(updatedEmployee) => handleUpdateEmployee(updatedEmployee)}
         />
       )}
     </div>
