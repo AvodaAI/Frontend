@@ -11,9 +11,9 @@ npm run dev
 
 This project uses:
 - Next.js
-- Auth.js - WIP
+- Clerk - WIP
 - TypeScript
-- Tailwind CSS
+- Tailwind CSS V4
 - ESLint
 - Drizzle ORM
 - PostgreSQL

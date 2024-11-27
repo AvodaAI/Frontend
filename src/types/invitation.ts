@@ -1,12 +1,13 @@
+// src/types/invitation.ts
 export interface Invitation {
-  object: 'invitation';
   id: string;
   email_address: string;
-  public_metadata?: Record<string, any>;
+  public_metadata: object;
   revoked: boolean;
-  status: 'pending' | 'accepted' | 'revoked' | 'expired';
+  status: string;
   url: string | null;
-  expires_at: number | null;
+  expires_at: number | null; // This should be included here
   created_at: number;
   updated_at: number;
 }
+

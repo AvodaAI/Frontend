@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Button } from '@components/ui/button'
+import { Button, buttonVariants } from '@components/ui/button'
 import {
   Table,
   TableBody,
@@ -99,7 +99,7 @@ export function EmployeeTable() {
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction onClick={() => handleDelete(employee.id)}>
+                      <AlertDialogAction className={buttonVariants({ variant: 'destructive' })} onClick={() => handleDelete(employee.id)}>
                         Delete
                       </AlertDialogAction>
                     </AlertDialogFooter>

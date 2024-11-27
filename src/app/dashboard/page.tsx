@@ -26,11 +26,17 @@ export default async function Page() {
           <div className="bg-green-50 p-6 rounded-lg">
             <h3 className="text-xl font-semibold mb-4">Quick Actions</h3>
             <div className="space-y-4">
-              <Link href="/employees/add" className="block">
-                <Button variant="outline" className="w-full">
-                  Add New Employee
-                </Button>
-              </Link>
+              <Dialog>
+          <DialogTrigger asChild>
+            <Button variant="outline" className="w-full">Add New Employee</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Employee</DialogTitle>
+            </DialogHeader>
+            <AddEmployeeForm />
+          </DialogContent>
+        </Dialog>
               <Link href="/employees" className="block">
                 <Button variant="outline" className="w-full">
                   View Employees

@@ -7,6 +7,11 @@ import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import { User, NewUser } from '@/types/user'
+import { Calendar } from '@components/ui/calendar'
+import { Popover, PopoverContent, PopoverTrigger } from '@components/ui/popover'
+import { format } from 'date-fns'
+import { Calendar as CalendarIcon } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 export function AddEmployeeForm() {
   const [user, setUser] = useState<NewUser>({
@@ -17,8 +22,9 @@ export function AddEmployeeForm() {
     position: '',
     hire_date: new Date(Date.now() - 86400000), // Subtract 24 hours in milliseconds
   })
+  const [date, setDate] = useState<Date>()
   const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const [success, setSuccess] = useState<boolean>(false)
   const [fieldErrors, setFieldErrors] = useState<{[key: string]: string}>({})
 
   const validateFields = () => {
@@ -58,7 +64,8 @@ export function AddEmployeeForm() {
         },
         body: JSON.stringify({
           ...user,
-          isFromDashboard: true
+          isFromDashboard: true,
+          hire_date: date,
         }),
       })
 
@@ -86,6 +93,7 @@ export function AddEmployeeForm() {
         position: '',
         hire_date: new Date(Date.now() - 86400000), // Subtract 24 hours in milliseconds
       })
+      setDate(undefined)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create employee')
       console.error(err)
@@ -137,20 +145,32 @@ export function AddEmployeeForm() {
           className=""
         />
       </div>
-      <div>
+      <div className="space-y-2">
         <Label htmlFor="hire_date">Hire Date (This can be changed later)</Label>
-        <Input
-          id="hire_date"
-          type="date"
-          value={user.hire_date instanceof Date 
-            ? user.hire_date.toISOString().split('T')[0] 
-            : user.hire_date || ''}
-          onChange={(e) => setUser({ ...user, hire_date: new Date(e.target.value) })}
-          className={fieldErrors.hire_date ? 'border-red-500' : ''}
-        />
-        {fieldErrors.hire_date && (
-          <p className="text-sm text-red-500 mt-1">{fieldErrors.hire_date}</p>
-        )}
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              id="hire_date"
+              variant="outline"
+              className={cn(
+                "w-full justify-start text-left font-normal",
+                !date && "text-muted-foreground"
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {date ? format(date, "PPP") : <span>Pick a hire date</span>}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={date}
+              onSelect={setDate}
+              disabled={{ after: new Date() }}
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
       </div>
       <Button type="submit">Add Employee</Button>
       {error && (
