@@ -12,14 +12,25 @@ import { Popover, PopoverContent, PopoverTrigger } from '@components/ui/popover'
 import { format } from 'date-fns'
 import { Calendar as CalendarIcon } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/app/components/ui/select"
 
-export function AddEmployeeForm() {
+interface AddEmployeeFormProps {
+  onClose?: () => void;
+}
+
+export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
   const [user, setUser] = useState<NewUser>({
     first_name: '',
     last_name: '',
     email: '',
     password: '',
-    position: '',
+    role: '',
     hire_date: new Date(Date.now() - 86400000), // Subtract 24 hours in milliseconds
   })
   const [date, setDate] = useState<Date>()
@@ -82,6 +93,9 @@ export function AddEmployeeForm() {
         setError(`Employee added but invitation failed: ${data.invitation.error}`)
       } else {
         setSuccess(true)
+        if (onClose) {
+          setTimeout(onClose, 2000);
+        }
       }
 
       // Reset form
@@ -90,7 +104,7 @@ export function AddEmployeeForm() {
         last_name: '',
         email: '',
         password: '',
-        position: '',
+        role: '',
         hire_date: new Date(Date.now() - 86400000), // Subtract 24 hours in milliseconds
       })
       setDate(undefined)
@@ -102,6 +116,7 @@ export function AddEmployeeForm() {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4" autoComplete='off' noValidate>
+      <div className='grid grid-cols-2 gap-4'>
       <div>
         <Label htmlFor="first_name">First Name</Label>
         <Input
@@ -123,6 +138,7 @@ export function AddEmployeeForm() {
           <p className="text-sm text-red-500 mt-1">{fieldErrors.last_name}</p>
         )}
       </div>
+      </div>
       <div>
         <Label htmlFor="email">Email</Label>
         <Input
@@ -136,16 +152,26 @@ export function AddEmployeeForm() {
           <p className="text-sm text-red-500 mt-1">{fieldErrors.email}</p>
         )}
       </div>
-      <div>
-        <Label htmlFor="position">Position</Label>
-        <Input
-          id="position"
-          value={user.position ?? ''}
-          onChange={(e) => setUser({ ...user, position: e.target.value})}
-          className=""
-        />
+      <div className='grid grid-cols-3 gap-2'>
+      <div className='col-span-1'>
+          <Label htmlFor="role">Role</Label>
+          <Select
+            onValueChange={(value) => setUser({ ...user, role: value })}
+            defaultValue={user.role}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="Select a role" />
+            </SelectTrigger>
+            <SelectContent side="top">
+              <SelectItem value="Manager">Manager</SelectItem>
+              <SelectItem value="Employee">Employee</SelectItem>
+            </SelectContent>
+          </Select>
+          {fieldErrors.role && (
+            <p className="text-sm text-red-500">{fieldErrors.role}</p>
+          )}
       </div>
-      <div className="space-y-2">
+      <div className='col-span-2'>
         <Label htmlFor="hire_date">Hire Date (This can be changed later)</Label>
         <Popover>
           <PopoverTrigger asChild>
@@ -171,6 +197,7 @@ export function AddEmployeeForm() {
             />
           </PopoverContent>
         </Popover>
+      </div>
       </div>
       <Button type="submit">Add Employee</Button>
       {error && (

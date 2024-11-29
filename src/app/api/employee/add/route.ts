@@ -2,7 +2,6 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { users } from '@/db/schema';
-import { eq } from 'drizzle-orm';
 import { clerkClient } from '@clerk/nextjs/server';
 
 const clerk = clerkClient();

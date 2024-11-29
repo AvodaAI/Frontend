@@ -1,8 +1,7 @@
 // src/app/components/auth/invitations-table.tsx
-// TODO: Add revoke action
 // TODO: Add pagination
-// TODO: Add search
-// TODO: fix format/date api
+// TODO: Add search functionality
+// FIXME: fix expires_at (from API)
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -12,6 +11,8 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Button } from '@components/ui/button'
 import { Loader2 } from 'lucide-react'
 import { Invitation } from '@/types/invitation'
+import { cn } from '@/lib/utils'
+
 export default function InvitationsTable() {
   const { isLoaded, isSignedIn } = useAuth()
   const [invitations, setInvitations] = useState<Invitation[]>([])
@@ -52,7 +53,8 @@ export default function InvitationsTable() {
     return <div className="text-red-500">{error}</div>
   }
 
-  const formattedDate = (unixDate: number) => {
+  const formattedDate = (unixDate: number | null) => {
+    if (unixDate === null) return 'N/A';
     const date = new Date(unixDate).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
@@ -62,41 +64,111 @@ export default function InvitationsTable() {
   }
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Email</TableHead>
-          <TableHead>Status</TableHead>
-          <TableHead>Invited At</TableHead>
-          <TableHead>Expires At</TableHead>
-          <TableHead>Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-      <TableBody>
+    <div className="w-full space-y-4">
+      {/* Desktop view */}
+      <div className="hidden md:block overflow-hidden">
+        <Table className='border'>
+          <TableHeader>
+            <TableRow className="bg-muted/50">
+              <TableHead className="w-[300px] font-semibold">Email</TableHead>
+              <TableHead className="w-[120px] font-semibold">Status</TableHead>
+              <TableHead className="w-[150px] font-semibold">Invited At</TableHead>
+              <TableHead className="w-[150px] font-semibold">Expires At</TableHead>
+              <TableHead className="w-[100px] text-right font-semibold">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {invitations.map((invitation) => (
+              <TableRow key={invitation.id} className="hover:bg-muted/30">
+                <TableCell className="font-medium">{invitation.email_address}</TableCell>
+                <TableCell>
+                  <span className={cn(
+                    "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium",
+                    {
+                      "bg-green-100 text-green-700": invitation.status === "accepted",
+                      "bg-yellow-100 text-yellow-700": invitation.status === "pending",
+                      "bg-red-100 text-red-700": invitation.status === "expired" || invitation.status === "revoked"
+                    }
+                  )}>
+                    {invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}
+                  </span>
+                </TableCell>
+                <TableCell className="text-muted-foreground">
+                  {formattedDate(invitation.created_at)}
+                </TableCell>
+                <TableCell className="text-muted-foreground">
+                  {formattedDate(invitation.expires_at)}
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant={invitation.status !== 'pending' ? 'ghost' : 'destructive'}
+                    size="sm"
+                    className={cn(
+                      'cursor-pointer',
+                      invitation.status !== 'pending' && 'opacity-50'
+                    )}
+                    disabled={invitation.status !== 'pending'}
+                    onClick={() => {/* TODO: Add revoke action */}}
+                  >
+                    Revoke
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Mobile view */}
+      <div className="block md:hidden space-y-4">
         {invitations.map((invitation) => (
-          <TableRow key={invitation.id}>
-            <TableCell>{invitation.email_address}</TableCell>
-            <TableCell>{invitation.status}</TableCell>
-            <TableCell>
-              {formattedDate(invitation.created_at)}
-            </TableCell>
-            <TableCell>
-              {formattedDate(invitation.expires_at)}
-            </TableCell>
-            <TableCell>
+          <div
+            key={invitation.id}
+            className="bg-card p-4 rounded-lg border shadow-sm space-y-3"
+          >
+            <div className="flex justify-between items-start">
+              <div className="font-medium">{invitation.email_address}</div>
+              <span className={cn(
+                "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium",
+                {
+                  "bg-green-100 text-green-700": invitation.status === "accepted",
+                  "bg-yellow-100 text-yellow-700": invitation.status === "pending",
+                  "bg-red-100 text-red-700": invitation.status === "expired" || invitation.status === "revoked"
+                }
+              )}>
+                {invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}
+              </span>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div className="text-muted-foreground">Invited At</div>
+                <div>{formattedDate(invitation.created_at)}</div>
+              </div>
+              <div>
+                <div className="text-muted-foreground">Expires At</div>
+                <div>{formattedDate(invitation.expires_at)}</div>
+              </div>
+            </div>
+
+            <div className="pt-2">
               <Button
-                variant={invitation.status !== 'pending' ? 'default' : 'destructive'}
+                hidden={invitation.status !== 'pending'}
+                variant={invitation.status !== 'pending' ? 'ghost' : 'destructive'}
                 size="sm"
-                className='cursor-pointer'
+                className={cn(
+                  'w-full cursor-pointer',
+                  invitation.status !== 'pending' && 'opacity-50'
+                )}
                 disabled={invitation.status !== 'pending'}
                 onClick={() => {/* TODO: Add revoke action */}}
               >
                 Revoke
               </Button>
-            </TableCell>
-          </TableRow>
+            </div>
+          </div>
         ))}
-      </TableBody>
-    </Table>
+      </div>
+    </div>
   )
 }
