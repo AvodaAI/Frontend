@@ -9,9 +9,7 @@
     "lint": "next lint",
     "db:generate": "drizzle-kit generate:pg",
     "db:push": "drizzle-kit push:pg",
-    "db:studio": "drizzle-kit studio",
-    "storybook": "storybook dev -p 6006",
-    "build-storybook": "storybook build"
+    "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.5.0",
@@ -41,14 +39,6 @@
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "@chromatic-com/storybook": "^3.2.2",
-    "@storybook/addon-essentials": "^8.4.5",
-    "@storybook/addon-interactions": "^8.4.5",
-    "@storybook/addon-onboarding": "^8.4.5",
-    "@storybook/blocks": "^8.4.5",
-    "@storybook/nextjs": "^8.4.5",
-    "@storybook/react": "^8.4.5",
-    "@storybook/test": "^8.4.5",
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^20.10.4",
     "@types/pg": "^8.10.9",
@@ -60,9 +50,7 @@
     "drizzle-kit": "^0.28.1",
     "eslint": "^8.56.0",
     "eslint-config-next": "^15.0.0-rc.0",
-    "eslint-plugin-storybook": "^0.11.1",
     "postcss": "^8.4.49",
-    "storybook": "^8.4.5",
     "tailwindcss": "^4.0.0-beta.2",
     "typescript": "^5.3.3"
   }
