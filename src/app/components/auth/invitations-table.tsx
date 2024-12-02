@@ -1,7 +1,7 @@
 // src/app/components/auth/invitations-table.tsx
 // TODO: Add pagination
 // TODO: Add search functionality
-// FIXME: fix expires_at (from API)
+// FIXME: fix expires_at type error
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -133,7 +133,7 @@ export default function InvitationsTable() {
                 {
                   "bg-green-100 text-green-700": invitation.status === "accepted",
                   "bg-yellow-100 text-yellow-700": invitation.status === "pending",
-                  "bg-red-100 text-red-700": invitation.status === "expired" || invitation.status === "revoked"
+                  "bg-red-100 text-red-700":  invitation.status === "revoked"
                 }
               )}>
                 {invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}

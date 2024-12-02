@@ -34,7 +34,7 @@ export async function GET(request: NextRequest) {
 
     // Validate status
     const statusParam = searchParams.get('status')
-    const validStatuses = ['pending', 'accepted', 'revoked', undefined] as const
+    const validStatuses = ['pending', 'accepted', 'revoked'] as const
     const status = statusParam && validStatuses.includes(statusParam as any) 
       ? statusParam as typeof validStatuses[number]
       : undefined
