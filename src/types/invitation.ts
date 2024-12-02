@@ -6,7 +6,7 @@ export interface Invitation {
   revoked: boolean;
   status: string;
   url: string | null;
-  expires_at?: number | null; // This should be included here
+  expires_at: number | null; // This should be included here //Removed optional marker`
   created_at: number;
   updated_at: number;
 }
