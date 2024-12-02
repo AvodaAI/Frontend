@@ -1,15 +1,19 @@
+//src/app/api/auth/signup/route.ts
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import bcrypt from 'bcryptjs'
 import { db } from '@/db'
 import { users } from '@/db/schema'
-import { eq } from 'drizzle-orm'
+import { clerkClient } from '@clerk/nextjs/server'
+import bcrypt from 'bcrypt'
+
+const client = clerkClient()
 
 // Validation schema
 const signUpSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
   clerk_id: z.string().optional(),
+  status: z.string().optional(),
   first_name: z.string().optional(),
   last_name: z.string().optional(),
   position: z.string().optional(),
@@ -39,7 +43,8 @@ export async function POST(request: Request) {
       last_name,
       position,
       city,
-      country
+      country,
+      status
     } = validatedFields.data
 
     // Check if user already exists
@@ -61,7 +66,7 @@ export async function POST(request: Request) {
     const [newUser] = await db.insert(users).values({
       email,
       password: hashedPassword,
-      role: 'user', // Default role
+      role: 'admin', // Default role
       clerk_id: clerk_id, 
       first_name: first_name,
       last_name: last_name,
@@ -70,8 +75,18 @@ export async function POST(request: Request) {
       country: country,
       hire_date: new Date(),
       last_login: new Date(),
-      created_at: new Date()
+      created_at: new Date(),
+      status: status
     }).returning()
+
+    // Update clerk metadata with role
+    if (clerk_id) {
+      await (await client).users.updateUserMetadata(clerk_id, {
+        publicMetadata: {
+          type: 'employee' // Default to employee
+        }
+      })
+    }
 
     // Return user info without password
     return NextResponse.json({

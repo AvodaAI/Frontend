@@ -11,16 +11,23 @@ import {
   SheetTrigger,
 } from "@components/ui/sheet"
 import { cn } from "@/lib/utils"
-
+import { useUserRole } from "@/hooks/use-role"
+//FIXME: After fixing RBAC, update adminOnly
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard' },
-  { name: 'Employees', href: '/employees' },
-  { name: 'Invitations', href: '/invitations' },
-  { name: 'Settings', href: '/settings' },
+  { name: 'Dashboard', href: '/dashboard', adminOnly: false },
+  { name: 'Employees', href: '/employees', adminOnly: false },
+  { name: 'Time Tracking', href: '/time-tracking', adminOnly: false },
+  { name: 'Invitations', href: '/invitations', adminOnly: false },
+  { name: 'Settings', href: '/settings', adminOnly: false },
 ]
 
 export function Header() {
   const pathname = usePathname()
+  const { isAdmin } = useUserRole()
+
+  const filteredNavigation = navigation.filter(
+    item => !item.adminOnly || (item.adminOnly && isAdmin)
+  )
 
   return (
     <header className="bg-white shadow-sm">
@@ -32,7 +39,7 @@ export function Header() {
             </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            {navigation.map((item) => (
+            {filteredNavigation.map((item) => (
               <Link
                 key={item.href}
                 href={item.href}
@@ -63,7 +70,7 @@ export function Header() {
             </Link>
             <div className="my-4 h-[calc(100vh-8rem)] pb-10">
               <div className="flex flex-col space-y-3">
-                {navigation.map((item) => (
+                {filteredNavigation.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}

@@ -11,7 +11,7 @@ export const users = pgTable('users', {
 
   // Authentication and Authorization
   email_verified: timestamp('email_verified'),
-  role: varchar('role', { length: 50 }).notNull().default('user'),
+  role: varchar('role', { length: 50 }).notNull().default('employee'),
   last_login: timestamp('last_login'),
 
   // Employee Information
@@ -22,6 +22,9 @@ export const users = pgTable('users', {
   country: varchar('country', { length: 255 }),
   hire_date: timestamp('hire_date'),
 
+  // Status
+  status: varchar('status', { length: 50 }).default('active'),
+
   // Timestamps
   created_at: timestamp('created_at').notNull().defaultNow(),
   updated_at: timestamp('updated_at').notNull().defaultNow(),
@@ -29,7 +32,8 @@ export const users = pgTable('users', {
 
 // Relations and indexes
 export const usersRelations = relations(users, ({ many }) => ({
-  sessions: many(sessions)
+  sessions: many(sessions),
+  timeLogs: many(timeLogs)
 }));
 
 export const sessions = pgTable('sessions', {
@@ -43,6 +47,27 @@ export const sessions = pgTable('sessions', {
 export const sessionsRelations = relations(sessions, ({ one }) => ({
   user: one(users, {
     fields: [sessions.user_id],
+    references: [users.id],
+  }),
+}));
+
+export const timeLogs = pgTable('time_logs', {
+  id: serial('id').primaryKey(),
+  user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  task_id: varchar('task_id', { length: 255 }).notNull(),
+  organization_id: varchar('organization_id', { length: 255 }),
+  start_time: timestamp('start_time').notNull(),
+  end_time: timestamp('end_time'),
+  duration_minutes: integer('duration_minutes'),
+  created_at: timestamp('created_at').notNull().defaultNow(),
+  updated_at: timestamp('updated_at').notNull().defaultNow(),
+  created_by: varchar('created_by', { length: 255 }),
+  updated_by: varchar('updated_by', { length: 255 }),
+});
+
+export const timeLogsRelations = relations(timeLogs, ({ one }) => ({
+  user: one(users, {
+    fields: [timeLogs.user_id],
     references: [users.id],
   }),
 }));

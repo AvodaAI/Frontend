@@ -1,8 +1,6 @@
 //src/app/api/auth/signin/route.ts
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
-import bcrypt from 'bcryptjs'
-import { db } from '@/db'
 
 // Validation schema
 const signInSchema = z.object({

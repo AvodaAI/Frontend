@@ -52,7 +52,7 @@ export async function POST(request: Request) {
       const invitation = await (await clerk).invitations.createInvitation({
         emailAddress: email,
         publicMetadata: {
-          role: 'employee',
+          type: 'employee',
           employeeId: newEmployee.id,
           firstName: first_name,
           lastName: last_name

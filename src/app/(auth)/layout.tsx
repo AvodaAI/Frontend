@@ -1,3 +1,4 @@
+// src/app/(auth)/layout.tsx
 'use client'
 
 import { Header } from "@components/layout/Header"
