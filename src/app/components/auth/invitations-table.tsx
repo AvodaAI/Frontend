@@ -1,7 +1,7 @@
 // src/app/components/auth/invitations-table.tsx
 // TODO: Add pagination
 // TODO: Add search functionality
-// FIXME: fix expires_at type error
+// FIXED: fix expires_at *type* error
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -53,8 +53,8 @@ export default function InvitationsTable() {
     return <div className="text-red-500">{error}</div>
   }
 
-  const formattedDate = (unixDate: number | null) => {
-    if (unixDate === null) return 'N/A';
+  const formattedDate = (unixDate: number | null | undefined) => {
+    if (unixDate === null || unixDate === undefined) return 'N/A';
     const date = new Date(unixDate).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
