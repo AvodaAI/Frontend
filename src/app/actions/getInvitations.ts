@@ -1,5 +1,5 @@
 // src/app/actions/getInvitations.ts
-//FIXME fix type re api (specifically expires_at )
+//FIXME fix type regarding api (specifically expires_at )
 'use server'
 
 import { clerkClient } from '@clerk/nextjs/server'

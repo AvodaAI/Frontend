@@ -12,6 +12,7 @@ import {
 } from "@components/ui/sheet"
 import { cn } from "@/lib/utils"
 import { useUserRole } from "@/hooks/use-role"
+
 //FIXME: After fixing RBAC, update adminOnly
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', adminOnly: false },
