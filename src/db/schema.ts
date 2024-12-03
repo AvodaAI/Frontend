@@ -17,6 +17,7 @@ export const users = pgTable('users', {
   // Employee Information
   first_name: varchar('first_name', { length: 255 }),
   last_name: varchar('last_name', { length: 255 }),
+  status: varchar('status', { length: 255 }).notNull().default('active'),
   position: text('position'),
   city: varchar('city', { length: 255 }),
   country: varchar('country', { length: 255 }),
