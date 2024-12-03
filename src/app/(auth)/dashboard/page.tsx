@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useState } from 'react'
 import { ErrorBoundary } from '@components/ui/error-boundary'
 import { Suspense } from 'react'
-import { useUserRole } from '@/hooks/use-role'
+import { useUserRole } from '@/hooks/useRole'
 import { useUser } from '@clerk/nextjs'
 
 export default function Page() {

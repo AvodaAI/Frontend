@@ -1,3 +1,5 @@
+// src/app/api/timer/start/route.ts
+//TODO: wrap in a database transaction to prevent race conditions where multiple timers could be started simultaneously.
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { timeLogs } from '@/db/schema';

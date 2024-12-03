@@ -1,3 +1,5 @@
+// src/app/api/timer/stop/route.ts
+//TODO: validate that the end time is after the start time
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { timeLogs } from '@/db/schema';
