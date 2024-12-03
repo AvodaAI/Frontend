@@ -1,5 +1,5 @@
 // src/app/invitations/page.tsx
-import InvitationsTable from "@components/auth/invitations-table"
+import InvitationsTable from "@/app/components/invitations/invitations-table"
 
 export default function InvitationsPage() {
   return (

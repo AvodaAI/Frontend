@@ -1,12 +1,12 @@
 // src/app/components/auth/invitations-table.tsx
 // TODO: Add pagination
 // TODO: Add search functionality
-// FIXED: fix expires_at *type* error
+// DONE: fix expires_at *type* error
 'use client'
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
-import { getInvitations } from '../../actions/getInvitations'
+import { getInvitations } from '@actions/getInvitations'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/ui/table'
 import { Button } from '@components/ui/button'
 import { Loader2 } from 'lucide-react'
