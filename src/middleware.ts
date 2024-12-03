@@ -1,8 +1,21 @@
-// middleware.ts
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+const isProtectedRoutes = createRouteMatcher([
+  '/dashboard',
+  '/employees',
+  '/time-tracking',
+  '/invitations',
+  '/settings',
+])
+
+export default clerkMiddleware(async (auth, req) => {
+  const { userId, redirectToSignIn } = await auth()
+  if (!userId && isProtectedRoutes(req)) {
+    console.log('User is not signed in')
+    return redirectToSignIn()
+  }
+})
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ['/((?!.+\\.[\\w]+$|_next).*)', '/', '/(api|trpc)(.*)'],
 }
