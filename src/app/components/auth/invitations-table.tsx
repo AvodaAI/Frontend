@@ -3,7 +3,6 @@
 // TODO: Add search functionality
 // FIXED: fix expires_at *type* error
 'use client'
-
 import { useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import { getInvitations } from '../../actions/getInvitations'
@@ -12,12 +11,22 @@ import { Button } from '@components/ui/button'
 import { Loader2 } from 'lucide-react'
 import { Invitation } from '@/types/invitation'
 import { cn } from '@/lib/utils'
+import { usePagination } from '@/utils/invitations-pagination'
+import { useSearch } from '@/utils/invitations-search'
+import { revokeInvitation } from '@/app/actions/revokeInvitation'
+import { Input } from '../ui/input'
 
 export default function InvitationsTable() {
   const { isLoaded, isSignedIn } = useAuth()
   const [invitations, setInvitations] = useState<Invitation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  // Use search hook
+  const { searchTerm, setSearchTerm, filteredItems: filteredInvitations } = useSearch(invitations);
+
+  // Then use pagination hook
+  const { paginatedItems, paginationState, totalPages, goToNextPage, goToPreviousPage } = usePagination(filteredInvitations);
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
@@ -35,6 +44,21 @@ export default function InvitationsTable() {
       setError(result.error || 'Failed to fetch invitations')
     }
     setLoading(false)
+  }
+
+  // Revoke invitation handler
+  const handleRevokeInvitation = async (invitationId: string) => {
+    try {
+      const result = await revokeInvitation(invitationId);
+      if (result.success) {
+        // Refresh invitations after successful revoke
+        fetchInvitations();
+      } else {
+        setError(result.error || 'Failed to revoke invitation');
+      }
+    } catch (err) {
+      setError('An error occurred while revoking the invitation');
+    }
   }
 
   if (!isLoaded || !isSignedIn) {
@@ -65,6 +89,13 @@ export default function InvitationsTable() {
 
   return (
     <div className="w-full space-y-4">
+      {/* Search Input */}
+      <Input 
+        placeholder="Search invitations..." 
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="mb-4"
+      />
       {/* Desktop view */}
       <div className="hidden md:block overflow-hidden">
         <Table className='border'>
@@ -78,7 +109,7 @@ export default function InvitationsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {invitations.map((invitation) => (
+            {paginatedItems.map((invitation) => (
               <TableRow key={invitation.id} className="hover:bg-muted/30">
                 <TableCell className="font-medium">{invitation.email_address}</TableCell>
                 <TableCell>
@@ -106,9 +137,9 @@ export default function InvitationsTable() {
                     className={cn(
                       'cursor-pointer',
                       invitation.status !== 'pending' && 'opacity-50'
-                    )}
+                    )} 
                     disabled={invitation.status !== 'pending'}
-                    onClick={() => {/* TODO: Add revoke action */}}
+                    onClick={() => handleRevokeInvitation(invitation.id)}
                   >
                     Revoke
                   </Button>
@@ -117,11 +148,32 @@ export default function InvitationsTable() {
             ))}
           </TableBody>
         </Table>
+
+        {/* Pagination Controls */}
+        <div className="flex justify-between items-center mt-4">
+          <Button
+            variant="outline"
+            onClick={goToPreviousPage}
+            disabled={paginationState.currentPage === 1}
+          >
+            Previous
+          </Button>
+          <span>
+            Page {paginationState.currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            onClick={goToNextPage}
+            disabled={paginationState.currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </div>
       </div>
 
       {/* Mobile view */}
       <div className="block md:hidden space-y-4">
-        {invitations.map((invitation) => (
+        {paginatedItems.map((invitation) => (
           <div
             key={invitation.id}
             className="bg-card p-4 rounded-lg border shadow-sm space-y-3"
@@ -159,9 +211,9 @@ export default function InvitationsTable() {
                 className={cn(
                   'w-full cursor-pointer',
                   invitation.status !== 'pending' && 'opacity-50'
-                )}
+                )} 
                 disabled={invitation.status !== 'pending'}
-                onClick={() => {/* TODO: Add revoke action */}}
+                onClick={() => handleRevokeInvitation(invitation.id)}
               >
                 Revoke
               </Button>
