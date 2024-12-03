@@ -1,6 +1,6 @@
 'use client'
 
-import InvitationsTable from "@components/invitations/invitations-table"
+import InvitationsTable from "./components/invitations-table"
 import { Button } from "@components/ui/button"
 import { Plus } from "lucide-react"
 import { Suspense } from "react"

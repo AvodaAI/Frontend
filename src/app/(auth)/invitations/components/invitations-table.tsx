@@ -6,12 +6,13 @@
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
-import { getInvitations } from '@actions/getInvitations'
+import { getInvitations } from '../actions/getInvitations'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/ui/table'
 import { Button } from '@components/ui/button'
 import { Loader2 } from 'lucide-react'
 import { Invitation } from '@/types/invitation'
 import { cn } from '@/lib/utils'
+import { formatUnixDate } from '@/utils/unixdate'
 
 export default function InvitationsTable() {
   const { isLoaded, isSignedIn } = useAuth()
@@ -31,16 +32,13 @@ export default function InvitationsTable() {
     try {
       const result = await getInvitations({ limit: 500, offset: 0 })
       if (result.success && result.data) {
-        console.log('Received invitations:', result.data) // Debug log
         setInvitations(result.data)
       } else {
         setError(result.error || 'Failed to fetch invitations')
-        console.error('Failed to fetch invitations:', result.error)
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch invitations'
       setError(errorMessage)
-      console.error('Error in fetchInvitations:', err)
     } finally {
       setLoading(false)
     }
@@ -60,16 +58,6 @@ export default function InvitationsTable() {
 
   if (error) {
     return <div className="text-red-500">{error}</div>
-  }
-
-  const formattedDate = (unixDate: number | null | undefined) => {
-    if (unixDate === null || unixDate === undefined) return 'N/A';
-    const date = new Date(unixDate).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-    return date
   }
 
   return (
@@ -110,10 +98,10 @@ export default function InvitationsTable() {
                     </span>
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {formattedDate(invitation.created_at)}
+                    {formatUnixDate(invitation.created_at)}
                   </TableCell>
                   <TableCell className="text-muted-foreground">
-                    {formattedDate(invitation.expires_at)}
+                    {formatUnixDate(invitation.expires_at)}
                   </TableCell>
                   <TableCell className="text-right">
                     <Button
@@ -121,7 +109,7 @@ export default function InvitationsTable() {
                       size="sm"
                       className={cn(
                         'cursor-pointer',
-                        invitation.status !== 'pending' && 'opacity-50'
+                        invitation.status !== 'pending' && 'opacity-50 border border-muted-foreground'
                       )}
                       disabled={invitation.status !== 'pending'}
                       onClick={() => {/* TODO: Add revoke action */}}
@@ -160,11 +148,11 @@ export default function InvitationsTable() {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="text-muted-foreground">Invited At</div>
-                <div>{formattedDate(invitation.created_at)}</div>
+                <div>{formatUnixDate(invitation.created_at)}</div>
               </div>
               <div>
                 <div className="text-muted-foreground">Expires At</div>
-                <div>{formattedDate(invitation.expires_at)}</div>
+                <div>{formatUnixDate(invitation.expires_at)}</div>
               </div>
             </div>
 
