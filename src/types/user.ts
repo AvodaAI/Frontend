@@ -1,3 +1,4 @@
+//src/types/user.ts
 import { z } from 'zod';
 import { users } from '@/db/schema';
 import { InferModel } from 'drizzle-orm';

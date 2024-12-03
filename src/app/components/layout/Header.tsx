@@ -11,7 +11,7 @@ import {
   SheetTrigger,
 } from "@components/ui/sheet"
 import { cn } from "@/lib/utils"
-import { useUserRole } from "@/hooks/use-role"
+import { useUserRole } from "@/hooks/useRole"
 
 //FIXME: After fixing RBAC, update adminOnly
 const navigation = [

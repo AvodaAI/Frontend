@@ -5,7 +5,7 @@ import { EmployeeTable } from '@/app/(auth)/employees/components/EmployeeTable'
 import { AddEmployeeForm } from '@/app/(auth)/employees/components/AddEmployeeForm'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@components/ui/dialog'
 import { useState } from 'react'
-import { useUserRole } from '@/hooks/use-role'
+import { useUserRole } from '@/hooks/useRole'
 import { redirect } from 'next/navigation'
 
 export default function EmployeesPage() {
