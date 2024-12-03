@@ -1,5 +1,5 @@
 //src/app/page.tsx
-import { Header } from "@/app/components/header";
+import { Header } from './components/header';
 import { SignIn } from '@components/auth/SignIn'
 import { SignUp } from '@components/auth/SignUp'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs'

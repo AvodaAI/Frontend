@@ -1,11 +1,11 @@
 // src/app/components/auth/invitations-table.tsx
-// TODO: Add pagination
-// TODO: Add search functionality
-// FIXED: fix expires_at *type* error
+// DONE: Add pagination
+//FIXME: Search functionality
+// DONE: fix expires_at *type* error
 'use client'
 import { useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
-import { getInvitations } from '../../actions/getInvitations'
+import { getInvitations } from '../actions/getInvitations'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/ui/table'
 import { Button } from '@components/ui/button'
 import { Loader2 } from 'lucide-react'
@@ -14,13 +14,17 @@ import { cn } from '@/lib/utils'
 import { usePagination } from '@/utils/invitations-pagination'
 import { useSearch } from '@/utils/invitations-search'
 import { revokeInvitation } from '@/app/actions/revokeInvitation'
-import { Input } from '../ui/input'
-
+import { Input } from '@components/ui/input'
+import { formatUnixDate } from '@/utils/unixdate'
+import { useToast } from "@/hooks/useToast"
+import { RevokeSuccessToast } from './RevokeSuccessToast'
 export default function InvitationsTable() {
   const { isLoaded, isSignedIn } = useAuth()
+  const { toast } = useToast()
   const [invitations, setInvitations] = useState<Invitation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [revokedId, setRevokedId] = useState<string | null>(null)
 
   // Use search hook
   const { searchTerm, setSearchTerm, filteredItems: filteredInvitations } = useSearch(invitations);
@@ -37,13 +41,23 @@ export default function InvitationsTable() {
   const fetchInvitations = async () => {
     setLoading(true)
     setError(null)
-    const result = await getInvitations({ limit: 500, offset: 0 })
-    if (result.success && result.data) {
-      setInvitations(result.data)
-    } else {
-      setError(result.error || 'Failed to fetch invitations')
+    try {
+      // Fetch all invitations regardless of status
+      const result = await getInvitations({ 
+        limit: 500, 
+        offset: 0,
+      })
+      if (result.success && result.data) {
+        setInvitations(result.data)
+      } else {
+        setError(result.error || 'Failed to fetch invitations')
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch invitations'
+      setError(errorMessage)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   // Revoke invitation handler
@@ -53,6 +67,7 @@ export default function InvitationsTable() {
       if (result.success) {
         // Refresh invitations after successful revoke
         fetchInvitations();
+        setRevokedId(invitationId);
       } else {
         setError(result.error || 'Failed to revoke invitation');
       }
@@ -77,18 +92,9 @@ export default function InvitationsTable() {
     return <div className="text-red-500">{error}</div>
   }
 
-  const formattedDate = (unixDate: number | null | undefined) => {
-    if (unixDate === null || unixDate === undefined) return 'N/A';
-    const date = new Date(unixDate).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-    return date
-  }
-
   return (
     <div className="w-full space-y-4">
+      {revokedId && <RevokeSuccessToast invitationId={revokedId} />}
       {/* Search Input */}
       <Input 
         placeholder="Search invitations..." 
@@ -118,17 +124,17 @@ export default function InvitationsTable() {
                     {
                       "bg-green-100 text-green-700": invitation.status === "accepted",
                       "bg-yellow-100 text-yellow-700": invitation.status === "pending",
-                      "bg-red-100 text-red-700": invitation.status === "expired" || invitation.status === "revoked"
+                      "bg-red-100 text-red-700": invitation.revoked === true || invitation.status === "expired" || invitation.status === "revoked"
                     }
                   )}>
                     {invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}
                   </span>
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {formattedDate(invitation.created_at)}
+                  {formatUnixDate(invitation.created_at)}
                 </TableCell>
                 <TableCell className="text-muted-foreground">
-                  {formattedDate(invitation.expires_at)}
+                  {formatUnixDate(invitation.expires_at)}
                 </TableCell>
                 <TableCell className="text-right">
                   <Button
@@ -185,7 +191,7 @@ export default function InvitationsTable() {
                 {
                   "bg-green-100 text-green-700": invitation.status === "accepted",
                   "bg-yellow-100 text-yellow-700": invitation.status === "pending",
-                  "bg-red-100 text-red-700":  invitation.status === "revoked"
+                  "bg-red-100 text-red-700": invitation.status === "expired" || invitation.status === "revoked"
                 }
               )}>
                 {invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}
@@ -195,11 +201,11 @@ export default function InvitationsTable() {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="text-muted-foreground">Invited At</div>
-                <div>{formattedDate(invitation.created_at)}</div>
+                <div>{formatUnixDate(invitation.created_at)}</div>
               </div>
               <div>
                 <div className="text-muted-foreground">Expires At</div>
-                <div>{formattedDate(invitation.expires_at)}</div>
+                <div>{formatUnixDate(invitation.expires_at)}</div>
               </div>
             </div>
 

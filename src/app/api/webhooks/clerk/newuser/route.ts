@@ -1,5 +1,6 @@
 // src/app/api/webhooks/clerk/newuser/route.ts
-//TODO configure webhook for new users
+//TODO: configure webhook for new users
+//TODO: validate the svix-id, svix-timestamp, and svix-signature headers specifically
 import { NextRequest, NextResponse } from 'next/server'
 import { Webhook } from 'svix'
 import { db } from '@/db'

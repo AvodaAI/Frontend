@@ -11,7 +11,7 @@ import {
   SheetTrigger,
 } from "@components/ui/sheet"
 import { cn } from "@/lib/utils"
-import { useUserRole } from "@/hooks/use-role"
+import { useUserRole } from "@/hooks/useRole"
 
 //FIXME: After fixing RBAC, update adminOnly
 const navigation = [
@@ -20,6 +20,7 @@ const navigation = [
   { name: 'Time Tracking', href: '/time-tracking', adminOnly: false },
   { name: 'Invitations', href: '/invitations', adminOnly: false },
   { name: 'Settings', href: '/settings', adminOnly: false },
+  { name: 'Status', href: '/status', adminOnly: false },
 ]
 
 export function Header() {

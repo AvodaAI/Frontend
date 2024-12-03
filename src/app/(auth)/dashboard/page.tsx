@@ -3,13 +3,13 @@
 
 import { Button } from '@components/ui/button'
 import Link from 'next/link'
-import { EmployeeTable } from '@/app/components/employees/EmployeeTable'
-import { AddEmployeeForm } from '@components/employees/AddEmployeeForm'
+import { EmployeeTable } from '@/app/(auth)/employees/components/EmployeeTable'
+import { AddEmployeeForm } from '@/app/(auth)/employees/components/AddEmployeeForm'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@components/ui/dialog'
 import { useState } from 'react'
 import { ErrorBoundary } from '@components/ui/error-boundary'
 import { Suspense } from 'react'
-import { useUserRole } from '@/hooks/use-role'
+import { useUserRole } from '@/hooks/useRole'
 import { useUser } from '@clerk/nextjs'
 
 export default function Page() {

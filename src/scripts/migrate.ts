@@ -1,7 +1,7 @@
 //src/scripts/migrate.ts
 const fs = require('fs').promises;
 const path = require('path');
-const db = require('../lib/db');
+const db = require('@/lib/db');
 
 interface Employee {
   id?: number;

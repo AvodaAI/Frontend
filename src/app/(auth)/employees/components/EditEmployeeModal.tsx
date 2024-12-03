@@ -14,9 +14,9 @@ import {
   DialogFooter,
 } from '@components/ui/dialog'
 import { User } from '@/types'
-import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { Popover, PopoverContent, PopoverTrigger } from '../../../components/ui/popover'
 import { CalendarIcon } from 'lucide-react'
-import { Calendar } from '../ui/calendar'
+import { Calendar } from '../../../components/ui/calendar'
 import { cn } from '@/lib/utils'
 import { format } from 'date-fns'
 import {

@@ -24,10 +24,10 @@ export async function POST(request: Request) {
 
     const { email, password } = validatedFields.data
 
-    // TODO Attempt to sign in using clerk
+    // TODO: Attempt to sign in using clerk
 
-    //TODO If sign-in is successful, return success response
+    //TODO: If sign-in is successful, return success response
   } catch (error) {
-    //TODO If sign-in fails, return error response
+    //TODO: If sign-in fails, return error response
   }
 }

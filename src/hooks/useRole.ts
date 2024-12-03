@@ -1,3 +1,4 @@
+// src/hooks/use-role.ts
 'use client'
 
 import { useUser } from '@clerk/nextjs'
