@@ -56,12 +56,13 @@ export default function ClerkUsersTable() {
   }, [isLoaded, isSignedIn])
 
   useEffect(() => {
-    // Fetch emails for all users when component mounts
+    let mounted = true;
     users.forEach(user => {
-      if (user.primaryEmailAddressId) {
+      if (user.primaryEmailAddressId && mounted) {
         fetchEmail(user.primaryEmailAddressId)
       }
-    })
+    });
+    return () => { mounted = false };
   }, [users])
 
   if (!isLoaded || !isSignedIn) {
