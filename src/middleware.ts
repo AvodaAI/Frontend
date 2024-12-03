@@ -13,5 +13,4 @@ export default clerkMiddleware(async (auth, req) => {
   if (!userId && isProtectedRoutes(req)) {
     return redirectToSignIn()
   }
-  }
-})
+})  
