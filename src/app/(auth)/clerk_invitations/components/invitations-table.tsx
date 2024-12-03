@@ -1,9 +1,8 @@
 // src/app/components/auth/invitations-table.tsx
-// TODO: Add pagination
-// TODO: Add search functionality
+// DONE: Add pagination
+//FIXME: Search functionality
 // DONE: fix expires_at *type* error
 'use client'
-
 import { useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import { getInvitations } from '../actions/getInvitations'
@@ -12,13 +11,26 @@ import { Button } from '@components/ui/button'
 import { Loader2 } from 'lucide-react'
 import { Invitation } from '@/types/invitation'
 import { cn } from '@/lib/utils'
+import { usePagination } from '@/utils/invitations-pagination'
+import { useSearch } from '@/utils/invitations-search'
+import { revokeInvitation } from '@/app/actions/revokeInvitation'
+import { Input } from '@components/ui/input'
 import { formatUnixDate } from '@/utils/unixdate'
-
+import { useToast } from "@/hooks/useToast"
+import { RevokeSuccessToast } from './RevokeSuccessToast'
 export default function InvitationsTable() {
   const { isLoaded, isSignedIn } = useAuth()
+  const { toast } = useToast()
   const [invitations, setInvitations] = useState<Invitation[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [revokedId, setRevokedId] = useState<string | null>(null)
+
+  // Use search hook
+  const { searchTerm, setSearchTerm, filteredItems: filteredInvitations } = useSearch(invitations);
+
+  // Then use pagination hook
+  const { paginatedItems, paginationState, totalPages, goToNextPage, goToPreviousPage } = usePagination(filteredInvitations);
 
   useEffect(() => {
     if (isLoaded && isSignedIn) {
@@ -30,7 +42,11 @@ export default function InvitationsTable() {
     setLoading(true)
     setError(null)
     try {
-      const result = await getInvitations({ limit: 500, offset: 0 })
+      // Fetch all invitations regardless of status
+      const result = await getInvitations({ 
+        limit: 500, 
+        offset: 0,
+      })
       if (result.success && result.data) {
         setInvitations(result.data)
       } else {
@@ -41,6 +57,22 @@ export default function InvitationsTable() {
       setError(errorMessage)
     } finally {
       setLoading(false)
+    }
+  }
+
+  // Revoke invitation handler
+  const handleRevokeInvitation = async (invitationId: string) => {
+    try {
+      const result = await revokeInvitation(invitationId);
+      if (result.success) {
+        // Refresh invitations after successful revoke
+        fetchInvitations();
+        setRevokedId(invitationId);
+      } else {
+        setError(result.error || 'Failed to revoke invitation');
+      }
+    } catch (err) {
+      setError('An error occurred while revoking the invitation');
     }
   }
 
@@ -62,6 +94,14 @@ export default function InvitationsTable() {
 
   return (
     <div className="w-full space-y-4">
+      {revokedId && <RevokeSuccessToast invitationId={revokedId} />}
+      {/* Search Input */}
+      <Input 
+        placeholder="Search invitations..." 
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="mb-4"
+      />
       {/* Desktop view */}
       <div className="hidden md:block overflow-hidden">
         <Table className='border'>
@@ -75,58 +115,71 @@ export default function InvitationsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {invitations.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
-                  No invitations found
+            {paginatedItems.map((invitation) => (
+              <TableRow key={invitation.id} className="hover:bg-muted/30">
+                <TableCell className="font-medium">{invitation.email_address}</TableCell>
+                <TableCell>
+                  <span className={cn(
+                    "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium",
+                    {
+                      "bg-green-100 text-green-700": invitation.status === "accepted",
+                      "bg-yellow-100 text-yellow-700": invitation.status === "pending",
+                      "bg-red-100 text-red-700": invitation.revoked === true || invitation.status === "expired" || invitation.status === "revoked"
+                    }
+                  )}>
+                    {invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}
+                  </span>
+                </TableCell>
+                <TableCell className="text-muted-foreground">
+                  {formatUnixDate(invitation.created_at)}
+                </TableCell>
+                <TableCell className="text-muted-foreground">
+                  {formatUnixDate(invitation.expires_at)}
+                </TableCell>
+                <TableCell className="text-right">
+                  <Button
+                    variant={invitation.status !== 'pending' ? 'ghost' : 'destructive'}
+                    size="sm"
+                    className={cn(
+                      'cursor-pointer',
+                      invitation.status !== 'pending' && 'opacity-50'
+                    )} 
+                    disabled={invitation.status !== 'pending'}
+                    onClick={() => handleRevokeInvitation(invitation.id)}
+                  >
+                    Revoke
+                  </Button>
                 </TableCell>
               </TableRow>
-            ) : (
-              invitations.map((invitation) => (
-                <TableRow key={invitation.id} className="hover:bg-muted/30">
-                  <TableCell className="font-medium">{invitation.email_address}</TableCell>
-                  <TableCell>
-                    <span className={cn(
-                      "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium",
-                      {
-                        "bg-green-100 text-green-700": invitation.status === "accepted",
-                        "bg-yellow-100 text-yellow-700": invitation.status === "pending",
-                        "bg-red-100 text-red-700": invitation.status === "expired" || invitation.status === "revoked"
-                      }
-                    )}>
-                      {invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {formatUnixDate(invitation.created_at)}
-                  </TableCell>
-                  <TableCell className="text-muted-foreground">
-                    {formatUnixDate(invitation.expires_at)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button
-                      variant={invitation.status !== 'pending' ? 'ghost' : 'destructive'}
-                      size="sm"
-                      className={cn(
-                        'cursor-pointer',
-                        invitation.status !== 'pending' && 'opacity-50 border border-muted-foreground'
-                      )}
-                      disabled={invitation.status !== 'pending'}
-                      onClick={() => {/* TODO: Add revoke action */}}
-                    >
-                      Revoke
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
+            ))}
           </TableBody>
         </Table>
+
+        {/* Pagination Controls */}
+        <div className="flex justify-between items-center mt-4">
+          <Button
+            variant="outline"
+            onClick={goToPreviousPage}
+            disabled={paginationState.currentPage === 1}
+          >
+            Previous
+          </Button>
+          <span>
+            Page {paginationState.currentPage} of {totalPages}
+          </span>
+          <Button
+            variant="outline"
+            onClick={goToNextPage}
+            disabled={paginationState.currentPage === totalPages}
+          >
+            Next
+          </Button>
+        </div>
       </div>
 
       {/* Mobile view */}
       <div className="block md:hidden space-y-4">
-        {invitations.map((invitation) => (
+        {paginatedItems.map((invitation) => (
           <div
             key={invitation.id}
             className="bg-card p-4 rounded-lg border shadow-sm space-y-3"
@@ -138,7 +191,7 @@ export default function InvitationsTable() {
                 {
                   "bg-green-100 text-green-700": invitation.status === "accepted",
                   "bg-yellow-100 text-yellow-700": invitation.status === "pending",
-                  "bg-red-100 text-red-700":  invitation.status === "revoked"
+                  "bg-red-100 text-red-700": invitation.status === "expired" || invitation.status === "revoked"
                 }
               )}>
                 {invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}
@@ -164,9 +217,9 @@ export default function InvitationsTable() {
                 className={cn(
                   'w-full cursor-pointer',
                   invitation.status !== 'pending' && 'opacity-50'
-                )}
+                )} 
                 disabled={invitation.status !== 'pending'}
-                onClick={() => {/* TODO: Add revoke action */}}
+                onClick={() => handleRevokeInvitation(invitation.id)}
               >
                 Revoke
               </Button>

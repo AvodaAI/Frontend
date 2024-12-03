@@ -1,4 +1,5 @@
 // src/app/layout.tsx
+import { Toaster } from '@components/ui/toaster'
 import './globals.css'
 import { ClerkProvider } from '@clerk/nextjs'
 import { Inter } from 'next/font/google'
@@ -22,6 +23,7 @@ export default function RootLayout({
           <div className="relative flex min-h-screen flex-col">
             {children}
           </div>
+          <Toaster />
         </ClerkProvider>
       </body>
     </html>
