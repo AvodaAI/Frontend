@@ -4,6 +4,8 @@
 import { useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
 import { getClerkUsers } from '../actions/getClerkUsers'
+import { getClerkEmail } from '../actions/getClerkEmail'
+import { GetClerkUsersResponse } from '../actions/getClerkUsers'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/ui/table'
 import { Button } from '@components/ui/button'
 import { Loader2 } from 'lucide-react'
@@ -13,24 +15,18 @@ import { dataFallback } from '@/utils/datafallback'
 
 export default function ClerkUsersTable() {
   const { isLoaded, isSignedIn } = useAuth()
-  const [users, setUsers] = useState<any[]>([])
+  const [users, setUsers] = useState<GetClerkUsersResponse['data']>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [emails, setEmails] = useState<Record<string, string>>({})
 
-  useEffect(() => {
-    if (isLoaded && isSignedIn) {
-      fetchUsers()
-    }
-  }, [isLoaded, isSignedIn])
-
-  const fetchUsers = async () => {
+  const fetchClerkUsers = async (params: { limit: number; offset: number }) => {
     setLoading(true)
     setError(null)
     try {
-      const result = await getClerkUsers({ limit: 500, offset: 0 })
-      if (result.success && result.data) {
-        setUsers(result.data)
-      } else {
+      const result = await getClerkUsers(params)
+      setUsers(result.data)
+      if (!result.success) {
         setError(result.error || 'Failed to fetch users')
       }
     } catch (err) {
@@ -40,6 +36,30 @@ export default function ClerkUsersTable() {
       setLoading(false)
     }
   }
+
+  const fetchEmail = async (emailAddressId: string) => {
+    if (!emailAddressId || emails[emailAddressId]) return
+    
+    const email = await getClerkEmail(emailAddressId)
+    if (email) {
+      setEmails(prev => ({ ...prev, [emailAddressId]: email }))
+    }
+  }
+
+  useEffect(() => {
+    if (isLoaded && isSignedIn) {
+      fetchClerkUsers({ limit: 500, offset: 0 })
+    }
+  }, [isLoaded, isSignedIn])
+
+  useEffect(() => {
+    // Fetch emails for all users when component mounts
+    users.forEach(user => {
+      if (user.primaryEmailAddressId) {
+        fetchEmail(user.primaryEmailAddressId)
+      }
+    })
+  }, [users])
 
   if (!isLoaded || !isSignedIn) {
     return <div>Loading...</div>
@@ -71,13 +91,17 @@ export default function ClerkUsersTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell>{user.id}</TableCell>
-              <TableCell>{dataFallback(user.first_name) || dataFallback(user.last_name) || 'N/A'}</TableCell>
-              <TableCell>{dataFallback(user.email_addresses && user.email_addresses[0]?.email_address) || 'N/A'}</TableCell>
-              <TableCell>{dataFallback(formatUnixDate(user.created_at)) || 'N/A'}</TableCell>
-              <TableCell>{dataFallback(user.last_sign_in_at ? formatUnixDate(user.last_sign_in_at) : 'Never')}</TableCell>
+          {users.map((clerkuser) => (
+            <TableRow key={clerkuser.id}>
+              <TableCell>{clerkuser.id}</TableCell>
+              <TableCell>{dataFallback(clerkuser.firstName) || dataFallback(clerkuser.lastName) || 'N/A'}</TableCell>
+              <TableCell>
+                {clerkuser.primaryEmailAddressId ? 
+                  (emails[clerkuser.primaryEmailAddressId] || 'Loading...') 
+                  : 'N/A'}
+              </TableCell>
+              <TableCell>{dataFallback(formatUnixDate(clerkuser.createdAt)) || 'N/A'}</TableCell>
+              <TableCell>{dataFallback(clerkuser.lastSignInAt ? formatUnixDate(clerkuser.lastSignInAt) : 'Never')}</TableCell>
               <TableCell>
                 <Button variant="ghost" size="sm">
                   View Details

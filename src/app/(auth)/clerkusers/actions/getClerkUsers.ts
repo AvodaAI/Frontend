@@ -13,14 +13,6 @@ interface GetClerkUsersParams {
   offset?: number;
 }
 
-interface EmailAddress {
-  id: string;
-  emailAddress: string;
-  verification: {
-    status: string;
-  } | null;
-}
-
 interface ClerkUser {
   id: string;
   externalId: string | null;
@@ -31,14 +23,13 @@ interface ClerkUser {
   lastName: string | null;
   publicMetadata: Record<string, any>;
   privateMetadata: Record<string, any>;
-  emailAddresses: EmailAddress[];
   lastSignInAt: number | null;
   lastActiveAt: number | null;
   updatedAt: number;
   createdAt: number;
 }
 
-interface GetClerkUsersResponse {
+export interface GetClerkUsersResponse {
   data: ClerkUser[];
   success?: boolean;
   error?: string;
@@ -65,12 +56,8 @@ export async function getClerkUsers(
       username: clerkUser.username,
       firstName: clerkUser.firstName,
       lastName: clerkUser.lastName,
-      publicMetadata: clerkUser.publicMetadata,
-      privateMetadata: clerkUser.privateMetadata,
-      emailAddresses: clerkUser.emailAddresses.map(email => ({
-        ...email,
-        verification: email.verification ?? { status: 'unknown' }
-      })),
+      publicMetadata: JSON.parse(JSON.stringify(clerkUser.publicMetadata)), 
+      privateMetadata: JSON.parse(JSON.stringify(clerkUser.privateMetadata)), 
       lastSignInAt: clerkUser.lastSignInAt,
       lastActiveAt: clerkUser.lastActiveAt,
       updatedAt: clerkUser.updatedAt,
