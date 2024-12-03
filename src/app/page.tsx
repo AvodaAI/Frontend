@@ -1,4 +1,5 @@
 //src/app/page.tsx
+import { Header } from './components/header';
 import { SignIn } from '@components/auth/SignIn'
 import { SignUp } from '@components/auth/SignUp'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs'
@@ -6,6 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs'
 export default function Home() {
   return (
     <>
+      <Header />
       <main className="flex-1">
         <section className="w-full py-12 md:py-24 lg:py-32">
           <div className="container px-4 md:px-6">
