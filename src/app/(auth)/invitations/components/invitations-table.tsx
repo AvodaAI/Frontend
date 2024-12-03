@@ -1,17 +1,18 @@
 // src/app/components/auth/invitations-table.tsx
 // TODO: Add pagination
 // TODO: Add search functionality
-// FIXED: fix expires_at *type* error
+// DONE: fix expires_at *type* error
 'use client'
 
 import { useEffect, useState } from 'react'
 import { useAuth } from '@clerk/nextjs'
-import { getInvitations } from '../../actions/getInvitations'
+import { getInvitations } from '../actions/getInvitations'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/ui/table'
 import { Button } from '@components/ui/button'
 import { Loader2 } from 'lucide-react'
 import { Invitation } from '@/types/invitation'
 import { cn } from '@/lib/utils'
+import { formatUnixDate } from '@/utils/unixdate'
 
 export default function InvitationsTable() {
   const { isLoaded, isSignedIn } = useAuth()
@@ -28,13 +29,19 @@ export default function InvitationsTable() {
   const fetchInvitations = async () => {
     setLoading(true)
     setError(null)
-    const result = await getInvitations({ limit: 500, offset: 0 })
-    if (result.success && result.data) {
-      setInvitations(result.data)
-    } else {
-      setError(result.error || 'Failed to fetch invitations')
+    try {
+      const result = await getInvitations({ limit: 500, offset: 0 })
+      if (result.success && result.data) {
+        setInvitations(result.data)
+      } else {
+        setError(result.error || 'Failed to fetch invitations')
+      }
+    } catch (err) {
+      const errorMessage = err instanceof Error ? err.message : 'Failed to fetch invitations'
+      setError(errorMessage)
+    } finally {
+      setLoading(false)
     }
-    setLoading(false)
   }
 
   if (!isLoaded || !isSignedIn) {
@@ -53,16 +60,6 @@ export default function InvitationsTable() {
     return <div className="text-red-500">{error}</div>
   }
 
-  const formattedDate = (unixDate: number | null | undefined) => {
-    if (unixDate === null || unixDate === undefined) return 'N/A';
-    const date = new Date(unixDate).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-    })
-    return date
-  }
-
   return (
     <div className="w-full space-y-4">
       {/* Desktop view */}
@@ -78,43 +75,51 @@ export default function InvitationsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {invitations.map((invitation) => (
-              <TableRow key={invitation.id} className="hover:bg-muted/30">
-                <TableCell className="font-medium">{invitation.email_address}</TableCell>
-                <TableCell>
-                  <span className={cn(
-                    "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium",
-                    {
-                      "bg-green-100 text-green-700": invitation.status === "accepted",
-                      "bg-yellow-100 text-yellow-700": invitation.status === "pending",
-                      "bg-red-100 text-red-700": invitation.status === "expired" || invitation.status === "revoked"
-                    }
-                  )}>
-                    {invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}
-                  </span>
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {formattedDate(invitation.created_at)}
-                </TableCell>
-                <TableCell className="text-muted-foreground">
-                  {formattedDate(invitation.expires_at)}
-                </TableCell>
-                <TableCell className="text-right">
-                  <Button
-                    variant={invitation.status !== 'pending' ? 'ghost' : 'destructive'}
-                    size="sm"
-                    className={cn(
-                      'cursor-pointer',
-                      invitation.status !== 'pending' && 'opacity-50'
-                    )}
-                    disabled={invitation.status !== 'pending'}
-                    onClick={() => {/* TODO: Add revoke action */}}
-                  >
-                    Revoke
-                  </Button>
+            {invitations.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={5} className="text-center py-4 text-muted-foreground">
+                  No invitations found
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              invitations.map((invitation) => (
+                <TableRow key={invitation.id} className="hover:bg-muted/30">
+                  <TableCell className="font-medium">{invitation.email_address}</TableCell>
+                  <TableCell>
+                    <span className={cn(
+                      "inline-flex items-center rounded-md px-2 py-1 text-xs font-medium",
+                      {
+                        "bg-green-100 text-green-700": invitation.status === "accepted",
+                        "bg-yellow-100 text-yellow-700": invitation.status === "pending",
+                        "bg-red-100 text-red-700": invitation.status === "expired" || invitation.status === "revoked"
+                      }
+                    )}>
+                      {invitation.status.charAt(0).toUpperCase() + invitation.status.slice(1)}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {formatUnixDate(invitation.created_at)}
+                  </TableCell>
+                  <TableCell className="text-muted-foreground">
+                    {formatUnixDate(invitation.expires_at)}
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <Button
+                      variant={invitation.status !== 'pending' ? 'ghost' : 'destructive'}
+                      size="sm"
+                      className={cn(
+                        'cursor-pointer',
+                        invitation.status !== 'pending' && 'opacity-50 border border-muted-foreground'
+                      )}
+                      disabled={invitation.status !== 'pending'}
+                      onClick={() => {/* TODO: Add revoke action */}}
+                    >
+                      Revoke
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
         </Table>
       </div>
@@ -143,11 +148,11 @@ export default function InvitationsTable() {
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
                 <div className="text-muted-foreground">Invited At</div>
-                <div>{formattedDate(invitation.created_at)}</div>
+                <div>{formatUnixDate(invitation.created_at)}</div>
               </div>
               <div>
                 <div className="text-muted-foreground">Expires At</div>
-                <div>{formattedDate(invitation.expires_at)}</div>
+                <div>{formatUnixDate(invitation.expires_at)}</div>
               </div>
             </div>
 
