@@ -1,3 +1,4 @@
+// src/app/(auth)/clerk_invitations/page.tsx
 'use client'
 
 import InvitationsTable from "./components/invitations-table"
