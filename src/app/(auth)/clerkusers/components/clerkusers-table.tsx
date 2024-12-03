@@ -1,4 +1,7 @@
 // src/app/(auth)/clerkusers/components/clerkusers-table.tsx
+//TODO: Make Add User Modal
+//TODO: Update & Delete User Modal
+//TODO: Link to view details page
 'use client'
 
 import { useEffect, useState } from 'react'
