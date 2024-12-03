@@ -65,6 +65,12 @@ export function Header() {
                 </SignUpButton>
               </>
             )}
+            <Link
+              href="/status"
+              className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+            >
+              Status
+            </Link>
           </nav>
         </div>
       </div>

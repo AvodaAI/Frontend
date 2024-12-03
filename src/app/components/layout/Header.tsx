@@ -20,6 +20,7 @@ const navigation = [
   { name: 'Time Tracking', href: '/time-tracking', adminOnly: false },
   { name: 'Invitations', href: '/invitations', adminOnly: false },
   { name: 'Settings', href: '/settings', adminOnly: false },
+  { name: 'Status', href: '/status', adminOnly: false },
 ]
 
 export function Header() {
