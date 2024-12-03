@@ -3,7 +3,7 @@
 
 import { Button } from '@components/ui/button'
 import Link from 'next/link'
-import { EmployeeTable } from '@/app/components/employees/EmployeeTable'
+import { EmployeeTable } from '@components/employees/EmployeeTable'
 import { AddEmployeeForm } from '@components/employees/AddEmployeeForm'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@components/ui/dialog'
 import { useState } from 'react'

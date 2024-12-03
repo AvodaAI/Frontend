@@ -22,9 +22,6 @@ export const users = pgTable('users', {
   country: varchar('country', { length: 255 }),
   hire_date: timestamp('hire_date'),
 
-  // Status
-  status: varchar('status', { length: 50 }).default('active'),
-
   // Timestamps
   created_at: timestamp('created_at').notNull().defaultNow(),
   updated_at: timestamp('updated_at').notNull().defaultNow(),

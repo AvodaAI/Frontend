@@ -1,10 +1,10 @@
 'use client'
 
-import InvitationsTable from "@/app/components/invitations/invitations-table"
+import InvitationsTable from "@components/invitations/invitations-table"
 import { Button } from "@components/ui/button"
 import { Plus } from "lucide-react"
 import { Suspense } from "react"
-import { ErrorBoundary } from "@/app/components/ui/error-boundary"
+import { ErrorBoundary } from "@components/ui/error-boundary"
 
 export default function InvitationsPage() {
   return (

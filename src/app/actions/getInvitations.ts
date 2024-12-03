@@ -26,35 +26,39 @@ export async function getInvitations(params?: GetInvitationsParams): Promise<Get
       const { limit = 10, offset = 0, status } = params || {}
   
       // Call Clerk API to fetch invitations with provided filters
-      const invitations = await (await clerk).invitations.getInvitationList({ 
+      const response = await (await clerk).invitations.getInvitationList({ 
         limit, 
-        offset, 
-        status 
+        offset,
+        ...(status && { status })
       })
-  
+
+      console.log('Fetched invitations:', response)
+      
+      // Extract invitations from the response data array
+      const invitations = response.data || []
+      
       // Map invitations to match the API response format
-      const mappedInvitations = Array.isArray(invitations)
-        ? invitations.map(inv => ({
-          object: 'invitation',
-          id: inv.id,
-          email_address: inv.emailAddress,
-          public_metadata: inv.publicMetadata,
-          revoked: inv.revoked,
-          status: inv.status,
-          url: inv.url || null,
-          expires_at: Number(inv.expiresAt),
-          created_at: Number(inv.createdAt),
-          updated_at: Number(inv.updatedAt),
-        }))
-        : []
+      const mappedInvitations = invitations.map(inv => ({
+        id: inv.id,
+        email_address: inv.emailAddress,
+        public_metadata: inv.publicMetadata || {},
+        revoked: inv.revoked || false,
+        status: inv.status,
+        url: inv.url,
+        expires_at: null, // Clerk doesn't seem to provide this
+        created_at: new Date(inv.createdAt).getTime(),
+        updated_at: new Date(inv.updatedAt).getTime(),
+      }))
+
+      console.log('Mapped invitations:', mappedInvitations)
 
       return { 
         success: true, 
         data: mappedInvitations, 
-        total: mappedInvitations.length 
+        total: response.totalCount 
       }
     } catch (error) {
       console.error('Error fetching invitations:', error)
-      return { success: false, error: 'Failed to fetch invitations' }
+      return { success: false, error: error instanceof Error ? error.message : 'Failed to fetch invitations' }
     }
-  }
+}

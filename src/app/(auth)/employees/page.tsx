@@ -1,7 +1,7 @@
 'use client'
 
 import { Button } from '@components/ui/button'
-import { EmployeeTable } from '@/app/components/employees/EmployeeTable'
+import { EmployeeTable } from '@components/employees/EmployeeTable'
 import { AddEmployeeForm } from '@components/employees/AddEmployeeForm'
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@components/ui/dialog'
 import { useState } from 'react'
@@ -9,17 +9,7 @@ import { useUserRole } from '@/hooks/use-role'
 import { redirect } from 'next/navigation'
 
 export default function EmployeesPage() {
-  const { isAdmin, isLoaded } = useUserRole()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  
-  // Redirect non-admin users
-  if (isLoaded && !isAdmin) {
-    redirect('/dashboard')
-  }
-
-  if (!isLoaded) {
-    return <div>Loading...</div>
-  }
 
   return (
     <div className="container max-w-7xl mx-auto">
