@@ -1,13 +1,14 @@
 // @ts-nocheck
 // src/lib/db.ts
 import { Pool } from 'pg';
+import 'dotenv/config';
 
 const pool = new Pool({
-  host: '95.217.7.150',
-  port: 5432,
-  user: 'postgres',
-  password: 'NbvKSY7Z0bF632qtN7afz4X2y6GO0kEihVjGRk4Pm7yUBoXSjfKdSr7zPDWihrmB',
-  database: 'tests',
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
 });
 
 const db = {
@@ -30,31 +31,6 @@ const db = {
       return res;
     } catch (error) {
       console.error('Database query error:', error);
-      throw error;
-    }
-  },
-
-  async initializeTables() {
-    const createUsersTable = `
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        first_name VARCHAR(255),
-        last_name VARCHAR(255),
-        position VARCHAR(255),
-        hire_date DATE,
-        city VARCHAR(255),
-        country VARCHAR(255),
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      );
-    `;
-
-    try {
-      await this.query(createUsersTable);
-      console.log('Tables initialized successfully');
-    } catch (error) {
-      console.error('Error initializing tables:', error);
       throw error;
     }
   },

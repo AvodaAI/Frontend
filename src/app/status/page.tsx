@@ -1,16 +1,20 @@
 // src/app/status/page.tsx
+//TODO: Only show the internal header if auth, otherwise show the public header
 'use server';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import db from '@/lib/db';
 import SupabaseStatus from '@/utils/supabase/status';
+import { Header } from '../components/layout/Header';
 export default async function StatusPage() {
   const status = await db.checkConnection();
   const supabaseStatus = await SupabaseStatus.checkConnection();
 
 
   return (
+    <div>
+      <Header />
     <div className="min-h-[80vh] flex items-center justify-center p-4">
       <Card className="w-full max-w-xl shadow-lg">
         <CardHeader className="space-y-1">
@@ -54,5 +58,6 @@ export default async function StatusPage() {
         </CardContent>
       </Card>
     </div>
+    </div>  
   );
 }

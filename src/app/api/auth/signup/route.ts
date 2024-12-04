@@ -12,7 +12,7 @@ const client = clerkClient()
 const signUpSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(6, "Password must be at least 6 characters long"),
-  clerk_id: z.string().optional(),
+  auth_id: z.string().optional(),
   status: z.string().optional(),
   first_name: z.string().optional(),
   last_name: z.string().optional(),
@@ -38,7 +38,7 @@ export async function POST(request: Request) {
     const { 
       email, 
       password, 
-      clerk_id, 
+      auth_id, 
       first_name,
       last_name,
       position,
@@ -67,7 +67,7 @@ export async function POST(request: Request) {
       email,
       password: hashedPassword,
       role: 'admin', // Default role
-      clerk_id: clerk_id, 
+      auth_id: auth_id, 
       first_name: first_name,
       last_name: last_name,
       position: position,
@@ -80,8 +80,8 @@ export async function POST(request: Request) {
     }).returning()
 
     // Update clerk metadata with role
-    if (clerk_id) {
-      await (await client).users.updateUserMetadata(clerk_id, {
+    if (auth_id) {
+      await (await client).users.updateUserMetadata(auth_id, {
         publicMetadata: {
           type: 'employee' // Default to employee
         }
@@ -93,7 +93,7 @@ export async function POST(request: Request) {
       id: newUser.id,
       email: newUser.email,
       role: newUser.role,
-      clerk_id: newUser.clerk_id,
+      auth_id: newUser.auth_id,
       first_name: newUser.first_name,
       last_name: newUser.last_name,
       position: newUser.position

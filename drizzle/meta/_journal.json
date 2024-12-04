@@ -5,29 +5,15 @@
     {
       "idx": 0,
       "version": "7",
-      "when": 1732551196165,
-      "tag": "0000_melodic_richard_fisk",
+      "when": 1733268648727,
+      "tag": "0000_greedy_daredevil",
       "breakpoints": true
     },
     {
       "idx": 1,
       "version": "7",
-      "when": 1732553062155,
-      "tag": "0001_bumpy_thunderball",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "7",
-      "when": 1732584961812,
-      "tag": "0002_awesome_shotgun",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "7",
-      "when": 1733193062368,
-      "tag": "0003_careful_genesis",
+      "when": 1733272012800,
+      "tag": "0001_shallow_famine",
       "breakpoints": true
     }
   ]

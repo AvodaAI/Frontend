@@ -18,7 +18,7 @@ const navigation = [
   { name: 'Dashboard', href: '/dashboard', adminOnly: false },
   { name: 'Employees', href: '/employees', adminOnly: false },
   { name: 'Time Tracking', href: '/time-tracking', adminOnly: false },
-  { name: 'Invitations', href: '/invitations', adminOnly: false },
+  { name: 'Clerk Invitations', href: '/clerk_invitations', adminOnly: false },
   { name: 'Settings', href: '/settings', adminOnly: false },
   { name: 'Status', href: '/status', adminOnly: false },
 ]

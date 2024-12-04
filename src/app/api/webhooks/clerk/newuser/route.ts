@@ -1,6 +1,7 @@
 // src/app/api/webhooks/clerk/newuser/route.ts
 //TODO: configure webhook for new users
 //TODO: validate the svix-id, svix-timestamp, and svix-signature headers specifically
+//TODO: Change All to Supabase
 import { NextRequest, NextResponse } from 'next/server'
 import { Webhook } from 'svix'
 import { db } from '@/db'
@@ -26,7 +27,7 @@ export async function POST(req: NextRequest) {
     const evt = wh.verify(payload, headers) as {
       type: string
       data: {
-        id: string  // Clerk ID
+        id: string  // External Auth ID
         email_addresses: { email_address: string }[]
         first_name?: string
         last_name?: string
@@ -41,7 +42,7 @@ export async function POST(req: NextRequest) {
     }
 
     const { 
-      id: clerkId, 
+      id: auth_id, 
       email_addresses, 
       first_name, 
       last_name, 
@@ -60,7 +61,7 @@ export async function POST(req: NextRequest) {
     const existingUser = await db.select().from(users)
       .where(
         eq(users.email, primaryEmail) || 
-        eq(users.clerk_id, clerkId)
+        eq(users.auth_id, auth_id)
       )
       .limit(1)
 
@@ -68,19 +69,19 @@ export async function POST(req: NextRequest) {
     if (existingUser.length === 0) {
       await db.insert(users).values({
         email: primaryEmail,
-        clerk_id: clerkId,
+        auth_id: auth_id,
         first_name: first_name || null,
         last_name: last_name || null,
         // Generate a temporary password for Clerk users
-        password: clerkId, 
+        password: auth_id, 
         email_verified: new Date(),
         role: 'employee', // Default role for new users
       })
     } else {
       // Update existing user with Clerk ID if not already set
-      if (!existingUser[0].clerk_id) {
+      if (!existingUser[0].auth_id) {
         await db.update(users)
-          .set({ clerk_id: clerkId })
+          .set({ auth_id: auth_id })
           .where(eq(users.email, primaryEmail))
       }
     }

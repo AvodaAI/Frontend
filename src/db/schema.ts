@@ -1,13 +1,13 @@
 // src/db/schema.ts
-import { pgTable, serial, varchar, timestamp, text, integer } from 'drizzle-orm/pg-core';
+import { pgTable, integer, varchar, timestamp } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 export const users = pgTable('users', {
   // Identification
-  id: serial('id').primaryKey(),
+  id: integer('id').primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
-  clerk_id: varchar('clerk_id', { length: 255 }),
+  auth_id: varchar('auth_id', { length: 255 }),
 
   // Authentication and Authorization
   email_verified: timestamp('email_verified'),
@@ -18,7 +18,7 @@ export const users = pgTable('users', {
   first_name: varchar('first_name', { length: 255 }),
   last_name: varchar('last_name', { length: 255 }),
   status: varchar('status', { length: 255 }).notNull().default('active'),
-  position: text('position'),
+  position: varchar('position', { length: 255 }),
   city: varchar('city', { length: 255 }),
   country: varchar('country', { length: 255 }),
   hire_date: timestamp('hire_date'),
@@ -35,7 +35,7 @@ export const usersRelations = relations(users, ({ many }) => ({
 }));
 
 export const sessions = pgTable('sessions', {
-  id: serial('id').primaryKey(),
+  id: integer('id').primaryKey(),
   user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   token: varchar('token', { length: 255 }).notNull().unique(),
   expires_at: timestamp('expires_at').notNull(),
@@ -50,7 +50,7 @@ export const sessionsRelations = relations(sessions, ({ one }) => ({
 }));
 
 export const timeLogs = pgTable('time_logs', {
-  id: serial('id').primaryKey(),
+  id: integer('id').primaryKey(),
   user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   task_id: varchar('task_id', { length: 255 }).notNull(),
   organization_id: varchar('organization_id', { length: 255 }),
