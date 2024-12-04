@@ -1,3 +1,9 @@
+// src/app/(auth)/supabase_users/components/supabaseusers-table.tsx
+//TODO: Add pagination
+//TODO: Search functionality
+//TODO: Add edit functionality
+//TODO: Add delete functionality
+//TODO: Extract interface and types
 'use client'
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@components/ui/table"
