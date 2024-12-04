@@ -77,10 +77,10 @@
 
 ## Pre-Commit Checklist
 
-- [ ] Remove all console.log statements
-- [ ] Add any TODO or FIXME comments for smaller points
-- [ ] Validate form inputs
-- [ ] Handle loading/error states
+  - Remove all console.log statements
+  - Add any TODO or FIXME comments for smaller points
+  - Validate form inputs
+  - Handle loading/error states
 
 ## Development Environment Setup
 
