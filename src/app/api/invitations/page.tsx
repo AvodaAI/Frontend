@@ -1,5 +1,5 @@
 // src/app/invitations/page.tsx
-import InvitationsTable from "@/app/(auth)/invitations/components/invitations-table"
+import InvitationsTable from "@/app/(auth)/clerk_invitations/components/invitations-table"
 
 export default function InvitationsPage() {
   return (
@@ -11,4 +11,3 @@ export default function InvitationsPage() {
     </div>
   )
 }
-

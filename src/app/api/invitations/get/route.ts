@@ -1,6 +1,6 @@
 // src/app/invitations/get/route.ts
 import { NextRequest, NextResponse } from 'next/server'
-import { getInvitations } from '@/app/(auth)/invitations/actions/getInvitations'
+import { getInvitations } from '@/app/(auth)/clerk_invitations/actions/getInvitations'
 import { auth } from '@clerk/nextjs/server'
 
 const MAX_LIMIT = 500
