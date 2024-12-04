@@ -13,7 +13,7 @@ import { Invitation } from '@/types/invitation'
 import { cn } from '@/lib/utils'
 import { usePagination } from '@/utils/invitations-pagination'
 import { useSearch } from '@/utils/invitations-search'
-import { revokeInvitation } from '@/app/actions/revokeInvitation'
+import { revokeInvitation } from '@/app/(auth)/clerk_invitations/actions/revokeInvitation'
 import { Input } from '@components/ui/input'
 import { formatUnixDate } from '@/utils/unixdate'
 import { useToast } from "@/hooks/useToast"
