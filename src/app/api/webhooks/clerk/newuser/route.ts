@@ -73,7 +73,7 @@ export async function POST(req: NextRequest) {
         first_name: first_name || null,
         last_name: last_name || null,
         // Generate a temporary password for Clerk users
-        password: auth_id, 
+        password: Math.random().toString(36).slice(2), 
         email_verified: new Date(),
         role: 'employee', // Default role for new users
       })
