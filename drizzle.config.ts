@@ -7,6 +7,6 @@ export default defineConfig({
   schema: './src/db/schema.ts',
   dialect: 'postgresql',
   dbCredentials: {
-    url: process.env.SUPABASE_URL!,
+    url: process.env.SUPABASE_URL || throw new Error('SUPABASE_URL is required'),
   },
 });
