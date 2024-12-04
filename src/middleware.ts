@@ -1,4 +1,5 @@
 //src/middleware.ts
+//TODO:https://supabase.com/docs/guides/auth/server-side/nextjs
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 
 const isProtectedRoutes = createRouteMatcher([
