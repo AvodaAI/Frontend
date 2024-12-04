@@ -7,7 +7,7 @@ export const users = pgTable('users', {
   id: integer('id').primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
-  auth_id: varchar('auth_id', { length: 255 }),
+  auth_id: varchar('auth_id', { length: 255 }), //UID from {Supabase}
 
   // Authentication and Authorization
   email_verified: timestamp('email_verified'),
