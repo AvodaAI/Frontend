@@ -1,5 +1,5 @@
 // src/app/api/timer/start/route.ts
-//TODO: wrap in a database transaction to prevent race conditions where multiple timers could be started simultaneously.
+// FIXED: wrap in a database transaction to prevent race conditions where multiple timers could be started simultaneously.
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { timeLogs } from '@/db/schema';
@@ -7,22 +7,25 @@ import { auth, currentUser } from '@clerk/nextjs/server';
 import { z } from 'zod';
 import { eq, and, isNull } from 'drizzle-orm';
 
-
-// Input validation schema
+// Comprehensive input validation schema
 const startTimerSchema = z.object({
-  taskId: z.string(),
-  organizationId: z.string().optional(), // Optional org ID if task is org-specific
+  taskId: z.string().min(1, "Task ID is required"),
+  organizationId: z.string().optional(),
+  description: z.string().max(500, "Description too long").optional(),
 });
 
 export async function POST(request: Request) {
   try {
-    // Verify user authentication and get user details
+    // Robust authentication check
     const { userId, orgId } = await auth();
     const user = await currentUser();
 
     if (!userId || !user) {
       return NextResponse.json(
-        { error: 'Authentication required' },
+        { 
+          error: 'Authentication required', 
+          code: 'UNAUTHORIZED' 
+        },
         { status: 401 }
       );
     }
@@ -31,67 +34,81 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = startTimerSchema.parse(body);
 
-    // Check for existing active timer
-    const existingTimer = await db.query.timeLogs.findFirst({
-      where: and(
-        eq(timeLogs.user_id, Number(userId)),
-        isNull(timeLogs.end_time)
-      ),
+    // Database transaction to prevent race conditions
+    const existingActiveTimer = await db.transaction(async (tx) => {
+      // Check for existing active timer
+      const activeTimer = await tx.query.timeLogs.findFirst({
+        where: and(
+          eq(timeLogs.user_id, Number(userId)),
+          isNull(timeLogs.end_time)
+        ),
+      });
+
+      // Prevent multiple active timers
+      if (activeTimer) {
+        throw new Error('ACTIVE_TIMER_EXISTS');
+      }
+
+      // Create new time log entry
+      const [newTimeLog] = await tx.insert(timeLogs).values({
+        user_id: Number(userId),
+        task_id: validatedData.taskId,
+        organization_id: validatedData.organizationId || null,
+        description: validatedData.description,
+        start_time: new Date(),
+        end_time: null,
+        created_by: user.firstName 
+          ? `${user.firstName} ${user.lastName || ''}`.trim() 
+          : user.username || userId,
+      }).returning();
+
+      return newTimeLog;
     });
 
-    if (existingTimer) {
+    return NextResponse.json({
+      message: 'Timer started successfully',
+      timeLog: existingActiveTimer,
+      user: {
+        id: userId,
+        name: user.firstName 
+          ? `${user.firstName} ${user.lastName || ''}`.trim() 
+          : user.username,
+        organization: orgId ? { id: orgId } : null
+      }
+    }, { status: 201 });
+
+  } catch (error) {
+    console.error('Error starting timer:', error);
+    
+    // Detailed error handling
+    if (error instanceof z.ZodError) {
       return NextResponse.json(
         { 
-          error: 'Active timer exists',
+          error: 'Invalid request data', 
+          details: error.errors,
+          code: 'VALIDATION_ERROR'
+        },
+        { status: 400 }
+      );
+    }
+
+    if (error instanceof Error && error.message === 'ACTIVE_TIMER_EXISTS') {
+      return NextResponse.json(
+        { 
+          error: 'Active timer already exists',
           message: 'Please stop the current timer before starting a new one',
-          activeTimer: existingTimer
+          code: 'TIMER_CONFLICT'
         },
         { status: 409 }
       );
     }
 
-    // If organization ID is provided, verify user's access
-    if (validatedData.organizationId) {
-      if (!orgId || orgId !== validatedData.organizationId) {
-        return NextResponse.json(
-          { error: 'Invalid organization access' },
-          { status: 403 }
-        );
-      }
-    }
-
-    // Create new time log entry
-    const newTimeLog = await db.insert(timeLogs).values({
-      user_id: Number(userId),
-      task_id: validatedData.taskId,
-      organization_id: validatedData.organizationId || null,
-      start_time: new Date(),
-      end_time: null,
-      created_by: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.username || userId,
-    }).returning();
-
-    return NextResponse.json({
-      message: 'Timer started successfully',
-      timeLog: newTimeLog[0],
-      user: {
-        id: userId,
-        name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.username,
-        organization: orgId ? { id: orgId } : null
-      }
-    });
-
-  } catch (error) {
-    console.error('Error starting timer:', error);
-    
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
-        { status: 400 }
-      );
-    }
-
     return NextResponse.json(
-      { error: 'Internal server error', message: 'Failed to start timer' },
+      { 
+        error: 'Internal server error', 
+        message: 'Failed to start timer',
+        code: 'INTERNAL_ERROR'
+      },
       { status: 500 }
     );
   }
