@@ -23,19 +23,26 @@
         "BUG",
         "HACK",
         "FIXME",
+        "MediumTODO",
+        "HighTODO",
         "TODO",
         "XXX",
-        "[ ]",
         "[x]",
         "DONE"
     ],
     "todo-tree.general.automaticGitRefreshInterval": 300,
     "todo-tree.highlights.customHighlight": {
-        "TODO": {
+        "HighTODO": {
             "icon": "issue-opened",
-            "foreground": "#3498db",
-            "background": "#3498db20",
-            "iconColour": "#3498db"
+            "foreground": "#e74c3c",
+            "background": "#e74c3c20",
+            "iconColour": "#e74c3c"
+        },
+        "MediumTODO": {
+            "icon": "issue-opened",
+            "foreground": "#f1c40f",
+            "background": "#f1c40f20",
+            "iconColour": "#f1c40f"
         },
         "BUG": {
             "icon": "bug",
@@ -50,7 +57,7 @@
             "iconColour": "#f1c40f"
         },
         "FIXME": {
-            "icon": "flame",
+            "icon": "tools",
             "foreground": "#ff1900",
             "background": "#e67e2220",
             "iconColour": "#ff1900"
@@ -61,7 +68,7 @@
             "background": "#95a5a620",
             "iconColour": "#95a5a6"
         },
-        "[ ]": {
+        "TODO": {
             "icon": "issue-draft",
             "foreground": "#2ecc71",
             "background": "#2ecc7120",
