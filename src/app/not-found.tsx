@@ -13,7 +13,8 @@ export default function NotFound() {
       </p>
       <Link href="/" className="mt-3 inline-block">
         <Button
-          className="px-4 py-1 text-white font-semibold bg-[#1d3658] rounded-full hover:bg-[#2C3F47] transition-colors duration-150 ease-in-out"
+          variant={"outline"}
+          className="w-full justify-start"
         >
           Go Back Home
         </Button>
