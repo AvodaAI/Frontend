@@ -2,7 +2,6 @@
 import { z } from 'zod';
 import { users } from '@/db/schema';
 import { InferModel } from 'drizzle-orm';
-import { auth } from '@clerk/nextjs/server';
 
 // User type from database schema
 export type User = InferModel<typeof users>;
