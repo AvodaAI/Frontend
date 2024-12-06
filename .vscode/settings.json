@@ -83,5 +83,15 @@
     "cSpell.words": [
         "signup",
         "unixdate"
+    ],
+    "editor.tokenColorCustomizations": {
+    "textMateRules": [
+      {
+        "scope": "support.class.component.tsx",
+        "settings": {
+          "foreground": "#e736e7" // choose your desired color
+        }
+      }
     ]
+  }  
 }

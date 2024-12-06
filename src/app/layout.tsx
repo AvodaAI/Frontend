@@ -1,7 +1,6 @@
 // src/app/layout.tsx
 import { Toaster } from '@components/ui/toaster'
 import './globals.css'
-import { ClerkProvider } from '@clerk/nextjs'
 import { Inter } from 'next/font/google'
 import { cn } from '@/lib/utils'
 
@@ -19,12 +18,10 @@ export default function RootLayout({
         "min-h-screen bg-background font-sans antialiased",
         inter.className
       )}>
-        <ClerkProvider>
           <div className="relative flex min-h-screen flex-col">
             {children}
           </div>
           <Toaster />
-        </ClerkProvider>
       </body>
     </html>
   )

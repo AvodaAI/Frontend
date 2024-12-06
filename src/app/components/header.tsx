@@ -3,11 +3,11 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
 
 export function Header() {
-  const { isSignedIn } = useUser();
+  const isSignedIn = false;
   const pathname = usePathname();
   const isHomePage = pathname === "/";
 
@@ -42,27 +42,15 @@ export function Header() {
                 >
                   Dashboard
                 </Link>
-                <UserButton 
-                  afterSignOutUrl="/"
-                  appearance={{
-                    elements: {
-                      avatarBox: "w-8 h-8"
-                    }
-                  }}
-                />
               </>
             ) : (
               <>
-                <SignInButton mode="modal">
-                  <button className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                  <Button variant="outline">
                     Sign In
-                  </button>
-                </SignInButton>
-                <SignUpButton mode="modal">
-                  <button className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
+                  </Button>
+                  <Button variant="default">
                     Sign Up
-                  </button>
-                </SignUpButton>
+                  </Button>
               </>
             )}
             <Link
