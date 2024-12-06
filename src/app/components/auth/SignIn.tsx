@@ -10,7 +10,7 @@ import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 
 export function SignIn() {
   const [error, action, isPending] = useActionState(signIn, null)
-  const success = error === null
+  const success = error === null && !isPending && action.hasBeenSubmitted
 
   return (
     <form action={action} className="space-y-4">
