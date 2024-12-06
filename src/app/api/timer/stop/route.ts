@@ -1,11 +1,7 @@
 // src/app/api/timer/stop/route.ts
-//TODO: validate that the end time is after the start time
-import { NextResponse } from 'next/server';
-import { db } from '@/db';
-import { timeLogs } from '@/db/schema';
-import { auth, currentUser } from '@clerk/nextjs/server';
-import { z } from 'zod';
-import { eq, and, isNull } from 'drizzle-orm';
+import { NextResponse } from "next/server";
+import { supabase } from "@/utils/supabase/supabaseClient";
+import { z } from "zod";
 
 // Input validation schema
 const stopTimerSchema = z.object({
@@ -21,13 +17,11 @@ function calculateDuration(startTime: Date, endTime: Date): number {
 
 export async function POST(request: Request) {
   try {
-    // Verify user authentication and get user details
-    const { userId, orgId } = await auth();
-    const user = await currentUser();
-
-    if (!userId || !user) {
+    // Verify user authentication using Supabase
+    const { data: user, error: authError } = await supabase.auth.getUser();
+    if (authError || !user) {
       return NextResponse.json(
-        { error: 'Authentication required' },
+        { error: "Authentication required" },
         { status: 401 }
       );
     }
@@ -37,72 +31,88 @@ export async function POST(request: Request) {
     const validatedData = stopTimerSchema.parse(body);
 
     // Find the active time log for this task and user
-    const activeTimeLog = await db.query.timeLogs.findFirst({
-      where: and(
-        eq(timeLogs.user_id, Number(userId)),
-        eq(timeLogs.task_id, validatedData.taskId),
-        isNull(timeLogs.end_time)
-      ),
-    });
+    const { data: activeTimeLog, error: activeTimerError } = await supabase
+      .from("time_logs") // Assuming the table is named "time_logs"
+      .select("*")
+      .eq("user_id", user.id)
+      .eq("task_id", validatedData.taskId)
+      .is("end_time", null)
+      .single();
 
-    if (!activeTimeLog) {
+    if (activeTimerError) {
       return NextResponse.json(
-        { error: 'No active timer found for this task' },
+        { error: "No active timer found for this task" },
         { status: 404 }
       );
     }
 
     // Verify organization access if org ID is provided
     if (validatedData.organizationId) {
-      if (!orgId || orgId !== validatedData.organizationId) {
+      const { data: userOrg } = await supabase
+        .from("organizations") // Assuming an "organizations" table
+        .select("id")
+        .eq("id", validatedData.organizationId)
+        .eq("user_id", user.id)
+        .single();
+
+      if (!userOrg) {
         return NextResponse.json(
-          { error: 'Invalid organization access' },
+          { error: "Invalid organization access" },
           { status: 403 }
         );
       }
     }
 
     const endTime = new Date();
-    const duration = calculateDuration(activeTimeLog.start_time, endTime);
+    const duration = calculateDuration(
+      new Date(activeTimeLog.start_time),
+      endTime
+    );
 
     // Update the time log with end time and duration
-    const updatedTimeLog = await db
-      .update(timeLogs)
-      .set({
+    const { data: updatedTimeLog, error: updateError } = await supabase
+      .from("time_logs") // Assuming the table is named "time_logs"
+      .update({
         end_time: endTime,
         duration_minutes: duration,
         updated_at: endTime,
-        updated_by: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.username || userId,
+        updated_by: user.email, // Use the authenticated user's email
       })
-      .where(eq(timeLogs.id, activeTimeLog.id))
-      .returning();
+      .eq("id", activeTimeLog.id)
+      .select()
+      .single();
+
+    if (updateError) {
+      throw new Error(updateError.message);
+    }
 
     return NextResponse.json({
-      message: 'Timer stopped successfully',
-      timeLog: updatedTimeLog[0],
+      message: "Timer stopped successfully",
+      timeLog: updatedTimeLog,
       user: {
-        id: userId,
-        name: user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.username,
-        organization: orgId ? { id: orgId } : null
+        id: user.id,
+        name: user.email,
+        organization: validatedData.organizationId
+          ? { id: validatedData.organizationId }
+          : null,
       },
       duration: {
         minutes: duration,
-        formatted: `${Math.floor(duration / 60)}h ${duration % 60}m`
-      }
+        formatted: `${Math.floor(duration / 60)}h ${duration % 60}m`,
+      },
     });
-
   } catch (error) {
-    console.error('Error stopping timer:', error);
-    
+    console.error("Error stopping timer:", error);
+
     if (error instanceof z.ZodError) {
       return NextResponse.json(
-        { error: 'Invalid request data', details: error.errors },
+        { error: "Invalid request data", details: error.errors },
         { status: 400 }
       );
     }
 
     return NextResponse.json(
-      { error: 'Internal server error', message: 'Failed to stop timer' },
+      { error: "Internal server error", message: "Failed to stop timer" },
       { status: 500 }
     );
   }

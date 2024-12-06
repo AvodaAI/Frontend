@@ -1,19 +1,19 @@
-'use client'
+'use client';
 
-import { UserButton } from "@clerk/nextjs"
-import { Bell, Menu } from "lucide-react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Button } from "@components/ui/button"
+import { Bell, Menu } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Button } from "@components/ui/button";
 import {
   Sheet,
   SheetContent,
   SheetTrigger,
-} from "@components/ui/sheet"
-import { cn } from "@/lib/utils"
-import { useUserRole } from "@/hooks/useRole"
+} from "@components/ui/sheet";
+import { cn } from "@/lib/utils";
+import { useUserRole } from "@/hooks/useRole";
+import { supabase } from "@/utils/supabase/supabaseClient";
 
-//FIXME: After fixing RBAC, update adminOnly
+// Navigation links
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', adminOnly: false },
   { name: 'Employees', href: '/employees', adminOnly: false },
@@ -21,15 +21,26 @@ const navigation = [
   { name: 'Invitations', href: '/invitations', adminOnly: false },
   { name: 'Settings', href: '/settings', adminOnly: false },
   { name: 'Status', href: '/status', adminOnly: false },
-]
+];
 
-export function Header() {
-  const pathname = usePathname()
-  const { isAdmin } = useUserRole()
+export function Header () {
+  const pathname = usePathname();
+  const { isAdmin } = useUserRole();
 
+  // Filter navigation based on the user's role
   const filteredNavigation = navigation.filter(
-    item => !item.adminOnly || (item.adminOnly && isAdmin)
-  )
+    item => !item.adminOnly || ( item.adminOnly && isAdmin )
+  );
+
+  // Handle user sign out
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if ( error ) {
+      console.error( "Error signing out:", error.message );
+    } else {
+      window.location.href = '/'; // Redirect to home after sign out
+    }
+  };
 
   return (
     <header className="bg-white shadow-sm">
@@ -41,18 +52,18 @@ export function Header() {
             </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            {filteredNavigation.map((item) => (
+            { filteredNavigation.map( ( item ) => (
               <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
+                key={ item.href }
+                href={ item.href }
+                className={ cn(
                   "transition-colors hover:text-foreground/80",
                   pathname === item.href ? "text-foreground" : "text-foreground/60"
-                )}
+                ) }
               >
-                {item.name}
+                { item.name }
               </Link>
-            ))}
+            ) ) }
           </nav>
         </div>
 
@@ -72,26 +83,25 @@ export function Header() {
             </Link>
             <div className="my-4 h-[calc(100vh-8rem)] pb-10">
               <div className="flex flex-col space-y-3">
-                {filteredNavigation.map((item) => (
+                { filteredNavigation.map( ( item ) => (
                   <Link
-                    key={item.href}
-                    href={item.href}
-                    className={cn(
+                    key={ item.href }
+                    href={ item.href }
+                    className={ cn(
                       "text-foreground/60 transition-colors hover:text-foreground",
                       pathname === item.href && "text-foreground"
-                    )}
+                    ) }
                   >
-                    {item.name}
+                    { item.name }
                   </Link>
-                ))}
+                ) ) }
               </div>
             </div>
           </SheetContent>
         </Sheet>
 
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <div className="w-full flex-1 md:w-auto md:flex-none">
-          </div>
+          <div className="w-full flex-1 md:w-auto md:flex-none"></div>
           <div className="flex items-center space-x-3">
             <Button
               variant="ghost"
@@ -101,10 +111,17 @@ export function Header() {
             >
               <Bell className="h-4 w-4" />
             </Button>
-            <UserButton afterSignOutUrl="/" />
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={ handleSignOut }
+              aria-label="Sign Out"
+            >
+              Sign Out
+            </Button>
           </div>
         </div>
       </div>
     </header>
-  )
+  );
 }

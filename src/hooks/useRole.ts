@@ -1,25 +1,48 @@
 // src/hooks/use-role.ts
-'use client'
+"use client";
 
-import { useUser } from '@clerk/nextjs'
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from "react";
+import { supabase } from "@/utils/supabase/supabaseClient";
 
 export function useUserRole() {
-  const { user, isLoaded } = useUser()
-  const [role, setRole] = useState<string | null>(null)
+  const [role, setRole] = useState<string | null>(null);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    if (isLoaded && user) {
-      // Fetch user role from metadata
-      const userRole = user.publicMetadata?.type as string || 'admin'
-      setRole(userRole)
+    async function fetchUserRole() {
+      setIsLoaded(false);
+
+      const { data: user, error: authError } = await supabase.auth.getUser();
+      if (authError || !user) {
+        setRole(null); // No user authenticated
+        setIsLoaded(true);
+        return;
+      }
+
+      // Fetch user's role from public metadata or database
+      const { data, error } = await supabase
+        .from("users") // Assuming the table is named "users"
+        .select("role") // Assuming "role" column stores the user role
+        .eq("id", user.id)
+        .single();
+
+      if (error) {
+        console.error("Error fetching user role:", error.message);
+        setRole(null);
+      } else {
+        setRole(data?.role || "admin"); // Default to 'admin' if no role is found
+      }
+
+      setIsLoaded(true);
     }
-  }, [user, isLoaded])
+
+    fetchUserRole();
+  }, []);
 
   return {
     role,
-    isAdmin: role === 'admin',
-    isEmployee: role === 'employee',
-    isLoaded
-  }
+    isAdmin: role === "admin",
+    isEmployee: role === "employee",
+    isLoaded,
+  };
 }
