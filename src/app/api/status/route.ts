@@ -7,7 +7,6 @@ export async function GET() {
     const status = await db.checkConnection();
     return NextResponse.json(status);
   } catch (error) {
-    console.error('Error checking database status:', error);
     return NextResponse.json(
       { isConnected: false, lastChecked: new Date().toISOString() },
       { status: 500 }

@@ -1,7 +1,7 @@
 //src/app/api/employee/delete/route.ts
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
-import { employees } from '@/db/schema';
+import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 export async function DELETE(request: Request) {
@@ -16,8 +16,8 @@ export async function DELETE(request: Request) {
     }
 
     const [deletedEmployee] = await db
-      .delete(employees)
-      .where(eq(employees.id, id))
+      .delete(users)
+      .where(eq(users.id, id))
       .returning();
 
     if (!deletedEmployee) {

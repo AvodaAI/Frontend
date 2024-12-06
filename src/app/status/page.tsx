@@ -1,61 +1,56 @@
 // src/app/status/page.tsx
-'use client';
-import { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/app/components/ui/card';
-import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert';
+'use server';
+import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
+import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert';
 import { CheckCircle2, XCircle } from 'lucide-react';
+import db from '@/lib/db';
+import SupabaseStatus from '@/utils/supabase/status';
+export default async function StatusPage() {
+  const status = await db.checkConnection();
+  const supabaseStatus = await SupabaseStatus.checkConnection();
 
-export default function StatusPage() {
-  const [status, setStatus] = useState<{ isConnected: boolean; lastChecked: string } | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  const checkStatus = async () => {
-    try {
-      const response = await fetch('/api/status');
-      const data = await response.json();
-      setStatus(data);
-    } catch (error) {
-      console.error('Error checking status:', error);
-      setStatus({ isConnected: false, lastChecked: new Date().toISOString() });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    checkStatus();
-    const interval = setInterval(checkStatus, 3 * 60 * 1000); // Check every 3 minutes
-    return () => clearInterval(interval);
-  }, []);
-
-  if (loading) {
-    return <div>Loading...</div>;
-  }
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-2xl font-bold mb-4">System Status</h1>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Database Connection Status</CardTitle>
+    <div className="min-h-[80vh] flex items-center justify-center p-4">
+      <Card className="w-full max-w-xl shadow-lg">
+        <CardHeader className="space-y-1">
+          <CardTitle className="text-2xl font-bold text-center">System Status</CardTitle>
         </CardHeader>
-        <CardContent>
-          {status && (
-            <Alert variant={status.isConnected ? "default" : "destructive"}>
+        <CardContent className="space-y-4">
+          <Alert variant={status.isConnected ? "default" : "destructive"} className="relative">
+            <div className="flex items-center gap-4">
               {status.isConnected ? (
-                <CheckCircle2 className="h-4 w-4" />
+                <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0" />
               ) : (
-                <XCircle className="h-4 w-4" />
+                <XCircle className="h-6 w-6 text-red-600 flex-shrink-0" />
               )}
-              <AlertTitle>
-                {status.isConnected ? "Connected" : "Disconnected"}
-              </AlertTitle>
-              <AlertDescription>
-                Last checked: {new Date(status.lastChecked).toLocaleString()}
-              </AlertDescription>
-            </Alert>
-          )}
+              <div className="space-y-1">
+                <AlertTitle className="font-semibold">
+                  {status.isConnected ? "Database Connection: All Systems Operational" : "Database Connection: System Issues Detected"}
+                </AlertTitle>
+                <AlertDescription className="text-sm opacity-90">
+                  Last checked: {new Date(status.lastChecked).toLocaleString()}
+                </AlertDescription>
+              </div>
+            </div>
+          </Alert>
+          <Alert variant={status.isConnected ? "default" : "destructive"} className="relative">
+            <div className="flex items-center gap-4">
+              {status.isConnected ? (
+                <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0" />
+              ) : (
+                <XCircle className="h-6 w-6 text-red-600 flex-shrink-0" />
+              )}
+              <div className="space-y-1">
+                <AlertTitle className="font-semibold">
+                  {supabaseStatus.isConnected ? "Supabase Connection: All Systems Operational" : "Supabase Connection: System Issues Detected"}
+                </AlertTitle>
+                <AlertDescription className="text-sm opacity-90">
+                  Last checked: {new Date(supabaseStatus.lastChecked).toLocaleString()}
+                </AlertDescription>
+              </div>
+            </div>
+          </Alert>
         </CardContent>
       </Card>
     </div>

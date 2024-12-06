@@ -1,7 +1,7 @@
 //src/app/api/employee/edit/route.ts
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
-import { employees } from '@/db/schema';
+import { users } from '@/db/schema';
 import { eq } from 'drizzle-orm';
 
 export async function PUT(request: Request) {
@@ -17,19 +17,19 @@ export async function PUT(request: Request) {
 
     // Build update object dynamically based on provided fields
     const updateData: any = {};
-    if (first_name) updateData.firstName = first_name;
-    if (last_name) updateData.lastName = last_name;
+    if (first_name) updateData.first_name = first_name;
+    if (last_name) updateData.last_name = last_name;
     if (email) updateData.email = email;
     if (position) updateData.position = position;
-    if (hire_date) updateData.hireDate = new Date(hire_date);
+    if (hire_date) updateData.hire_date = new Date(hire_date);
     if (city !== undefined) updateData.city = city || null;
     if (country !== undefined) updateData.country = country || null;
-    updateData.updatedAt = new Date();
+    updateData.updated_at = new Date();
 
     const [updatedEmployee] = await db
-      .update(employees)
+      .update(users)
       .set(updateData)
-      .where(eq(employees.id, id))
+      .where(eq(users.id, id))
       .returning();
 
     if (!updatedEmployee) {

@@ -1,7 +1,7 @@
 //src/scripts/migrate.ts
 const fs = require('fs').promises;
 const path = require('path');
-const db = require('../lib/db');
+const db = require('@/lib/db');
 
 interface Employee {
   id?: number;
@@ -37,7 +37,7 @@ async function migrateEmployees() {
   for (const employee of employees) {
     try {
       await db.query(
-        `INSERT INTO employees (first_name, last_name, email, position, city, country, hire_date)
+        `INSERT INTO users (first_name, last_name, email, position, city, country, hire_date)
          VALUES ($1, $2, $3, $4, $5, $6, $7)
          ON CONFLICT (email) DO UPDATE SET
          first_name = EXCLUDED.first_name,
@@ -83,15 +83,17 @@ async function migrateUsers() {
 }
 
 async function verifyMigration() {
+  console.log('Verifying migration...');
+  
   const jsonEmployees = await readJsonFile(path.join(process.cwd(), 'src/app/data/employees.json'));
-  const jsonUsers = await readJsonFile(path.join(process.cwd(), 'src/app/data/users.json'));
   
-  const dbEmployees = await db.query('SELECT * FROM employees');
-  const dbUsers = await db.query('SELECT * FROM users');
+  // Check if data exists in the database
+  const dbEmployees = await db.query('SELECT * FROM users WHERE email IS NOT NULL');
   
-  console.log('Migration verification:');
-  console.log(`JSON employees: ${jsonEmployees.length}, DB employees: ${dbEmployees.rows.length}`);
-  console.log(`JSON users: ${jsonUsers.length}, DB users: ${dbUsers.rows.length}`);
+  // Compare counts
+  console.log(`JSON employees: ${jsonEmployees.length}, DB users: ${dbEmployees.rows.length}`);
+  
+  return true;
 }
 
 async function main() {

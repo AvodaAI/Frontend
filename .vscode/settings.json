@@ -1,0 +1,87 @@
+{
+    "windsurf.autocompleteSpeed": "fast",
+    "explorer.confirmDelete": false,
+    "cSpell.userWords": [
+        "Banquest",
+        "supabase"
+    ],
+    "[typescriptreact]": {
+        "editor.defaultFormatter": "vscode.typescript-language-features"
+    },
+    "windsurf.marketplaceGalleryItemURL": "https://marketplace.visualstudio.com/_apis/public/item",
+    "windsurf.marketplaceExtensionGalleryServiceURL": "https://marketplace.visualstudio.com/_apis/public/gallery",
+    "windsurf.enableConfig": {
+
+        "*": true
+    },
+    "todo-tree.general.showActivityBarBadge": true,
+    "todo-tree.general.tagGroups": {},
+    "todo-tree.filtering.includeHiddenFiles": true,
+    "todo-tree.tree.groupedByTag": true,
+    "todo-tree.tree.showCountsInTree": true,
+    "todo-tree.general.tags": [
+        "BUG",
+        "HACK",
+        "FIXME",
+        "TODO",
+        "XXX",
+        "[ ]",
+        "[x]",
+        "DONE"
+    ],
+    "todo-tree.general.automaticGitRefreshInterval": 300,
+    "todo-tree.highlights.customHighlight": {
+        "TODO": {
+            "icon": "issue-opened",
+            "foreground": "#3498db",
+            "background": "#3498db20",
+            "iconColour": "#3498db"
+        },
+        "BUG": {
+            "icon": "bug",
+            "foreground": "#ff1900",
+            "background": "#e74c3c20",
+            "iconColour": "#ff1900"
+        },
+        "HACK": {
+            "icon": "tools",
+            "foreground": "#f1c40f",
+            "background": "#f1c40f20",
+            "iconColour": "#f1c40f"
+        },
+        "FIXME": {
+            "icon": "flame",
+            "foreground": "#ff1900",
+            "background": "#e67e2220",
+            "iconColour": "#ff1900"
+        },
+        "XXX": {
+            "icon": "x",
+            "foreground": "#95a5a6",
+            "background": "#95a5a620",
+            "iconColour": "#95a5a6"
+        },
+        "[ ]": {
+            "icon": "issue-draft",
+            "foreground": "#2ecc71",
+            "background": "#2ecc7120",
+            "iconColour": "#2ecc71"
+        },
+        "[x]": {
+            "icon": "issue-closed",
+            "foreground": "#9b59b6",
+            "background": "#9b59b620",
+            "iconColour": "#9b59b6"
+        },
+        "DONE": {
+            "icon": "issue-closed",
+            "foreground": "#27ae60",
+            "background": "#27ae6020",
+            "iconColour": "#27ae60"
+        }
+    },
+    "cSpell.words": [
+        "signup",
+        "unixdate"
+    ]
+}

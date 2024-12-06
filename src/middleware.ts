@@ -1,17 +1,29 @@
-// middleware.ts
-
+// src/middleware.ts
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { supabase } from "@/utils/supabase/supabaseClient";
+
+export async function middleware(request: Request) {
+  const res = NextResponse.next();
+
+  const token = request.headers
+    .get("cookie")
+    ?.match(/supabase-auth-token=([^;]+)/)?.[1];
+
+  if (!token) {
+    const url = new URL("/signin", request.url);
+    return NextResponse.redirect(url);
+  }
+
+  const { data, error } = await supabase.auth.getUser(token);
+
+  if (error || !data?.user) {
+    const url = new URL("/signin", request.url);
+    return NextResponse.redirect(url);
+  }
+
+  return res;
+}
 
 export const config = {
-  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
+  matcher: ["/dashboard/:path*", "/employees/:path*", "/time-tracking/:path*"], // Protect these routes
 };
-
-// Middleware function
-export function middleware(request: NextRequest) {
-  // Add your middleware logic here if needed
-  console.log("Middleware is running for:", request.nextUrl.pathname);
-
-  // You can modify the response or just return the request as it is
-  return NextResponse.next();
-}
