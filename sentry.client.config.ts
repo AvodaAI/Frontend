@@ -10,12 +10,19 @@ Sentry.init({
   // https://docs.sentry.io/platforms/javascript/configuration/options/#traces-sample-rate
   tracesSampleRate: 1.0,
 
-  // ...
+  debug: false,
 
-  // Note: if you want to override the automatic release value, do not set a
-  // `release` value here - use the environment variable `SENTRY_RELEASE`, so
-  // that it will also get attached to your source maps
+  replaysOnErrorSampleRate: 1.0,
 
-  debug: false
+  replaysSessionSampleRate: 0.1,
+
+  // https://docs.sentry.io/platforms/javascript/session-replay/configuration/#general-integration-configuration
+  integrations: [
+    Sentry.replayIntegration({
+      maskAllText: false,
+      blockAllMedia: false,
+    }
+    ),
+  ],
 
 });
