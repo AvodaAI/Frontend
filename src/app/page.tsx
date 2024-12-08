@@ -4,8 +4,6 @@ import { SignIn } from '@components/auth/SignIn'
 import { SignUp } from '@components/auth/SignUp'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs'
 
-throw new Error('Sentry Test Error');
-
 export default function Home() {
   return (
     <>
