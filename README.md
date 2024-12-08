@@ -21,6 +21,7 @@ This project uses modularization to ensure code reusability and maintainability.
 - Supabase Database
 - Drizzle ORM
 - Github
+- Sentry
 
 ## Git Process:
 - Ensure you are assigned the task on Airtable and it exists on Github
@@ -30,3 +31,6 @@ This project uses modularization to ensure code reusability and maintainability.
 > #### Examples:
 > `_feature/sfk/adding_employee_creation_module_`
 > `_bugfix/sfk/auth_issue_fixes_`
+
+## MISC
+https://ca6.sentry.io/issues/?project=4508429367836672&referrer=sidebar

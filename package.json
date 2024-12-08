@@ -21,6 +21,7 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tabs": "^1.1.1",
     "@radix-ui/react-toast": "^1.2.2",
+    "@sentry/nextjs": "^8.42.0",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.46.2",
@@ -40,8 +41,8 @@
     "react-day-picker": "^8.10.1",
     "react-dom": "^18 || ^19",
     "svix": "^1.42.0",
-    "tailwindcss": "^4.0.0-beta.2",
     "tailwind-merge": "^2.1.0",
+    "tailwindcss": "^4.0.0-beta.2",
     "zod": "^3.22.4"
   },
   "devDependencies": {
@@ -51,14 +52,14 @@
     "@types/pg": "^8.10.9",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "autoprefixer": "^10.4.16",
     "babel-plugin-react-compiler": "^19.0.0-beta-df7b47d-20241124",
     "dotenv": "^16.4.5",
     "drizzle-kit": "^0.28.1",
     "eslint": "^8.56.0",
     "eslint-config-next": "^15.0.0-rc.0",
-    "supabase": "^1.226.3",
     "postcss": "^8.4.49",
-    "autoprefixer": "^10.4.16",
+    "supabase": "^1.226.3",
     "typescript": "^5.3.3"
   }
 }
