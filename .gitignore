@@ -2,6 +2,7 @@
 /node_modules
 package-lock.json
 
+
 # testing
 /coverage
 
@@ -32,6 +33,3 @@ next-env.d.ts
 # misc
 origin*
 #ai_*
-
-# Sentry Config File
-.env.sentry-build-plugin
