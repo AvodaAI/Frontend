@@ -7,7 +7,6 @@ const getEnvironment = () => {
   if (branch === 'master' || branch === 'main') {
     return 'production';
   }
-  console.log(branch)
   return 'staging';
 };
 
@@ -23,5 +22,19 @@ const nextConfig = {
 
 getEnvironment();
 
+const sentryBuildOptions = {
+  org: 'ca6', // Replace with your Sentry organization
+  project: 'avoda', // Replace with your Sentry project name
+};
+
+const sentryWebpackPluginOptions = {
+  org: 'ca6', // Replace with your Sentry organization
+  project: 'avoda', // Replace with your Sentry project name
+  authToken: process.env.SENTRY_AUTH_TOKEN, // Use environment variables for sensitive data
+  release: process.env.SENTRY_RELEASE || '1.0.0',
+  deploy: {
+    env: getEnvironment(),
+  },
+};
 
 module.exports = withSentryConfig(nextConfig, sentryWebpackPluginOptions, sentryBuildOptions);

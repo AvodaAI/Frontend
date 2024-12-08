@@ -20,13 +20,7 @@ Sentry.init({
   environment: getEnvironment(),
   
   // Enable release tracking with environment prefix
-  release: `${getEnvironment()}-${process.env.VERCEL_GIT_COMMIT_SHA || 'development'}`,
 
-  // Performance monitoring config
-  tracePropagationTargets: ['localhost', /^https:\/\/ktkkqqzaywjadzrzzabe\.supabase\.co/],
-  
-  // Debugging only in non-production
-  debug: getEnvironment() !== 'production',
 
   beforeSend(event) {
     const environment = getEnvironment();
@@ -38,13 +32,6 @@ Sentry.init({
     if (environment !== 'production' && process.env.NODE_ENV === 'development') {
       return null;
     }
-    
-    // Add deployment context
-    event.tags = {
-      ...event.tags,
-      git_branch: process.env.VERCEL_GIT_COMMIT_REF || 'unknown',
-      deployment: getEnvironment(),
-    };
     
     return event;
   },
