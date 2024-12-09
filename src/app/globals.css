@@ -45,14 +45,6 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
-
-  --screens-sm: 640px;
-  --screens-md: 768px;
-  --screens-lg: 1024px;
-  --screens-xl: 1280px;
-
-  --padding-md: 1.5rem;
-  --container-max-width: var(--screens-xl);
 }
 
 /*
@@ -87,7 +79,7 @@
     --card-foreground: #0A0A0A;
     --popover: #FFFFFF;
     --popover-foreground: #0A0A0A;
-    --primary: #0A0A0A;
+    --primary: #1d3658;
     --primary-foreground: #FAFAFA;
     --secondary: #F5F5F5;
     --secondary-foreground: #171717;
@@ -107,7 +99,7 @@
     --chart-3: #2C3F47;
     --chart-4: #DFB543;
     --chart-5: #F66B35;
-    --radius: 0.25rem;
+    --radius: 0.35rem;
   }
   .dark {
     --background: #0A0A0A;

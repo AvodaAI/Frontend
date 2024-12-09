@@ -39,7 +39,7 @@ export default function Home() {
             </div>
           </Container>
         </Section>
-        <Section id="features">
+        <Section id="features" className='bg-gray-100'>
           <Container>
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
               <div className="space-y-2">
