@@ -1,3 +1,5 @@
+// src/app/SupabaseClientWrapper.tsx
+//FIXME: Update with most recent Supabase Components - See docs.
 'use client';
 
 import { createBrowserSupabaseClient } from '@supabase/auth-helpers-nextjs';

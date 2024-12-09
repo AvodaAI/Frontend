@@ -1,4 +1,4 @@
-//src/app/(auth)/clerkusers/page.tsx
+//src/app/(auth)/supabase-users/page.tsx
 'use client'
 
 import ClerkUsersTable from "./components/clerkusers-table"

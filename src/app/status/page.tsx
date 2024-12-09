@@ -5,20 +5,22 @@ import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert';
 import { CheckCircle2, XCircle } from 'lucide-react';
 import db from '@/lib/db';
 import SupabaseStatus from '@/utils/supabase/status';
+import { Container } from '@components/container';
+import { Section } from '@components/section';
 export default async function StatusPage() {
   const status = await db.checkConnection();
   const supabaseStatus = await SupabaseStatus.checkConnection();
 
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center p-4">
+    <Container className="min-h-[80vh] flex items-center justify-center p-4">
       <Card className="w-full max-w-xl shadow-lg">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">System Status</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <Alert variant={status.isConnected ? "default" : "destructive"} className="relative">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center gap-4">
               {status.isConnected ? (
                 <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0" />
               ) : (
@@ -35,7 +37,7 @@ export default async function StatusPage() {
             </div>
           </Alert>
           <Alert variant={status.isConnected ? "default" : "destructive"} className="relative">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center gap-4">
               {status.isConnected ? (
                 <CheckCircle2 className="h-6 w-6 text-green-600 flex-shrink-0" />
               ) : (
@@ -53,6 +55,6 @@ export default async function StatusPage() {
           </Alert>
         </CardContent>
       </Card>
-    </div>
+    </Container>
   );
 }
