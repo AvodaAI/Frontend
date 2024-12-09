@@ -36,7 +36,7 @@ export async function getEmployees(
 
     // Build query
     let query = supabase
-      .from("users") // Assuming you have an "employees" table in Supabase
+      .from("users")
       .select("*", { count: "exact" })
       .range(offset, offset + limit - 1);
 
