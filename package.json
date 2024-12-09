@@ -14,7 +14,6 @@
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.5.0",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-context-menu": "^2.2.2",
     "@radix-ui/react-dialog": "^1.1.2",
@@ -24,7 +23,9 @@
     "@radix-ui/react-slot": "^1.1.0",
     "@radix-ui/react-tabs": "^1.1.1",
     "@radix-ui/react-toast": "^1.2.2",
+    "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/ssr": "^0.5.2",
+    "@supabase/supabase-js": "^2.46.2",
     "@tailwindcss/oxide": "^4.0.0-beta.2",
     "@tailwindcss/postcss": "^4.0.0-beta.2",
     "bcrypt": "^5.1.1",

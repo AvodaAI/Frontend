@@ -1,66 +1,84 @@
 // src/app/api/invitations/accept/route.ts
-import { NextResponse } from 'next/server'
-import { clerkClient } from '@clerk/nextjs/server'
-import { db } from '@/db'
-import { users } from '@/db/schema'
-import { eq } from 'drizzle-orm'
-
-const client = clerkClient()
+import { NextResponse } from "next/server";
+import { supabase } from "@/utils/supabase/supabaseClient";
 
 export async function POST(request: Request) {
   try {
-    const { invitationId } = await request.json()
+    const { invitationId } = await request.json();
 
-    // Verify the invitation
-    const invitationList = await (await client).invitations.getInvitationList(invitationId)
+    // Fetch the invitation from Supabase
+    const { data: invitation, error: fetchError } = await supabase
+      .from("invitations") // Assuming the table is named "invitations"
+      .select("*")
+      .eq("id", invitationId)
+      .single();
 
-    if (!invitationList.data || invitationList.data.length === 0) {
+    if (fetchError || !invitation) {
       return NextResponse.json(
-        { error: 'Invalid or expired invitation' },
+        { error: "Invalid or expired invitation" },
         { status: 400 }
-      )
+      );
     }
 
-    const invitation = invitationList.data[0]
-
-    if (invitation.status !== 'pending') {
+    if (invitation.status !== "pending") {
       return NextResponse.json(
-        { error: 'Invalid or expired invitation' },
+        { error: "Invalid or expired invitation" },
         { status: 400 }
-      )
+      );
     }
 
-    // Get the user's Clerk ID 
-    const { id:userId } = await (await client).users.getUser(invitation.emailAddress)
+    // Verify if the email exists in the `users` table
+    const { data: user, error: userError } = await supabase
+      .from("users") // Assuming the table is named "users"
+      .select("id, email")
+      .eq("email", invitation.email_address)
+      .single();
 
-    // Update user in database
-    await db.update(users)
-      .set({ 
-        role: 'employee',
-        email_verified: new Date() 
+    if (userError || !user) {
+      return NextResponse.json(
+        { error: "User does not exist" },
+        { status: 400 }
+      );
+    }
+
+    // Update the user's role and email verification status in the `users` table
+    const { error: updateError } = await supabase
+      .from("users")
+      .update({
+        role: "employee",
+        email_verified: new Date(),
       })
-      .where(eq(users.email, invitation.emailAddress))
+      .eq("email", invitation.email_address);
 
-    // Update Clerk metadata
-    await (await client).users.updateUserMetadata(userId, {
-      publicMetadata: {
-        type: 'employee'
-      }
-    })
+    if (updateError) {
+      throw new Error(updateError.message);
+    }
 
-    return NextResponse.json({ 
-      message: 'Invitation accepted successfully',
-      user: { 
-        email: invitation.emailAddress,
-        role: 'employee' 
-      }
-    }, { status: 200 })
+    // Update the invitation status to "accepted"
+    const { error: invitationUpdateError } = await supabase
+      .from("invitations")
+      .update({ status: "accepted" })
+      .eq("id", invitationId);
 
-  } catch (error) {
-    console.error('Error accepting invitation:', error)
+    if (invitationUpdateError) {
+      throw new Error(invitationUpdateError.message);
+    }
+
     return NextResponse.json(
-      { error: 'Failed to accept invitation' },
+      {
+        message: "Invitation accepted successfully",
+        user: {
+          email: invitation.email_address,
+          role: "employee",
+        },
+      },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error accepting invitation:", error);
+    return NextResponse.json(
+      { error: "Failed to accept invitation" },
       { status: 500 }
-    )
+    );
   }
 }

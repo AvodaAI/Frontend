@@ -1,34 +1,34 @@
 // src/app/actions/revokeInvitation.ts
-'use server'
-import { auth } from '@clerk/nextjs/server'
-import { clerkClient } from '@clerk/nextjs/server'
+"use server";
 
-import { Invitation } from '@/types/invitation'
+import { supabase } from "@/utils/supabase/supabaseClient";
 
 interface RevokeInvitationResponse {
-  success: boolean
-  data?: Invitation
-  error?: string
+  success: boolean;
+  error?: string;
 }
 
-export async function revokeInvitation(invitationId: string): Promise<RevokeInvitationResponse> {
+export async function revokeInvitation(
+  invitationId: string
+): Promise<RevokeInvitationResponse> {
   try {
-    // Verify user is authenticated
-    const { userId } = await auth()
-    if (!userId) {
-      return { success: false, error: 'Unauthorized' }
+    // Update the invitation in the Supabase table to mark it as revoked
+    const { error } = await supabase
+      .from("invitations") // Assuming the table is named "invitations"
+      .update({ revoked: true, status: "revoked" }) // Set revoked and update status
+      .eq("id", invitationId); // Match the invitation by ID
+
+    if (error) {
+      throw new Error(error.message);
     }
 
-    // Revoke the invitation via Clerk's API
-    const client = await clerkClient()
-    await client.invitations.revokeInvitation(invitationId)
-
-    return { success: true }
+    return { success: true };
   } catch (error) {
-    console.error('Failed to revoke invitation:', error)
-    return { 
-      success: false, 
-      error: 'Failed to revoke invitation' 
-    }
+    console.error("Failed to revoke invitation:", error);
+    return {
+      success: false,
+      error:
+        error instanceof Error ? error.message : "Failed to revoke invitation",
+    };
   }
 }

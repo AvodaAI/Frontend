@@ -107,7 +107,6 @@ export async function POST(request: Request) {
         formatted: stoppedTimeLog.duration.formattedDuration
       }
     });
-
   } catch (error) {
     console.error('Error stopping timer:', error);
     

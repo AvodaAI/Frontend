@@ -1,15 +1,32 @@
-// src/app/components/header.tsx
 "use client";
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { SignInButton, SignUpButton, UserButton, useUser } from "@clerk/nextjs";
+import { supabase } from "@/utils/supabase/supabaseClient";
 import { cn } from "@/lib/utils";
+import { useEffect, useState } from "react";
 
-export function Header() {
-  const { isSignedIn } = useUser();
+export function Header () {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
+  const [ isSignedIn, setIsSignedIn ] = useState( false );
+
+  useEffect( () => {
+    const checkAuth = async () => {
+      const { data: user } = await supabase.auth.getUser();
+      setIsSignedIn( !!user );
+    };
+    checkAuth();
+  }, [] );
+
+  const handleSignOut = async () => {
+    const { error } = await supabase.auth.signOut();
+    if ( error ) {
+      console.error( "Error signing out:", error.message );
+    } else {
+      window.location.href = "/";
+    }
+  };
 
   return (
     <header className="bg-white shadow-sm">
@@ -21,50 +38,50 @@ export function Header() {
             </Link>
           </div>
           <nav className="flex items-center gap-6">
-            {!isSignedIn && !isHomePage && (
+            { !isSignedIn && !isHomePage && (
               <Link
                 href="/"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 Home
               </Link>
-            )}
-            {isSignedIn ? (
+            ) }
+            { isSignedIn ? (
               <>
                 <Link
                   href="/dashboard"
-                  className={cn(
+                  className={ cn(
                     "text-sm font-medium transition-colors",
-                    pathname === "/dashboard" 
+                    pathname === "/dashboard"
                       ? "text-foreground"
                       : "text-muted-foreground hover:text-foreground"
-                  )}
+                  ) }
                 >
                   Dashboard
                 </Link>
-                <UserButton 
-                  afterSignOutUrl="/"
-                  appearance={{
-                    elements: {
-                      avatarBox: "w-8 h-8"
-                    }
-                  }}
-                />
+                <button
+                  onClick={ handleSignOut }
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Sign Out
+                </button>
               </>
             ) : (
               <>
-                <SignInButton mode="modal">
-                  <button className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
-                    Sign In
-                  </button>
-                </SignInButton>
-                <SignUpButton mode="modal">
-                  <button className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors">
-                    Sign Up
-                  </button>
-                </SignUpButton>
+                <Link
+                  href="/auth/signin"
+                  className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Sign In
+                </Link>
+                <Link
+                  href="/auth/signup"
+                  className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
+                  Sign Up
+                </Link>
               </>
-            )}
+            ) }
             <Link
               href="/status"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"

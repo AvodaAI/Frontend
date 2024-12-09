@@ -1,48 +1,78 @@
 // src/app/actions/getEmployees.ts
-'use server'
+"use server";
 
-import { clerkClient } from '@clerk/nextjs/server'
-import { db } from '@/db'
-import { users } from '@/db/schema'
-import { User } from '@/db/types'
-import { eq } from 'drizzle-orm'
-
-const clerk = clerkClient()
+import { supabase } from "@/utils/supabase/supabaseClient";
 
 interface GetEmployeesParams {
-  limit?: number
-  offset?: number
-  status?: 'active' | 'inactive' | undefined
+  limit?: number;
+  offset?: number;
+  status?: "active" | "inactive" | undefined;
+}
+
+interface Employee {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  status: string;
+  position: string;
+  createdAt: number;
+  updatedAt: number;
 }
 
 interface GetEmployeesResponse {
-  success: boolean
-  data?: User[]
-  error?: string
-  total?: number
+  success: boolean;
+  data?: Employee[];
+  error?: string;
+  total?: number;
 }
 
-export async function getEmployees(params?: GetEmployeesParams): Promise<GetEmployeesResponse> {
+export async function getEmployees(
+  params?: GetEmployeesParams
+): Promise<GetEmployeesResponse> {
   try {
-    const { limit = 10, offset = 0, status } = params || {}
+    const { limit = 10, offset = 0, status } = params || {};
 
-    // Fetch users from the database with optional status filtering
-    const query = status 
-      ? db.select().from(users).where(eq(users.status, status)).limit(limit).offset(offset)
-      : db.select().from(users).limit(limit).offset(offset)
+    // Build query
+    let query = supabase
+      .from("employees") // Assuming you have an "employees" table in Supabase
+      .select("*", { count: "exact" })
+      .range(offset, offset + limit - 1);
 
-    const employeesFromDb = await query
+    if (status) {
+      query = query.eq("status", status);
+    }
+
+    // Execute query
+    const { data, error, count } = await query;
+
+    if (error) {
+      throw new Error(error.message);
+    }
+
+    // Map the results to match the expected structure
+    const employees = data.map((employee) => ({
+      id: employee.id,
+      firstName: employee.first_name,
+      lastName: employee.last_name,
+      email: employee.email,
+      status: employee.status,
+      position: employee.position,
+      createdAt: new Date(employee.created_at).getTime(),
+      updatedAt: new Date(employee.updated_at).getTime(),
+    }));
 
     return {
       success: true,
-      data: employeesFromDb,
-      total: employeesFromDb.length
-    }
+      data: employees,
+      total: count || employees.length,
+    };
   } catch (error) {
-    console.error('Error fetching employees:', error)
+    console.error("Error fetching employees:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : 'Failed to fetch employees'
-    }
+      error:
+        error instanceof Error ? error.message : "Failed to fetch employees",
+    };
   }
 }
