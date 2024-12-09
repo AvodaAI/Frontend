@@ -48,12 +48,11 @@
 ### Frontend
 - **Framework:** NextJS 15
   - Use App Router
-  - Implement dynamic imports for large components
+  - Feature Based Architecture
   - Use Server Components by default
 
 - **Styling:** TailwindCSS V4
-  - Use JIT mode
-  - Custom colors defined in `tailwind.config.js`
+  - Custom colors defined in `globals.css`
   - Use CSS variables for theme values
 
 ### Backend
@@ -62,6 +61,7 @@
   - Implement soft deletes
   - Add indices for frequently queried columns
   - Maximum query time: 5s
+  - Using Supabase Database
 
 - **ORM:** Drizzle
   - Define schemas in `/db/schema`
@@ -69,7 +69,7 @@
   - Implement database transactions for multi-table operations
   - Add database constraints at schema level
 
-- **Authentication:** Clerk
+- **Authentication:** Supabase Auth
   - Implement role-based access control
   - Use middleware for protected routes
   - Add session management
@@ -79,7 +79,6 @@
 
 - [ ] Remove all console.log statements
 - [ ] Add any TODO or FIXME comments for smaller points
-- [ ] Validate form inputs
 - [ ] Handle loading/error states
 
 ## Development Environment Setup
@@ -87,9 +86,9 @@
 ### Required Tools & Versions
 - Node.js v18.x LTS
 - PostgreSQL 15+
-- VS Code with extensions:
-  - ESLint
-  - Prettier
-  - TailwindCSS IntelliSense
+- IDE extensions:
+  - Code Spell Checker
+  - ToDo Tree
+  - Prettier (Optional)
 
 Remember: These guidelines are mandatory with no exceptions.
