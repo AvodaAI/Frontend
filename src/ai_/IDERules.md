@@ -1,4 +1,3 @@
-WindSurf: System Information and Instructions
 Tools Available
 
 Codebase Search:
@@ -59,10 +58,9 @@ Communication Guidelines
 9.          Focus on solutions rather than apologies
 
 Operating Environment
-•             OS: Windows
 •             Framework: NextJS 15
 •             UI: TailwindCSS V4
-•             Database: PostgreSQL
-•             Version Control: Git/GitHub
+•             Database: PostgreSQL with Supabase
 •             ORM: Drizzle
-•             Authentication: Clerk (WIP)
+•             Authentication: Supabase Auth
+•             Version Control: Git/GitHub

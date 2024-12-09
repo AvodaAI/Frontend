@@ -45,6 +45,14 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+
+  --screens-sm: 640px;
+  --screens-md: 768px;
+  --screens-lg: 1024px;
+  --screens-xl: 1280px;
+
+  --padding-md: 1.5rem;
+  --container-max-width: var(--screens-xl);
 }
 
 /*
@@ -79,7 +87,7 @@
     --card-foreground: #0A0A0A;
     --popover: #FFFFFF;
     --popover-foreground: #0A0A0A;
-    --primary: #1d3658;
+    --primary: #0A0A0A;
     --primary-foreground: #FAFAFA;
     --secondary: #F5F5F5;
     --secondary-foreground: #171717;
@@ -99,7 +107,7 @@
     --chart-3: #2C3F47;
     --chart-4: #DFB543;
     --chart-5: #F66B35;
-    --radius: 0.35rem;
+    --radius: 0.25rem;
   }
   .dark {
     --background: #0A0A0A;
@@ -138,4 +146,44 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+@layer utilities {
+  .container {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    max-width: var(--container-max-width);
+  }
+
+  @media (min-width: 640px) {
+    .container {
+      max-width: var(--screens-sm);
+    }
+  }
+
+  @media (min-width: 768px) {
+    .container {
+      max-width: var(--screens-md);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      max-width: var(--screens-lg);
+    }
+  }
+
+  @media (min-width: 1280px) {
+    .container {
+      max-width: var(--screens-xl);
+    }
+  }
+}
+.component-reference {
+  color: #6366f1; /* Indigo color for light mode */
+}
+
+.component-reference.dark {
+  color: #4f46e5; /* Indigo color for dark mode */
 }

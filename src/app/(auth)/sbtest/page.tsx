@@ -7,15 +7,15 @@ export default async function supabaseTest() {
     try {
         const { data: users, error } = await supabase.from("users").select();
         return (
-        
+            <div>
                 {!error && users ? (
-                    Supabase Connection: All Systems Operational
+                    <p>Supabase Connection: All Systems Operational</p>
                 ) : (
-                    Supabase Connection: System Issues Detected - {error?.message}
+                    <p>Supabase Connection: System Issues Detected - {error?.message}</p>
                 )}
-        
+            </div>
         );
     } catch (e) {
-        return Supabase Connection: System Issues Detected;
+        return <div>Supabase Connection: System Issues Detected</div>;
     }
 }

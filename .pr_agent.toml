@@ -1,0 +1,2 @@
+[ignore]
+glob = ['package-lock.json']
