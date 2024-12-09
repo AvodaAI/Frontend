@@ -1,4 +1,6 @@
 // src/app/api/employee/add/route.ts
+//FIXME: Types and More. Align with Supabase Config
+//TODO: Use server?
 import { NextResponse } from "next/server";
 import { supabase } from "@/utils/supabase/supabaseClient";
 
@@ -44,7 +46,7 @@ export async function POST(request: Request) {
 
     // Insert new employee in Supabase
     const { data: newEmployee, error: insertError } = await supabase
-      .from("employees") // Assuming the table is named "employees"
+      .from("users") // Assuming the table is named "employees"
       .insert({
         first_name: first_name || null,
         last_name,

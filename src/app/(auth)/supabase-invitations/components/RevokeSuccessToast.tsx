@@ -1,4 +1,4 @@
-// src/app/(auth)/clerk_invitations/components/RevokeSuccessToast.tsx
+// src/app/(auth)/supabase-invitations/components/RevokeSuccessToast.tsx
 'use client'
 import { useToast } from "@/hooks/useToast"
 import { useEffect } from "react"

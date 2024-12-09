@@ -1,3 +1,4 @@
+//src/app/layout.tsx
 //TODO : Add Google Tag Manager + Config Analytics
 import './globals.css';
 import { Toaster } from '@components/ui/toaster';

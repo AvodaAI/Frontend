@@ -1,3 +1,4 @@
+// src/app/(auth)/dashboard/layout.tsx
 "use client";
 
 import { Toaster } from '@components/ui/toaster';

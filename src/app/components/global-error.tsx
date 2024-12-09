@@ -1,3 +1,4 @@
+// src/app/components/global-error.tsx - Placeholder/test
 "use client";
 
 import * as Sentry from "@sentry/nextjs";

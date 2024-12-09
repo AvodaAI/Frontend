@@ -1,4 +1,5 @@
-// src/app/actions/getSupabaseUsers.ts
+// src/app/(auth)/supabase-users/actions/getSupabaseUsers.ts
+// FIXME: Types and More. Align with Supabase Config
 "use server";
 
 import { supabase } from "@/utils/supabase/supabaseClient";

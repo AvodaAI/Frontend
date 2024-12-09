@@ -37,7 +37,7 @@ auth/
   {
     email: string,      // Required: Valid email address
     password: string,   // Required: Minimum 6 characters
-    clerk_id?: string,  // Optional: Clerk user ID
+    auth_id?: string,  // Optional: Supabase user ID
     status?: string,    // Optional: User status
     first_name?: string,// Optional: User's first name
     last_name?: string, // Optional: User's last name

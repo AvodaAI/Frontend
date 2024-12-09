@@ -15,7 +15,7 @@ export type NewUser = InferModel<typeof users, 'insert'> & {
 export const UserSchema = z.object({
   email: z.string().email(),
   role: z.string().optional().default('user'),
-  clerk_id: z.string().optional(),
+  auth_id: z.string().optional(),
   first_name: z.string().optional(),
   last_name: z.string().min(1),
   position: z.string().optional(),
@@ -29,7 +29,7 @@ export interface AuthUser {
   id: number;
   email: string;
   role: string;
-  clerk_id?: string | null;
+  auth_id?: string | null;
   first_name?: string | null;
   last_name?: string;
   position?: string | null;
