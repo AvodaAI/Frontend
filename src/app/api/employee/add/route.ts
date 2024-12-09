@@ -46,7 +46,7 @@ export async function POST(request: Request) {
 
     // Insert new employee in Supabase
     const { data: newEmployee, error: insertError } = await supabase
-      .from("users") // Assuming the table is named "employees"
+      .from("users")
       .insert({
         first_name: first_name || null,
         last_name,
