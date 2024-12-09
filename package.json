@@ -7,8 +7,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "db:generate": "drizzle-kit generate:pg",
-    "db:push": "drizzle-kit push:pg",
+    "db:generate": "drizzle-kit generate",
+    "db:push": "drizzle-kit push",
+    "db:pull": "drizzle-kit pull",
+    "db:check": "drizzle-kit check",
     "db:studio": "drizzle-kit studio"
   },
   "dependencies": {

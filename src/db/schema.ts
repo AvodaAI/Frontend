@@ -1,5 +1,5 @@
 // src/db/schema.ts
-import { pgTable, serial, varchar, timestamp, text, integer } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, timestamp, text, integer, boolean } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
 export const users = pgTable('users', {
@@ -53,15 +53,20 @@ export const timeLogs = pgTable('time_logs', {
   id: serial('id').primaryKey(),
   user_id: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   task_id: varchar('task_id', { length: 255 }).notNull(),
+  description: text('description'), // Optional description tracking
   organization_id: varchar('organization_id', { length: 255 }),
   start_time: timestamp('start_time').notNull(),
   end_time: timestamp('end_time'),
   duration_minutes: integer('duration_minutes'),
+  status: varchar('status', { length: 50 }).default('completed'), // Optional status tracking
+  locked: boolean('locked').notNull().default(false),
+  locked_time: timestamp('locked_time'),
   created_at: timestamp('created_at').notNull().defaultNow(),
   updated_at: timestamp('updated_at').notNull().defaultNow(),
   created_by: varchar('created_by', { length: 255 }),
   updated_by: varchar('updated_by', { length: 255 }),
 });
+
 
 export const timeLogsRelations = relations(timeLogs, ({ one }) => ({
   user: one(users, {
