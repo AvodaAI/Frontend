@@ -1,7 +1,6 @@
 // src/app/not-found.tsx
-'use server'
 
-import Link from "next/link";
+import Link from 'next/link'
 import { Button } from "@components/ui/button";
 import { Section } from "@components/section";
 import { Container } from "@components/container";
