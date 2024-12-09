@@ -3,14 +3,16 @@ import { Header } from './components/header';
 import { SignIn } from '@components/auth/SignIn'
 import { SignUp } from '@components/auth/SignUp'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs'
+import { Section } from '@components/section'
+import { Container } from '@components/container'
 
 export default function Home() {
   return (
     <>
       <Header />
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container px-4 md:px-6">
+        <Section>
+          <Container>
             <div className="flex flex-col items-center justify-center space-y-4 text-center">
               <div className="space-y-2">
                 <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
@@ -35,10 +37,10 @@ export default function Home() {
                 </a>
               </div>
             </div>
-          </div>
-        </section>
-        <section id="features" className="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800">
-          <div className="container px-4 md:px-6">
+          </Container>
+        </Section>
+        <Section id="features">
+          <Container>
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
               <div className="space-y-2">
                 <h3 className="text-xl font-bold">Employee Management</h3>
@@ -59,25 +61,27 @@ export default function Home() {
                 </p>
               </div>
             </div>
-          </div>
-        </section>
-        <section className="w-full py-12 md:py-24 lg:py-32">
-          <div className="container mx-auto max-w-md mt-10">
-            <h1 className="text-2xl font-bold mb-5 text-center">Authentication</h1>
-            <Tabs defaultValue="signin">
-              <TabsList className="grid w-full grid-cols-2">
-                <TabsTrigger value="signin">Sign In</TabsTrigger>
-                <TabsTrigger value="signup">Sign Up</TabsTrigger>
-              </TabsList>
-              <TabsContent value="signin">
-                <SignIn />
-              </TabsContent>
-              <TabsContent value="signup">
-                <SignUp />
-              </TabsContent>
-            </Tabs>
-          </div>
-        </section>
+          </Container>
+        </Section>
+        <Section>
+          <Container >
+            <div className="max-w-sm mx-auto">
+              <h1 className="text-2xl font-bold mb-5 text-center">Authentication</h1>
+              <Tabs defaultValue="signin">
+                <TabsList className="grid w-full grid-cols-2">
+                  <TabsTrigger value="signin">Sign In</TabsTrigger>
+                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
+                </TabsList>
+                <TabsContent value="signin">
+                  <SignIn />
+                </TabsContent>
+                <TabsContent value="signup">
+                  <SignUp />
+                </TabsContent>
+              </Tabs>
+            </div>
+          </Container>
+        </Section>
       </main>
     </>
   );
