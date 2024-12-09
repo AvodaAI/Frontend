@@ -1,4 +1,5 @@
 // src/app/actions/getEmployees.ts
+//FIXME: Types and More. Align with Supabase Config
 "use server";
 
 import { supabase } from "@/utils/supabase/supabaseClient";
@@ -35,7 +36,7 @@ export async function getEmployees(
 
     // Build query
     let query = supabase
-      .from("employees") // Assuming you have an "employees" table in Supabase
+      .from("users")
       .select("*", { count: "exact" })
       .range(offset, offset + limit - 1);
 

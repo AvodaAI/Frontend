@@ -73,7 +73,7 @@ interface ActionResponse<T> {
 ## Integration Points
 
 - **Database**: Uses Drizzle ORM with PostgreSQL via `@/db`
-- **Authentication**: Integrates with Clerk via `@clerk/nextjs/server`
+- **Authentication**: Integrates with Supabase Auth via `?`
 - **Types**: Leverages shared types from `@/db/types` and `@/types`
 - **Schema**: Uses database schema from `@/db/schema`
 

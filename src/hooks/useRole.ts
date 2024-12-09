@@ -1,4 +1,5 @@
 // src/hooks/use-role.ts
+//FIXME: Types
 "use client";
 
 import { useEffect, useState } from "react";

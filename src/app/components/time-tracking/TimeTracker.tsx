@@ -1,3 +1,5 @@
+// src/app/components/time-tracking/TimeTracker.tsx
+//FIXME: Types and More. Align with Supabase Config
 'use client';
 
 import React, { useState, useEffect } from 'react';

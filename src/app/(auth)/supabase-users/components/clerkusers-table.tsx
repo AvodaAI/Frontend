@@ -1,3 +1,5 @@
+// src/app/(auth)/supabase-users/components/clerkusers-table.tsx
+//TODO: Rename
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -5,7 +7,6 @@ import { supabase } from '@/utils/supabase/supabaseClient';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/ui/table';
 import { Button } from '@components/ui/button';
 import { Loader2 } from 'lucide-react';
-import { cn } from '@/lib/utils';
 import { formatUnixDate } from '@/utils/unixdate';
 import { dataFallback } from '@/utils/datafallback';
 
@@ -95,7 +96,7 @@ export default function SupabaseUsersTable () {
     <div className="rounded-md border">
       <div className="flex justify-between p-4">
         <h2 className="text-lg font-bold">Users</h2>
-        <Button onClick={ handleAddUser } variant="primary">
+        <Button onClick={ handleAddUser } variant="default">
           Add User
         </Button>
       </div>
