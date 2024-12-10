@@ -1,4 +1,8 @@
 // src/db/schema.ts
+/* MediumTODO: Add a check constraint to ensure end_date is greater than or equal to start_date to
+prevent invalid date ranges. */
+/* HighTODO: Make the description field optional as not all projects may require a description at
+creation time. */
 import { pgTable, serial, varchar, timestamp, text, integer, boolean } from 'drizzle-orm/pg-core';
 import { relations } from 'drizzle-orm';
 
