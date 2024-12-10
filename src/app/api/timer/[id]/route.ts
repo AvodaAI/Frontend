@@ -5,7 +5,10 @@ import { timeLogs } from '@/db/schema';
 import { createClient } from '@/utils/supabase/server';
 import { eq, and } from 'drizzle-orm';
 
-export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(
+  req: NextRequest,
+  context: { params: { id: string } }
+) {
   try {
     const supabase = createClient();
     const { data: { user }, error } = await (await supabase).auth.getUser();
@@ -26,7 +29,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
         .from(timeLogs)
         .where(
           and(
-            eq(timeLogs.id, Number(params.id)),
+            eq(timeLogs.id, Number(context.params.id)),
             eq(timeLogs.user_id, Number(userId))
           )
         )
@@ -41,7 +44,7 @@ export async function DELETE(req: NextRequest, { params }: { params: { id: strin
         .delete(timeLogs)
         .where(
           and(
-            eq(timeLogs.id, Number(params.id)),
+            eq(timeLogs.id, Number(context.params.id)),
             eq(timeLogs.user_id, Number(userId))
           )
         )
