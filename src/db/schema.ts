@@ -69,3 +69,14 @@ export const timeLogsRelations = relations(timeLogs, ({ one }) => ({
     references: [users.id],
   }),
 }));
+
+export const projects = pgTable('projects', {
+  id: serial('id').primaryKey(),
+  name: varchar('name', { length: 255 }).notNull(),
+  description: text('description').notNull(),
+  start_date: timestamp('start_date').notNull(),
+  end_date: timestamp('end_date').notNull(),
+  status: varchar('status', { length: 50 }).notNull().default('active'),
+  created_at: timestamp('created_at').notNull().defaultNow(),
+  updated_at: timestamp('updated_at').notNull().defaultNow(),
+});
