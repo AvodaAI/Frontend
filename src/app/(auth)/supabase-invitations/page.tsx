@@ -6,10 +6,13 @@ import { Button } from "@components/ui/button"
 import { Plus } from "lucide-react"
 import { Suspense } from "react"
 import { ErrorBoundary } from "@components/ui/error-boundary"
+import { Container } from "@/app/components/container"
+import { Section } from "@/app/components/section"
 
 export default function InvitationsPage() {
   return (
-    <div className="container mx-auto px-4 py-8 max-w-7xl">
+    <Container>
+      <Section>
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Invitations</h1>
         <Button>
@@ -24,6 +27,7 @@ export default function InvitationsPage() {
           </Suspense>
         </ErrorBoundary>
       </div>
-    </div>
+    </Section>
+  </Container>
   )
 }

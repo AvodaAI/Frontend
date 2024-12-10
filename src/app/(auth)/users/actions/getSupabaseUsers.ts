@@ -13,19 +13,25 @@ interface GetSupabaseUsersParams {
 }
 
 interface SupabaseUser {
-  id: string;
-  externalId: string | null;
-  primaryEmailAddress: string | null;
-  username: string | null;
-  firstName: string | null;
-  lastName: string | null;
-  publicMetadata: Record<string, any>;
-  privateMetadata: Record<string, any>;
-  lastSignInAt: number | null;
-  lastActiveAt: number | null;
-  updatedAt: number;
-  createdAt: number;
+  id: number;
+  auth_id: string | null; 
+  email: string;
+  password: string;
+  first_name: string | null; 
+  last_name: string | null; 
+  email_verified: Date | null; 
+  last_login: number | null; 
+  lastActiveAt: number | null; 
+  role: string; 
+  status: string; 
+  position: string | null; 
+  city: string | null; 
+  country: string | null; 
+  hire_date: Date | null; 
+  updated_at: number;
+  created_at: number;
 }
+
 
 export interface GetSupabaseUsersResponse {
   data: SupabaseUser[];
@@ -68,23 +74,28 @@ export async function getSupabaseUsers(
 
     // Map users to match the original response format
     const serializedUsers = data.map((user) => ({
-      id: user.id,
-      externalId: user.external_id || null,
+      id: user.id, 
+      externalId: user.auth_id || null, 
       primaryEmailAddress: user.email || null,
       username: user.username || null,
-      firstName: user.first_name || null,
-      lastName: user.last_name || null,
-      publicMetadata: user.public_metadata || {},
-      privateMetadata: user.private_metadata || {},
-      lastSignInAt: user.last_sign_in_at
-        ? new Date(user.last_sign_in_at).getTime()
+      firstName: user.first_name || null, 
+      lastName: user.last_name || null, 
+      publicMetadata: user.public_metadata || {}, 
+      privateMetadata: user.private_metadata || {}, 
+      lastSignInAt: user.last_login
+        ? new Date(user.last_login).getTime()
         : null,
-      lastActiveAt: user.last_active_at
-        ? new Date(user.last_active_at).getTime()
-        : null,
-      updatedAt: new Date(user.updated_at).getTime(),
-      createdAt: new Date(user.created_at).getTime(),
+      lastActiveAt: user.lastActiveAt || null, 
+      updatedAt: new Date(user.updated_at).getTime(), 
+      createdAt: new Date(user.created_at).getTime(), 
+      role: user.role, 
+      status: user.status, 
+      position: user.position || null, 
+      city: user.city || null, 
+      country: user.country || null, 
+      hireDate: user.hire_date ? new Date(user.hire_date).getTime() : null, 
     }));
+    
 
     return {
       data: serializedUsers,
