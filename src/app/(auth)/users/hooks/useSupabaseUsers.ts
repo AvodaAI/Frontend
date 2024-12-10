@@ -3,13 +3,14 @@ import { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase/supabaseClient';
 import { Database } from '@/types/supabase';
 interface SupabaseUser {
-  id: string;
-  first_name: string | null;
-  last_name: string | null;
-  email: string | null;
-  created_at: string;
-  last_login: string | null;
-}
+  interface SupabaseUser {
+    id: number;
+    first_name: string | null;
+    last_name: string | null;
+    email: string | null;
+    created_at: string;
+    last_login: string | null;
+  }
 
 export const useSupabaseUsers = () => {
   const [users, setUsers] = useState<SupabaseUser[]>([]);
