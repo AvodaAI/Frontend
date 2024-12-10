@@ -1,5 +1,6 @@
 // src/app/(auth)/supabase-users/components/clerkusers-table.tsx
 //TODO: Rename
+//HighTODO: Add confirmation dialog before deleting
 'use client';
 
 import { useEffect, useState } from 'react';
