@@ -17,4 +17,5 @@ app.get('/api/fortune', (c) => {
   })
 })
 
+
 export const GET = handle(app)
