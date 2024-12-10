@@ -26,7 +26,7 @@ export const UserSchema = z.object({
 
 // Type for user authentication
 export interface AuthUser {
-  id: number;
+  uid: number;
   email: string;
   role: string;
   auth_id?: string | null;
