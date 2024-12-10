@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/db';
 import { timeLogs } from '@/db/schema';
-import { auth } from '@clerk/nextjs/server';
+import { createClient } from '@/utils/supabase/server';
 import { z } from 'zod';
 import { eq, and, sql } from 'drizzle-orm';
 
@@ -18,7 +18,10 @@ const updateTimeLogSchema = z.object({
 
 export async function PUT(req: NextRequest) {
   try {
-    const { userId } = await auth();
+    const supabase = createClient();
+    const { data: { user }, error } = await (await supabase).auth.getUser();
+    const userId = user?.id;
+
     if (!userId) {
       return NextResponse.json(
         { error: 'Authentication required', code: 'UNAUTHORIZED' },
