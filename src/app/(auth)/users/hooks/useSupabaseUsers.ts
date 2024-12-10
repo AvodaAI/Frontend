@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase/supabaseClient';
 import { Database } from '@/types/supabase';
-interface SupabaseUser {
+
   interface SupabaseUser {
     id: number;
     first_name: string | null;

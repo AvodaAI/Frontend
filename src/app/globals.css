@@ -45,6 +45,10 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+
+  --padding-lg: 8px;
+  --padding-md: 6px;
+  --padding-sm: 4px;
 }
 
 /*

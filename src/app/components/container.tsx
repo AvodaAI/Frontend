@@ -17,7 +17,7 @@ export function Container({
   return (
     <Component 
       className={cn(
-        "container mx-auto px-4 md:px-[--padding-md]",
+        "container mx-auto px-4 sm:px-[--padding-md] lg:px-[--padding-lg]",
         className
       )}
       {...props}
