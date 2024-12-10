@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { timeLogs } from '@/db/schema';
-import { auth, currentUser } from '@clerk/nextjs/server';
+import { createClient } from '@/utils/supabase/server';
 import { z } from 'zod';
 import { eq, and, isNull } from 'drizzle-orm';
 
@@ -34,8 +34,10 @@ function calculateDuration(startTime: Date, endTime: Date): {
 export async function POST(request: Request) {
   try {
     // Robust authentication check
-    const { userId, orgId } = await auth();
-    const user = await currentUser();
+    const supabase = createClient();
+    const { data: { user }, error } = await (await supabase).auth.getUser();
+    const userId = user?.id;
+    const orgId = user?.organizationId;
 
     if (!userId || !user) {
       return NextResponse.json(
