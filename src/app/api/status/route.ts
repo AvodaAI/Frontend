@@ -1,15 +1,22 @@
 //src/app/api/status/route.ts
-import db from '@/lib/db';
-import { NextResponse } from 'next/server';
+import { Hono } from 'hono'
+import { handle } from 'hono/vercel'
+import db from '@/lib/db'
 
-export async function GET() {
+const app = new Hono()
+
+app.get('/api/status', async (c) => {
   try {
     const status = await db.checkConnection();
-    return NextResponse.json(status);
+    return c.json(status);
   } catch (error) {
-    return NextResponse.json(
+    return c.json(
       { isConnected: false, lastChecked: new Date().toISOString() },
       { status: 500 }
     );
   }
 }
+
+);
+
+export const GET = handle(app)
