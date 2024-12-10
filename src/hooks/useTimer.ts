@@ -1,4 +1,5 @@
 // src/hooks/useTimer.ts
+//FIXME: Types and Arguments
 import { useState, useCallback, useRef, useEffect } from 'react';
 
 export const useTimer = () => {

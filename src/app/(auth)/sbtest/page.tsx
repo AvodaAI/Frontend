@@ -1,5 +1,4 @@
 //src/app/(auth)/sbtest/page.tsx
-//test supabase connection
 import { createClient } from "@/utils/supabase/server";
 
 export default async function supabaseTest() {

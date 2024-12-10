@@ -1,4 +1,3 @@
-
 ## Getting Started
 
 First, install dependencies:
@@ -13,14 +12,25 @@ Then run the development server:
 npm run dev
 ````
 
-
-Stack:
-- Next.js
-- Clerk - WIP
-- TypeScript
-- Tailwind CSS V4
-- ESLint
-- Drizzle ORM
-- PostgreSQL
-
 This project uses modularization to ensure code reusability and maintainability.
+
+## Stack:
+- Next.js
+- Tailwind CSS V4
+- Supabase Auth
+- Supabase Database
+- Drizzle ORM
+- Github
+- Sentry
+
+## Git Process:
+- Ensure you are assigned the task on Airtable and it exists on Github
+- Create a branch for the task.
+- The branch name should follow this syntax: `[property]/[your initials]/[what you are trying to do]`.
+- Spaces should be "_"
+> #### Examples:
+> `_feature/sfk/adding_employee_creation_module_`
+> `_bugfix/sfk/auth_issue_fixes_`
+
+## MISC
+https://ca6.sentry.io/issues/?project=4508429367836672&referrer=sidebar

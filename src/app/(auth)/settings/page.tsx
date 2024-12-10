@@ -1,3 +1,4 @@
+// src/app/(auth)/settings/page.tsx
 'use client'
 
 export default function SettingsPage() {

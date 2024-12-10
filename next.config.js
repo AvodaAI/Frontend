@@ -1,12 +1,10 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  experimental: {
-  },
-  // Handle any potential module resolution issues
-  webpack: (config) => {
-    config.resolve.fallback = { fs: false, net: false, tls: false, crypto: false };
-    return config;
-  }
-}
+const { withSentryConfig } = require("@sentry/nextjs");
 
-module.exports = nextConfig
+/** @type {import('next').NextConfig}  */
+const nextConfig = {};
+
+module.exports = withSentryConfig(nextConfig, {
+  org: "ca6",
+  project: "avoda",
+  silent: false, // Can be used to suppress logs
+});

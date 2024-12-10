@@ -1,21 +1,31 @@
 // src/app/api/timer/start/route.ts
-import { NextResponse } from "next/server";
-import { supabase } from "@/utils/supabase/supabaseClient";
-import { z } from "zod";
+// FIXED: wrap in a database transaction to prevent race conditions where multiple timers could be started simultaneously.
+import { NextResponse } from 'next/server';
+import { db } from '@/db';
+import { timeLogs } from '@/db/schema';
+import { auth, currentUser } from '@clerk/nextjs/server';
+import { z } from 'zod';
+import { eq, and, isNull } from 'drizzle-orm';
 
-// Input validation schema
+// Comprehensive input validation schema
 const startTimerSchema = z.object({
-  taskId: z.string(),
-  organizationId: z.string().optional(), // Optional org ID if task is org-specific
+  taskId: z.string().min(1, "Task ID is required"),
+  organizationId: z.string().optional(),
+  description: z.string().max(500, "Description too long").optional(),
 });
 
 export async function POST(request: Request) {
   try {
-    // Verify user authentication using Supabase
-    const { data: user, error: authError } = await supabase.auth.getUser();
-    if (authError || !user) {
+    // Robust authentication check
+    const { userId, orgId } = await auth();
+    const user = await currentUser();
+
+    if (!userId || !user) {
       return NextResponse.json(
-        { error: "Authentication required" },
+        { 
+          error: 'Authentication required', 
+          code: 'UNAUTHORIZED' 
+        },
         { status: 401 }
       );
     }
@@ -24,88 +34,81 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = startTimerSchema.parse(body);
 
-    // Check for existing active timer
-    const { data: existingTimer, error: existingTimerError } = await supabase
-      .from("time_logs") // Assuming the table is named "time_logs"
-      .select("*")
-      .eq("user_id", user.id)
-      .is("end_time", null)
-      .single();
+    // Database transaction to prevent race conditions
+    const existingActiveTimer = await db.transaction(async (tx) => {
+      // Check for existing active timer
+      const activeTimer = await tx.query.timeLogs.findFirst({
+        where: and(
+          eq(timeLogs.user_id, Number(userId)),
+          isNull(timeLogs.end_time)
+        ),
+      });
 
-    if (existingTimerError && existingTimerError.code !== "PGRST116") {
-      // Ignore "No Rows Found" error (PGRST116) but handle others
-      throw new Error(existingTimerError.message);
+      // Prevent multiple active timers
+      if (activeTimer) {
+        throw new Error('ACTIVE_TIMER_EXISTS');
+      }
+
+      // Create new time log entry
+      const [newTimeLog] = await tx.insert(timeLogs).values({
+        user_id: Number(userId),
+        task_id: validatedData.taskId,
+        organization_id: validatedData.organizationId || null,
+        description: validatedData.description,
+        start_time: new Date(),
+        end_time: null,
+        created_by: user.firstName 
+          ? `${user.firstName} ${user.lastName || ''}`.trim() 
+          : user.username || userId,
+      }).returning();
+
+      return newTimeLog;
+    });
+
+    return NextResponse.json({
+      message: 'Timer started successfully',
+      timeLog: existingActiveTimer,
+      user: {
+        id: userId,
+        name: user.firstName 
+          ? `${user.firstName} ${user.lastName || ''}`.trim() 
+          : user.username,
+        organization: orgId ? { id: orgId } : null
+      }
+    }, { status: 201 });
+
+  } catch (error) {
+    console.error('Error starting timer:', error);
+    
+    // Detailed error handling
+    if (error instanceof z.ZodError) {
+      return NextResponse.json(
+        { 
+          error: 'Invalid request data', 
+          details: error.errors,
+          code: 'VALIDATION_ERROR'
+        },
+        { status: 400 }
+      );
     }
 
-    if (existingTimer) {
+    if (error instanceof Error && error.message === 'ACTIVE_TIMER_EXISTS') {
       return NextResponse.json(
-        {
-          error: "Active timer exists",
-          message: "Please stop the current timer before starting a new one",
-          activeTimer: existingTimer,
+        { 
+          error: 'Active timer already exists',
+          message: 'Please stop the current timer before starting a new one',
+          code: 'TIMER_CONFLICT'
         },
         { status: 409 }
       );
     }
 
-    // If organization ID is provided, verify user's access
-    if (validatedData.organizationId) {
-      const { data: userOrg } = await supabase
-        .from("organizations") // Assuming an "organizations" table
-        .select("id")
-        .eq("id", validatedData.organizationId)
-        .eq("user_id", user.id)
-        .single();
-
-      if (!userOrg) {
-        return NextResponse.json(
-          { error: "Invalid organization access" },
-          { status: 403 }
-        );
-      }
-    }
-
-    // Create a new time log entry
-    const { data: newTimeLog, error: insertError } = await supabase
-      .from("time_logs") // Assuming the table is named "time_logs"
-      .insert({
-        user_id: user.id,
-        task_id: validatedData.taskId,
-        organization_id: validatedData.organizationId || null,
-        start_time: new Date(),
-        end_time: null,
-        created_by: user.email, // Use the authenticated user's email
-      })
-      .select()
-      .single();
-
-    if (insertError) {
-      throw new Error(insertError.message);
-    }
-
-    return NextResponse.json({
-      message: "Timer started successfully",
-      timeLog: newTimeLog,
-      user: {
-        id: user.id,
-        name: user.email,
-        organization: validatedData.organizationId
-          ? { id: validatedData.organizationId }
-          : null,
-      },
-    });
-  } catch (error) {
-    console.error("Error starting timer:", error);
-
-    if (error instanceof z.ZodError) {
-      return NextResponse.json(
-        { error: "Invalid request data", details: error.errors },
-        { status: 400 }
-      );
-    }
-
     return NextResponse.json(
-      { error: "Internal server error", message: "Failed to start timer" },
+      { 
+        error: 'Internal server error', 
+        message: 'Failed to start timer',
+        code: 'INTERNAL_ERROR'
+      },
       { status: 500 }
     );
   }
