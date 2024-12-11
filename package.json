@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@hono/sentry": "^1.2.0",
+    "@hookform/resolvers": "^3.9.1",
     "@radix-ui/react-alert-dialog": "^1.1.2",
     "@radix-ui/react-context-menu": "^2.2.2",
     "@radix-ui/react-dialog": "^1.1.2",
@@ -35,6 +36,7 @@
     "date-fns": "^3.6.0",
     "drizzle-orm": "^0.36.4",
     "hono": "^4.6.13",
+    "input-otp": "^1.4.1",
     "lucide-react": "^0.294.0",
     "next": "15.1.0",
     "pg": "^8.13.1",
@@ -42,6 +44,7 @@
     "react": "^18 || ^19",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18 || ^19",
+    "react-hook-form": "^7.54.0",
     "svix": "^1.42.0",
     "tailwind-merge": "^2.1.0",
     "tailwindcss": "^4.0.0-beta.2",

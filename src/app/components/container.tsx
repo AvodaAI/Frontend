@@ -1,28 +1,24 @@
-//src/components/container.tsx
-//TODO: Fix JSX issues
-import { cn } from "@/lib/utils"
+import React from 'react';
+import { cn } from "@/lib/utils";
 
-interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
-  children: React.ReactNode
-  as?: keyof JSX.IntrinsicElements
-  className?: string
+interface Props {
+  as?: React.ElementType;
+  className?: string;
+  children?: React.ReactNode;
 }
 
-export function Container({
-  children,
-  as: Component = "div",
-  className,
-  ...props
-}: ContainerProps) {
+const Container: React.FC<Props> = ({ as: Comp = 'div', className, children }) => {
   return (
-    <Component 
+    <Comp
       className={cn(
-        "container mx-auto px-4 md:px-[--padding-md]",
+        "container mx-auto px-4 sm:px-6 md:px-8 lg:px-12",
         className
       )}
-      {...props}
     >
       {children}
-    </Component>
-  )
-}
+    </Comp>
+  );
+};
+
+export default Container;
+

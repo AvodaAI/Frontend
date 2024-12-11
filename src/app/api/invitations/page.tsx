@@ -1,5 +1,5 @@
 // src/app/invitations/page.tsx
-import InvitationsTable from "@/app/(auth)/supabase-invitations/components/invitations-table"
+import InvitationsTable from "@/app/(protected)/invitations/components/invitations-table"
 
 export default function InvitationsPage() {
   return (

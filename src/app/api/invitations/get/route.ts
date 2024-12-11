@@ -1,5 +1,5 @@
 // src/app/invitations/get/route.ts
-import { getInvitations } from "@/app/(auth)/supabase-invitations/actions/getInvitations";
+import { getInvitations } from "@/app/(protected)/invitations/actions/getInvitations";
 import { NextRequest, NextResponse } from "next/server";
 
 const MAX_LIMIT = 500;
