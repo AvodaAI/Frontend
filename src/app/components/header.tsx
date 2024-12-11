@@ -7,23 +7,23 @@ import { supabase } from "@/utils/supabase/supabaseClient";
 import { cn } from "@/lib/utils";
 import { useEffect, useState } from "react";
 
-export function Header () {
+export function Header() {
   const pathname = usePathname();
   const isHomePage = pathname === "/";
-  const [ isSignedIn, setIsSignedIn ] = useState( false );
+  const [isSignedIn, setIsSignedIn] = useState(false);
 
-  useEffect( () => {
+  useEffect(() => {
     const checkAuth = async () => {
       const { data: user } = await supabase.auth.getUser();
-      setIsSignedIn( !!user );
+      setIsSignedIn(!!user);
     };
     checkAuth();
-  }, [] );
+  }, []);
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
-    if ( error ) {
-      console.error( "Error signing out:", error.message );
+    if (error) {
+      console.error("Error signing out:", error.message);
     } else {
       window.location.href = "/";
     }
@@ -39,29 +39,29 @@ export function Header () {
             </Link>
           </div>
           <nav className="flex items-center gap-6">
-            { !isSignedIn && !isHomePage && (
+            {!isSignedIn && !isHomePage && (
               <Link
                 href="/"
                 className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
               >
                 Home
               </Link>
-            ) }
-            { isSignedIn ? (
+            )}
+            {isSignedIn ? (
               <>
                 <Link
                   href="/dashboard"
-                  className={ cn(
+                  className={cn(
                     "text-sm font-medium transition-colors",
                     pathname === "/dashboard"
                       ? "text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  ) }
+                      : "text-muted-foreground hover:text-foreground",
+                  )}
                 >
                   Dashboard
                 </Link>
                 <button
-                  onClick={ handleSignOut }
+                  onClick={handleSignOut}
                   className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                 >
                   Sign Out
@@ -82,7 +82,7 @@ export function Header () {
                   Sign Up
                 </Link>
               </>
-            ) }
+            )}
             <Link
               href="/status"
               className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"

@@ -1,16 +1,22 @@
 // src/app/(auth)/employees/page.tsx
-'use client'
+"use client";
 
-import { Button } from '@components/ui/button'
-import { EmployeeTable } from '@/app/(protected)/employees/components/EmployeeTable'
-import { AddEmployeeForm } from '@/app/(protected)/employees/components/AddEmployeeForm'
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@components/ui/dialog'
-import { useState } from 'react'
-import { useUserRole } from '@/hooks/useRole'
-import { redirect } from 'next/navigation'
+import { Button } from "@components/ui/button";
+import { EmployeeTable } from "@/app/(protected)/employees/components/EmployeeTable";
+import { AddEmployeeForm } from "@/app/(protected)/employees/components/AddEmployeeForm";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@components/ui/dialog";
+import { useState } from "react";
+import { useUserRole } from "@/hooks/useRole";
+import { redirect } from "next/navigation";
 
 export default function EmployeesPage() {
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
 
   return (
     <div className="container max-w-7xl mx-auto">
@@ -19,9 +25,7 @@ export default function EmployeesPage() {
           <h1 className="text-2xl font-bold tracking-tight">Employees</h1>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
-              <Button>
-                Add New Employee
-              </Button>
+              <Button>Add New Employee</Button>
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -37,5 +41,5 @@ export default function EmployeesPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

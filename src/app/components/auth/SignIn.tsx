@@ -1,44 +1,43 @@
 //src/app/components/auth/SignIn.tsx
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { useRouter } from 'next/navigation'
-import { Button } from '@components/ui/button'
-import { Input } from '@components/ui/input'
-import { Label } from '@components/ui/label'
-import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
-
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { Button } from "@components/ui/button";
+import { Input } from "@components/ui/input";
+import { Label } from "@components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "@components/ui/alert";
 
 export function SignIn() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const router = useRouter()
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
 
   const handleSignIn = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
+    e.preventDefault();
+    setError(null);
 
     try {
-      const response = await fetch('/api/auth/signin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/auth/signin", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password }),
-      })
+      });
 
       if (response.ok) {
         // Add a small delay before navigation
         setTimeout(() => {
-          router.replace('/dashboard')
-        }, 100)
+          router.replace("/dashboard");
+        }, 100);
       } else {
-        const data = await response.json()
-        setError(data.error || 'Invalid email or password')
+        const data = await response.json();
+        setError(data.error || "Invalid email or password");
       }
     } catch (error) {
-      setError('An error occurred during sign in')
+      setError("An error occurred during sign in");
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSignIn} className="space-y-4">
@@ -72,11 +71,9 @@ export function SignIn() {
       {!error && (
         <Alert variant="default">
           <AlertTitle>Success</AlertTitle>
-          <AlertDescription>
-            You have successfully signed in.
-          </AlertDescription>
+          <AlertDescription>You have successfully signed in.</AlertDescription>
         </Alert>
       )}
     </form>
-  )
+  );
 }

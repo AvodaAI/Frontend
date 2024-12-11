@@ -1,8 +1,8 @@
 //src/app/components/employees/EmployeeTabls.tsx
-'use client'
+"use client";
 
-import { useState, useEffect } from 'react'
-import { Button, buttonVariants } from '@components/ui/button'
+import { useState, useEffect } from "react";
+import { Button, buttonVariants } from "@components/ui/button";
 import {
   Table,
   TableBody,
@@ -10,50 +10,64 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@components/ui/table'
-import { EditEmployeeModal } from './EditEmployeeModal'
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@components/ui/alert-dialog'
-import { User } from '@/types/user'
+} from "@components/ui/table";
+import { EditEmployeeModal } from "./EditEmployeeModal";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@components/ui/alert-dialog";
+import { User } from "@/types/user";
 
 export function EmployeeTable({
-  children
+  children,
 }: {
-  children?: (employee: User) => React.ReactNode
+  children?: (employee: User) => React.ReactNode;
 }) {
-  const [employees, setEmployees] = useState<User[]>([])
-  const [editingEmployee, setEditingEmployee] = useState<User | null>(null)
+  const [employees, setEmployees] = useState<User[]>([]);
+  const [editingEmployee, setEditingEmployee] = useState<User | null>(null);
 
   useEffect(() => {
-    fetchEmployees()
-  }, [])
+    fetchEmployees();
+  }, []);
 
   const fetchEmployees = async () => {
-    const response = await fetch('/api/employee/list')
+    const response = await fetch("/api/employee/list");
     if (response.ok) {
-      const data = await response.json()
-      setEmployees(data)
+      const data = await response.json();
+      setEmployees(data);
     } else {
-      console.error('Error fetching employees')
+      console.error("Error fetching employees");
     }
-  }
+  };
 
   const handleDelete = async (id: number) => {
-    const response = await fetch('/api/employee/delete', {
-      method: 'DELETE',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ id })
-    })
+    const response = await fetch("/api/employee/delete", {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id }),
+    });
     if (response.ok) {
-      setEmployees(employees.filter(emp => emp.id !== id))
+      setEmployees(employees.filter((emp) => emp.id !== id));
     } else {
-      console.error('Error deleting employee')
+      console.error("Error deleting employee");
     }
-  }
+  };
 
   const handleUpdateEmployee = (updatedEmployee: User) => {
-    setEmployees(employees.map(emp => emp.id === updatedEmployee.id ? updatedEmployee : emp))
-    setEditingEmployee(null)
-  }
+    setEmployees(
+      employees.map((emp) =>
+        emp.id === updatedEmployee.id ? updatedEmployee : emp,
+      ),
+    );
+    setEditingEmployee(null);
+  };
 
   return (
     <div className="w-full space-y-5">
@@ -61,12 +75,16 @@ export function EmployeeTable({
       <div className="border hidden md:block">
         <Table>
           <TableHeader>
-            <TableRow className='bg-muted/50'>
-              <TableHead className='w-[250px] font-semibold'>Name</TableHead>
-              <TableHead className='w-[350px] font-semibold'>Email</TableHead>
-              <TableHead className='w-[125px] font-semibold'>Role</TableHead>
-              <TableHead className='w-[150px] font-semibold'>Last Login</TableHead>
-              <TableHead className="text-right font-semibold">Actions</TableHead>
+            <TableRow className="bg-muted/50">
+              <TableHead className="w-[250px] font-semibold">Name</TableHead>
+              <TableHead className="w-[350px] font-semibold">Email</TableHead>
+              <TableHead className="w-[125px] font-semibold">Role</TableHead>
+              <TableHead className="w-[150px] font-semibold">
+                Last Login
+              </TableHead>
+              <TableHead className="text-right font-semibold">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -79,12 +97,12 @@ export function EmployeeTable({
                 <TableCell>{user.position}</TableCell>
                 <TableCell>
                   {user.hire_date
-                    ? new Date(user.hire_date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
+                    ? new Date(user.hire_date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
                       })
-                    : 'N/A'}
+                    : "N/A"}
                 </TableCell>
                 <TableCell className="text-right space-x-2">
                   <Button onClick={() => setEditingEmployee(user)} size="sm">
@@ -101,13 +119,19 @@ export function EmployeeTable({
                       <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete the employee's
-                          record from the database.
+                          This action cannot be undone. This will permanently
+                          delete the employee's record from the database.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
                       <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction className={buttonVariants({ variant: 'destructive', size: 'sm' })} onClick={() => handleDelete(user.id)}>
+                        <AlertDialogAction
+                          className={buttonVariants({
+                            variant: "destructive",
+                            size: "sm",
+                          })}
+                          onClick={() => handleDelete(user.id)}
+                        >
                           Delete
                         </AlertDialogAction>
                       </AlertDialogFooter>
@@ -131,9 +155,7 @@ export function EmployeeTable({
               <div className="font-medium text-lg">
                 {user.first_name} {user.last_name}
               </div>
-              <div className="text-sm text-muted-foreground">
-                {user.email}
-              </div>
+              <div className="text-sm text-muted-foreground">{user.email}</div>
             </div>
 
             <div className="grid grid-cols-2 gap-2 text-sm">
@@ -145,30 +167,24 @@ export function EmployeeTable({
                 <div className="text-muted-foreground">Last Login</div>
                 <div className="font-medium">
                   {user.hire_date
-                    ? new Date(user.hire_date).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
+                    ? new Date(user.hire_date).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric",
                       })
-                    : 'N/A'}
+                    : "N/A"}
                 </div>
               </div>
             </div>
 
             <div className="grid grid-cols-2 gap-2 pt-2">
-              <Button 
-                onClick={() => setEditingEmployee(user)} 
-                size="sm"
-              >
+              <Button onClick={() => setEditingEmployee(user)} size="sm">
                 Edit
               </Button>
               {children && children(user)}
               <AlertDialog>
                 <AlertDialogTrigger asChild>
-                  <Button 
-                    variant="destructive" 
-                    size="sm"
-                  >
+                  <Button variant="destructive" size="sm">
                     Delete
                   </Button>
                 </AlertDialogTrigger>
@@ -176,14 +192,17 @@ export function EmployeeTable({
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete the employee's
-                      record from the database.
+                      This action cannot be undone. This will permanently delete
+                      the employee's record from the database.
                     </AlertDialogDescription>
                   </AlertDialogHeader>
                   <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction 
-                      className={buttonVariants({ variant: 'destructive', size: 'sm' })} 
+                    <AlertDialogAction
+                      className={buttonVariants({
+                        variant: "destructive",
+                        size: "sm",
+                      })}
                       onClick={() => handleDelete(user.id)}
                     >
                       Delete
@@ -204,5 +223,5 @@ export function EmployeeTable({
         />
       )}
     </div>
-  )
+  );
 }

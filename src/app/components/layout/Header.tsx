@@ -1,45 +1,41 @@
 //src/app/components/layout/Header.tsx
-'use client';
+"use client";
 
 import { Bell, Menu } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@components/ui/sheet";
+import { Sheet, SheetContent, SheetTrigger } from "@components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useRole";
 import { supabase } from "@/utils/supabase/supabaseClient";
 
 // Navigation links
 const navigation = [
-  { name: 'Dashboard', href: '/dashboard', adminOnly: false },
-  { name: 'Employees', href: '/employees', adminOnly: false },
-  { name: 'Time Tracking', href: '/time-tracking', adminOnly: false },
-  { name: 'Invitations', href: '/invitations', adminOnly: false },
-  { name: 'Settings', href: '/settings', adminOnly: false },
-  { name: 'Status', href: '/status', adminOnly: false },
+  { name: "Dashboard", href: "/dashboard", adminOnly: false },
+  { name: "Employees", href: "/employees", adminOnly: false },
+  { name: "Time Tracking", href: "/time-tracking", adminOnly: false },
+  { name: "Invitations", href: "/invitations", adminOnly: false },
+  { name: "Settings", href: "/settings", adminOnly: false },
+  { name: "Status", href: "/status", adminOnly: false },
 ];
 
-export function Header () {
+export function Header() {
   const pathname = usePathname();
   const { isAdmin } = useUserRole();
 
   // Filter navigation based on the user's role
   const filteredNavigation = navigation.filter(
-    item => !item.adminOnly || ( item.adminOnly && isAdmin )
+    (item) => !item.adminOnly || (item.adminOnly && isAdmin),
   );
 
   // Handle user sign out
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
-    if ( error ) {
-      console.error( "Error signing out:", error.message );
+    if (error) {
+      console.error("Error signing out:", error.message);
     } else {
-      window.location.href = '/'; // Redirect to home after sign out
+      window.location.href = "/"; // Redirect to home after sign out
     }
   };
 
@@ -53,18 +49,20 @@ export function Header () {
             </span>
           </Link>
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            { filteredNavigation.map( ( item ) => (
+            {filteredNavigation.map((item) => (
               <Link
-                key={ item.href }
-                href={ item.href }
-                className={ cn(
+                key={item.href}
+                href={item.href}
+                className={cn(
                   "transition-colors hover:text-foreground/80",
-                  pathname === item.href ? "text-foreground" : "text-foreground/60"
-                ) }
+                  pathname === item.href
+                    ? "text-foreground"
+                    : "text-foreground/60",
+                )}
               >
-                { item.name }
+                {item.name}
               </Link>
-            ) ) }
+            ))}
           </nav>
         </div>
 
@@ -84,18 +82,18 @@ export function Header () {
             </Link>
             <div className="my-4 h-[calc(100vh-8rem)] pb-10">
               <div className="flex flex-col space-y-3">
-                { filteredNavigation.map( ( item ) => (
+                {filteredNavigation.map((item) => (
                   <Link
-                    key={ item.href }
-                    href={ item.href }
-                    className={ cn(
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
                       "text-foreground/60 transition-colors hover:text-foreground",
-                      pathname === item.href && "text-foreground"
-                    ) }
+                      pathname === item.href && "text-foreground",
+                    )}
                   >
-                    { item.name }
+                    {item.name}
                   </Link>
-                ) ) }
+                ))}
               </div>
             </div>
           </SheetContent>
@@ -115,7 +113,7 @@ export function Header () {
             <Button
               variant="ghost"
               size="icon"
-              onClick={ handleSignOut }
+              onClick={handleSignOut}
               aria-label="Sign Out"
             >
               Sign Out

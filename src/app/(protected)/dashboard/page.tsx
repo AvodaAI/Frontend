@@ -1,50 +1,50 @@
 // src/app/(auth)/dashboard/page.tsx
-'use client';
+"use client";
 
-import { Button } from '@components/ui/button';
-import Link from 'next/link';
-import { EmployeeTable } from '@/app/(protected)/employees/components/EmployeeTable';
-import { AddEmployeeForm } from '@/app/(protected)/employees/components/AddEmployeeForm';
+import { Button } from "@components/ui/button";
+import Link from "next/link";
+import { EmployeeTable } from "@/app/(protected)/employees/components/EmployeeTable";
+import { AddEmployeeForm } from "@/app/(protected)/employees/components/AddEmployeeForm";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from '@components/ui/dialog';
-import { useState, useEffect } from 'react';
-import { ErrorBoundary } from '@components/ui/error-boundary';
-import { Suspense } from 'react';
-import { useSupabase } from '@/providers/SupabaseProvider';
+} from "@components/ui/dialog";
+import { useState, useEffect } from "react";
+import { ErrorBoundary } from "@components/ui/error-boundary";
+import { Suspense } from "react";
+import { useSupabase } from "@/providers/SupabaseProvider";
 
-export default function Page () {
+export default function Page() {
   const supabase = useSupabase();
-  const [ isDialogOpen, setIsDialogOpen ] = useState( false );
-  const [ userRole, setUserRole ] = useState<string | null>( null );
-  const [ userName, setUserName ] = useState<string | null>( 'Employee' );
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [userName, setUserName] = useState<string | null>("Employee");
 
-  useEffect( () => {
+  useEffect(() => {
     const fetchUser = async () => {
       const {
         data: { user },
         error,
       } = await supabase.auth.getUser();
 
-      if ( error ) {
-        console.error( 'Error fetching user:', error.message );
+      if (error) {
+        console.error("Error fetching user:", error.message);
         return;
       }
 
-      if ( user ) {
-        setUserName( user.user_metadata.full_name || 'Employee' );
-        setUserRole( user.user_metadata.role || 'employee' );
+      if (user) {
+        setUserName(user.user_metadata.full_name || "Employee");
+        setUserRole(user.user_metadata.role || "employee");
       }
     };
 
     fetchUser();
-  }, [ supabase ] );
+  }, [supabase]);
 
-  const isAdmin = userRole === 'admin';
+  const isAdmin = userRole === "admin";
 
   return (
     <div className="container max-w-7xl mx-auto">
@@ -54,8 +54,10 @@ export default function Page () {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="bg-blue-50/50 p-6 rounded-lg border">
             <h2 className="text-lg font-semibold mb-4">Welcome</h2>
-            <p className="text-muted-foreground">Name: { userName }</p>
-            <p className="text-muted-foreground">Role: { isAdmin ? 'Administrator' : 'Employee' }</p>
+            <p className="text-muted-foreground">Name: {userName}</p>
+            <p className="text-muted-foreground">
+              Role: {isAdmin ? "Administrator" : "Employee"}
+            </p>
           </div>
 
           <div className="bg-green-50/50 p-6 rounded-lg border">
@@ -67,11 +69,14 @@ export default function Page () {
                 </Button>
               </Link>
 
-              { isAdmin && (
+              {isAdmin && (
                 <>
-                  <Dialog open={ isDialogOpen } onOpenChange={ setIsDialogOpen }>
+                  <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
                     <DialogTrigger asChild>
-                      <Button variant="outline" className="w-full justify-start">
+                      <Button
+                        variant="outline"
+                        className="w-full justify-start"
+                      >
                         Add New Employee
                       </Button>
                     </DialogTrigger>
@@ -79,7 +84,7 @@ export default function Page () {
                       <DialogHeader>
                         <DialogTitle>Add New Employee</DialogTitle>
                       </DialogHeader>
-                      <AddEmployeeForm onClose={ () => setIsDialogOpen( false ) } />
+                      <AddEmployeeForm onClose={() => setIsDialogOpen(false)} />
                     </DialogContent>
                   </Dialog>
                   <Link href="/employees" className="block">
@@ -88,12 +93,12 @@ export default function Page () {
                     </Button>
                   </Link>
                 </>
-              ) }
+              )}
             </div>
           </div>
         </div>
 
-        { isAdmin && (
+        {isAdmin && (
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <h2 className="text-xl font-semibold">Employees</h2>
@@ -110,14 +115,21 @@ export default function Page () {
               </Dialog>
             </div>
             <div className="border rounded-lg">
-              <ErrorBoundary fallback={ <div>Error loading employee table. Please try refreshing the page.</div> }>
-                <Suspense fallback={ <div>Loading employees...</div> }>
+              <ErrorBoundary
+                fallback={
+                  <div>
+                    Error loading employee table. Please try refreshing the
+                    page.
+                  </div>
+                }
+              >
+                <Suspense fallback={<div>Loading employees...</div>}>
                   <EmployeeTable />
                 </Suspense>
               </ErrorBoundary>
             </div>
           </div>
-        ) }
+        )}
       </div>
     </div>
   );

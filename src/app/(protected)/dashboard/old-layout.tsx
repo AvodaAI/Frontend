@@ -1,20 +1,24 @@
 // src/app/(auth)/dashboard/layout.tsx
 "use client";
 
-import { Toaster } from '@components/ui/toaster';
-import { useSupabase } from '@/providers/SupabaseProvider';
-import { useRouter } from 'next/navigation';
+import { Toaster } from "@components/ui/toaster";
+import { useSupabase } from "@/providers/SupabaseProvider";
+import { useRouter } from "next/navigation";
 
-export default function DashboardLayout ( { children }: { children: React.ReactNode } ) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const supabase = useSupabase(); // Access Supabase client from context
   const router = useRouter();
 
   const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
-    if ( !error ) {
-      router.push( '/' );
+    if (!error) {
+      router.push("/");
     } else {
-      console.error( 'Error signing out:', error.message );
+      console.error("Error signing out:", error.message);
     }
   };
 
@@ -28,7 +32,7 @@ export default function DashboardLayout ( { children }: { children: React.ReactN
             </div>
             <div className="flex items-center">
               <button
-                onClick={ handleSignOut }
+                onClick={handleSignOut}
                 className="text-sm font-medium text-red-600 hover:text-red-800"
               >
                 Sign Out
@@ -38,7 +42,7 @@ export default function DashboardLayout ( { children }: { children: React.ReactN
         </div>
       </nav>
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-        { children }
+        {children}
         <Toaster />
       </main>
     </div>

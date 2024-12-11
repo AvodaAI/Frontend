@@ -1,23 +1,23 @@
 // src/app/(auth)/supabase-invitations/components/RevokeSuccessToast.tsx
-'use client'
-import { useToast } from "@/hooks/useToast"
-import { useEffect } from "react"
+"use client";
+import { useToast } from "@/hooks/useToast";
+import { useEffect } from "react";
 
 interface SuccessToastProps {
-  invitationId: string
+  invitationId: string;
 }
 
 export function RevokeSuccessToast({ invitationId }: SuccessToastProps) {
-  const { toast } = useToast()
-  
+  const { toast } = useToast();
+
   useEffect(() => {
     // Show toast once when component mounts
     toast({
       title: "Success",
       description: "The invitation has been successfully revoked.",
       variant: "success",
-    })
-  }, [invitationId]) // Run effect when invitationId changes
+    });
+  }, [invitationId]); // Run effect when invitationId changes
 
-  return null
+  return null;
 }

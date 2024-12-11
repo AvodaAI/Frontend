@@ -1,36 +1,36 @@
 //src/app/components/auth/SignUp.tsx
-'use client'
+"use client";
 
-import { useState } from 'react'
-import { Button } from '@components/ui/button'
-import { Input } from '@components/ui/input'
-import { Label } from '@components/ui/label'
-import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
+import { useState } from "react";
+import { Button } from "@components/ui/button";
+import { Input } from "@components/ui/input";
+import { Label } from "@components/ui/label";
+import { Alert, AlertDescription, AlertTitle } from "@components/ui/alert";
 
 export function SignUp() {
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
-  const [success, setSuccess] = useState(false)
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState(false);
 
   const handleSignUp = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setSuccess(false)
+    e.preventDefault();
+    setError(null);
+    setSuccess(false);
 
-    const response = await fetch('/api/auth/signup', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("/api/auth/signup", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
-    })
+    });
 
     if (response.ok) {
-      setSuccess(true)
+      setSuccess(true);
     } else {
-      const data = await response.json()
-      setError(data.error || 'An error occurred during sign up')
+      const data = await response.json();
+      setError(data.error || "An error occurred during sign up");
     }
-  }
+  };
 
   return (
     <form onSubmit={handleSignUp} className="space-y-4">
@@ -70,5 +70,5 @@ export function SignUp() {
         </Alert>
       )}
     </form>
-  )
+  );
 }

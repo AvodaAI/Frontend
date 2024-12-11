@@ -1,8 +1,8 @@
 // src/app/components/time-tracking/Timer.tsx
-import React from 'react';
-import { Play, Pause, RotateCcw, Loader2 } from 'lucide-react';
-import { Button } from '../ui/button';
-import { cn } from '@/lib/utils';
+import React from "react";
+import { Play, Pause, RotateCcw, Loader2 } from "lucide-react";
+import { Button } from "../ui/button";
+import { cn } from "@/lib/utils";
 
 interface TimerProps {
   isRunning: boolean;
@@ -32,7 +32,7 @@ export const Timer: React.FC<TimerProps> = ({
           disabled={isLoading}
           className={cn(
             "rounded-full",
-            isRunning ? "hover:bg-yellow-100" : "hover:bg-green-100"
+            isRunning ? "hover:bg-yellow-100" : "hover:bg-green-100",
           )}
         >
           {isLoading ? (

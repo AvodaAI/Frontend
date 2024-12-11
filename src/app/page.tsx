@@ -1,10 +1,10 @@
 //src/app/page.tsx
-import { Header } from './components/header';
-import { SignIn } from '@components/auth/SignIn'
-import { SignUp } from '@components/auth/SignUp'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs'
-import { Section } from '@components/section'
-import { Container } from '@components/container'
+import { Header } from "./components/header";
+import { SignIn } from "@components/auth/SignIn";
+import { SignUp } from "@components/auth/SignUp";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/ui/tabs";
+import { Section } from "@components/section";
+import { Container } from "@components/container";
 
 export default function Home() {
   return (
@@ -19,7 +19,8 @@ export default function Home() {
                   Employee Management System
                 </h1>
                 <p className="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                  Streamline your workforce management with our comprehensive employee management solution.
+                  Streamline your workforce management with our comprehensive
+                  employee management solution.
                 </p>
               </div>
               <div className="space-x-4">
@@ -39,13 +40,14 @@ export default function Home() {
             </div>
           </Container>
         </Section>
-        <Section id="features" className='bg-gray-100'>
+        <Section id="features" className="bg-gray-100">
           <Container>
             <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
               <div className="space-y-2">
                 <h3 className="text-xl font-bold">Employee Management</h3>
                 <p className="text-gray-500 dark:text-gray-400">
-                  Efficiently manage employee information, roles, and responsibilities.
+                  Efficiently manage employee information, roles, and
+                  responsibilities.
                 </p>
               </div>
               <div className="space-y-2">
@@ -64,9 +66,11 @@ export default function Home() {
           </Container>
         </Section>
         <Section>
-          <Container >
+          <Container>
             <div className="max-w-sm mx-auto">
-              <h1 className="text-2xl font-bold mb-5 text-center">Authentication</h1>
+              <h1 className="text-2xl font-bold mb-5 text-center">
+                Authentication
+              </h1>
               <Tabs defaultValue="signin">
                 <TabsList className="grid w-full grid-cols-2">
                   <TabsTrigger value="signin">Sign In</TabsTrigger>
