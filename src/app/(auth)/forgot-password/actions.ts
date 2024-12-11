@@ -1,10 +1,9 @@
 // src/app/(auth)/forgot-password/actions.ts
 'use server'
 
-import { createClient } from '@supabase/supabase-js'
+import { createClient } from "@/utils/supabase/server"
 
-// Provide your project's URL and anon key from environment variables
-const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!)
+const supabase = createClient()
 
 export async function forgotPasswordAction(formData: FormData) {
   const email = formData.get('email') as string
@@ -12,7 +11,7 @@ export async function forgotPasswordAction(formData: FormData) {
     return { error: 'Email is required.' }
   }
 
-  const { error } = await supabase.auth.resetPasswordForEmail(email, {
+  const { error } = await (await supabase).auth.resetPasswordForEmail(email, {
     redirectTo: `${process.env.NEXT_PUBLIC_APP_URL}/auth/reset-password`,
   })
 
