@@ -101,7 +101,7 @@ export function EmployeeTable({
                       <AlertDialogHeader>
                         <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                         <AlertDialogDescription>
-                          This action cannot be undone. This will permanently delete the employee's
+                          This action cannot be undone. This will permanently delete the employee&apos;s
                           record from the database.
                         </AlertDialogDescription>
                       </AlertDialogHeader>
@@ -176,7 +176,7 @@ export function EmployeeTable({
                   <AlertDialogHeader>
                     <AlertDialogTitle>Are you sure?</AlertDialogTitle>
                     <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete the employee's
+                      This action cannot be undone. This will permanently delete the employee&apos;s
                       record from the database.
                     </AlertDialogDescription>
                   </AlertDialogHeader>

@@ -17,7 +17,7 @@ export function RevokeSuccessToast({ invitationId }: SuccessToastProps) {
       description: "The invitation has been successfully revoked.",
       variant: "success",
     })
-  }, [invitationId]) // Run effect when invitationId changes
+  }, [invitationId,toast]) // Run effect when invitationId changes
 
   return null
 }

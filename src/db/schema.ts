@@ -7,7 +7,7 @@ export const users = pgTable('users', {
   id: serial('id').primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
-  clerk_id: varchar('clerk_id', { length: 255 }),
+  auth_id: varchar('auth_id', { length: 255 }),
 
   // Authentication and Authorization
   email_verified: timestamp('email_verified'),

@@ -6,7 +6,6 @@ import { CheckCircle2, XCircle } from 'lucide-react';
 import db from '@/lib/db';
 import SupabaseStatus from '@/utils/supabase/status';
 import { Container } from '@components/container';
-import { Section } from '@components/section';
 export default async function StatusPage() {
   const status = await db.checkConnection();
   const supabaseStatus = await SupabaseStatus.checkConnection();

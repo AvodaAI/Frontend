@@ -68,14 +68,13 @@ export default function InvitationsTable () {
       toast( {
         title: 'Invitation Revoked',
         description: `Invitation with ID ${ invitationId } was successfully revoked.`,
-        status: 'success',
       } );
-    } catch ( err ) {
+    } 
+    catch ( err ) {
       setError( 'An error occurred while revoking the invitation' );
       toast( {
         title: 'Error',
         description: 'Failed to revoke the invitation.',
-        status: 'error',
       } );
     }
   };
