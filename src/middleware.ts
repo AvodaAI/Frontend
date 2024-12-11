@@ -10,7 +10,7 @@ export async function middleware(request: Request) {
     ?.match(/supabase-auth-token=([^;]+)/)?.[1];
 
   if (!token) {
-    const url = new URL("/signin", request.url);
+    const url = new URL("/", request.url);
     return NextResponse.redirect(url);
   }
 

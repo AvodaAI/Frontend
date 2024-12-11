@@ -5,8 +5,15 @@ import { SignUp } from '@components/auth/SignUp'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs'
 import { Section } from '@components/section'
 import { Container } from '@components/container'
+import { cookies } from 'next/headers';
+import { redirect } from 'next/navigation';
 
-export default function Home() {
+export default async function Home() {
+  const cookieStore = await cookies()
+  const token = cookieStore.get('supabase-auth-token')
+  if(token){
+    redirect('/dashboard')
+  }  
   return (
     <>
       <Header />

@@ -12,7 +12,6 @@ import {
 } from "@components/ui/sheet";
 import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useRole";
-import { supabase } from "@/utils/supabase/supabaseClient";
 
 // Navigation links
 const navigation = [
@@ -24,22 +23,28 @@ const navigation = [
   { name: 'Status', href: '/status', adminOnly: false },
 ];
 
-export function Header () {
+export function Header() {
   const pathname = usePathname();
   const { isAdmin } = useUserRole();
 
   // Filter navigation based on the user's role
   const filteredNavigation = navigation.filter(
-    item => !item.adminOnly || ( item.adminOnly && isAdmin )
+    item => !item.adminOnly || (item.adminOnly && isAdmin)
   );
 
   // Handle user sign out
   const handleSignOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if ( error ) {
-      console.error( "Error signing out:", error.message );
-    } else {
-      window.location.href = '/'; // Redirect to home after sign out
+    try {
+      const response = await fetch('/api/auth/signout', {
+        method: 'POST',
+      });
+
+      const data = await response.json();
+      if (data.success) {
+        window.location.href = '/';
+      }
+
+    } catch (error) {
     }
   };
 
@@ -52,20 +57,43 @@ export function Header () {
               Employee Manager
             </span>
           </Link>
+          <div className="flex space-x-3">
           <nav className="flex items-center space-x-6 text-sm font-medium">
-            { filteredNavigation.map( ( item ) => (
+            {filteredNavigation.map((item) => (
               <Link
-                key={ item.href }
-                href={ item.href }
-                className={ cn(
+                key={item.href}
+                href={item.href}
+                className={cn(
                   "transition-colors hover:text-foreground/80",
                   pathname === item.href ? "text-foreground" : "text-foreground/60"
-                ) }
+                )}
               >
-                { item.name }
+                {item.name}
               </Link>
-            ) ) }
+            ))}
           </nav>
+          <div className="flex  items-center justify-between space-x-2 md:justify-end min-w-[100px]">
+          <div className="flex items-center space-x-3 min-w-[100px]">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              aria-label="Notifications"
+            >
+              <Bell className="h-4 w-4" />
+            </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleSignOut}
+              aria-label="Sign Out"
+            >
+              Sign Out
+            </Button>
+          </div>
+
+          </div>
+        </div>
         </div>
 
         <Sheet>
@@ -84,44 +112,24 @@ export function Header () {
             </Link>
             <div className="my-4 h-[calc(100vh-8rem)] pb-10">
               <div className="flex flex-col space-y-3">
-                { filteredNavigation.map( ( item ) => (
+                {filteredNavigation.map((item) => (
                   <Link
-                    key={ item.href }
-                    href={ item.href }
-                    className={ cn(
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
                       "text-foreground/60 transition-colors hover:text-foreground",
                       pathname === item.href && "text-foreground"
-                    ) }
+                    )}
                   >
-                    { item.name }
+                    {item.name}
                   </Link>
-                ) ) }
+                ))}
               </div>
             </div>
           </SheetContent>
         </Sheet>
 
-        <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
-          <div className="w-full flex-1 md:w-auto md:flex-none"></div>
-          <div className="flex items-center space-x-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              aria-label="Notifications"
-            >
-              <Bell className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={ handleSignOut }
-              aria-label="Sign Out"
-            >
-              Sign Out
-            </Button>
-          </div>
-        </div>
+       
       </div>
     </header>
   );

@@ -88,6 +88,7 @@ export async function POST(request: Request) {
         last_login: new Date(),
         created_at: new Date(),
         status: status || "active",
+        auth_id: data.user?.id
       })
       .returning();
 
