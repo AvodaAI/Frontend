@@ -1,10 +1,11 @@
 // src/db/schema.ts
-/* MediumTODO: Add a check constraint to ensure end_date is greater than or equal to start_date to
+/* Done: Add a check constraint to ensure end_date is greater than or equal to start_date to
 prevent invalid date ranges. */
-/* HighTODO: Make the description field optional as not all projects may require a description at
+/* Done: Make the description field optional as not all projects may require a description at
 creation time. */
 import { pgTable, serial, varchar, timestamp, text, integer, boolean } from 'drizzle-orm/pg-core';
-import { relations } from 'drizzle-orm';
+import { relations, sql } from 'drizzle-orm';
+import { check } from 'drizzle-orm/mysql-core';
 
 export const users = pgTable('users', {
   // Identification
@@ -81,11 +82,19 @@ export const timeLogsRelations = relations(timeLogs, ({ one }) => ({
 
 export const projects = pgTable('projects', {
   id: serial('id').primaryKey(),
-  name: varchar('name', { length: 255 }).notNull(),
-  description: text('description').notNull(),
+  name: text('name').notNull(),
+  description: text('description'), // Optional description
   start_date: timestamp('start_date').notNull(),
   end_date: timestamp('end_date').notNull(),
   status: varchar('status', { length: 50 }).notNull().default('active'),
   created_at: timestamp('created_at').notNull().defaultNow(),
   updated_at: timestamp('updated_at').notNull().defaultNow(),
+}, (table) => {
+  // Check constraint for valid date
+  return {
+    validDateRange: check(
+      'Please insert valid date',
+      sql`${table.end_date} >= ${table.start_date}`
+    ),
+  };
 });
