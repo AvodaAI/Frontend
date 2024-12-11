@@ -1,5 +1,5 @@
 {
-    "windsurf.autocompleteSpeed": "fast",
+    "windsurf.autocompleteSpeed": "default",
     "explorer.confirmDelete": false,
     "cSpell.userWords": [
         "Banquest",

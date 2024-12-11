@@ -33,3 +33,6 @@ next-env.d.ts
 # misc
 origin*
 #ai_*
+
+# windsurf rules
+.windsurfrules
