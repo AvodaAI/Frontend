@@ -1,3 +1,5 @@
+// src/app/(auth)/components/icons.tsx
+//FIXME: types
 import { LightbulbIcon as LucideProps, Github, Mail, Loader2, User, LogOut } from 'lucide-react'
 
 export const Icons = {

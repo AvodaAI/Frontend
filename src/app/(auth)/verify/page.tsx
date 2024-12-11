@@ -1,4 +1,6 @@
 // src/app/(auth)/verify/page.tsx
+//MediumTODO: refractor to useAction 
+//FIXME:  types
 'use client'
 
 import { useState } from 'react'
@@ -13,6 +15,7 @@ import {
 } from "@/app/(auth)/verify/components/otp-input"
 import Container from '@components/container'
 import { Section } from '@components/section'
+import { types } from 'util'
 
 export default function VerifyOTPPage() {
     const [otp, setOtp] = useState('')
