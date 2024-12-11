@@ -9,7 +9,7 @@ export function Section({ children, className, ...props }: SectionProps) {
   return (
     <section 
       className={cn(
-        "w-full py-12 md:py-24 lg:py-32",
+        "w-full px-4 sm:px-[--padding-md] lg:px-[--padding-lg]",
         className
       )}
       {...props}
