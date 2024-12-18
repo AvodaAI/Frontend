@@ -1,11 +1,12 @@
 // src/types/supabase.ts
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json }
-  | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
+
+export interface PublicMetadata {
+  type: string;
+  first_name: string;
+  last_name: string;
+  role: string;
+}
 
 export interface Database {
   public: {
@@ -43,7 +44,12 @@ export interface Database {
           status: string;
           revoked: boolean;
           created_at: string;
+          hire_date: string;
+          public_metadata: PublicMetadata;
+          url: string;
           expires_at: string | null;
+          organization_id: number;
+          created_by: number;
         };
         Insert: {
           id?: string;
@@ -51,7 +57,12 @@ export interface Database {
           status?: string;
           revoked?: boolean;
           created_at?: string;
+          hire_date: string;
+          public_metadata: PublicMetadata;
+          url: string;
           expires_at?: string | null;
+          organization_id: number;
+          created_by: number;
         };
         Update: {
           id?: string;
@@ -59,7 +70,12 @@ export interface Database {
           status?: string;
           revoked?: boolean;
           created_at?: string;
+          hire_date: string;
+          public_metadata: PublicMetadata;
+          url: string;
           expires_at?: string | null;
+          organization_id: number;
+          created_by: number;
         };
       };
     };

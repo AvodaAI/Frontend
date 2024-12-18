@@ -19,12 +19,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components/ui/select"
+import { supabase } from "@/utils/supabase/supabaseClient";
 
 interface AddEmployeeFormProps {
   onClose?: () => void;
+  isInviteEmployee?: boolean
 }
 
-export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
+export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormProps) {
   const [user, setUser] = useState<NewUser>({
     first_name: '',
     last_name: '',
@@ -36,11 +38,12 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
   const [date, setDate] = useState<Date>()
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<boolean>(false)
-  const [fieldErrors, setFieldErrors] = useState<{[key: string]: string}>({})
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})
+  const [organizationId, setOrganizationId] = useState('')
+
 
   const validateFields = () => {
-    const errors: {[key: string]: string} = {}
-  
+    const errors: { [key: string]: string } = {}
     if (!user.last_name?.trim()) errors.last_name = 'Last name is required'
     if (!user.email?.trim()) errors.email = 'Email is required'
     else if (!user.email.includes('@')) errors.email = 'Please enter a valid email'
@@ -49,7 +52,7 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
       const selectedDate = new Date(user.hire_date)
       const today = new Date()
       today.setHours(0, 0, 0, 0)
-      
+
       if (selectedDate > today) {
         errors.hire_date = 'Hire date cannot be in the future'
       }
@@ -59,7 +62,34 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
     return Object.keys(errors).length === 0
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const organizations = [
+    {
+      id: 1,
+      name: 'test 1',
+      owner: 'hasemej496@lofiey.com',
+      is_active: true,
+      employees: [9, 10],
+      created_at: '2024-12-18 09:59:02.85'
+    },
+    {
+      id: 2,
+      name: 'test 2',
+      owner: 'hasemej496@lofiey.com',
+      is_active: true,
+      employees: [5, 6],
+      created_at: '2024-12-18 09:59:02.85'
+    },
+    {
+      id: 3,
+      name: 'test 3',
+      owner: 'hasemej496@lofiey.com',
+      is_active: true,
+      employees: [7, 8],
+      created_at: '2024-12-18 09:59:02.85'
+    }
+  ]
+
+  const handleAddEmployeeSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setSuccess(false)
@@ -86,7 +116,7 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
       }
 
       const data = await res.json()
-      
+
       // Handle invitation status
       if (data.invitation?.status === 'failed') {
         setSuccess(true)
@@ -114,30 +144,90 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
     }
   }
 
+  const handleInviteEmployeeSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setError(null)
+    setSuccess(false)
+    setFieldErrors({})
+
+    if (!validateFields()) return
+
+    try {
+      const res = await fetch('/api/invitations/inviteUser', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: user?.email
+        }),
+      })
+
+      if (!res.ok) {
+        const data = await res.json()
+        throw new Error(data.error || 'Failed to invitation link')
+      }
+
+      const expires_at = new Date();
+      expires_at.setDate(expires_at.getDate() + 2);
+
+      const { error } = await supabase
+        .from('invitations')
+        .insert({
+          email_address: user?.email,
+          hire_date: user?.hire_date,
+          public_metadata: {
+            type: "employee",
+            first_name: user.first_name,
+            last_name: user.last_name,
+            role: user.role
+          },
+          created_at: (new Date()).toDateString(),
+          expires_at: expires_at.toISOString(),
+          revoked: null,
+          status: "pending",
+          organization_id: organizationId
+        })
+
+        if (error) {
+          throw new Error(error.message);
+        }
+
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create employee')
+      console.error(err)
+    }
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="space-y-4" autoComplete='off' noValidate>
+    <form onSubmit={
+      isInviteEmployee
+        ? handleInviteEmployeeSubmit
+        : handleAddEmployeeSubmit
+    }
+      className="space-y-4" autoComplete='off' noValidate>
       <div className='grid grid-cols-2 gap-4'>
-      <div>
-        <Label htmlFor="first_name">First Name</Label>
-        <Input
-          id="first_name"
-          value={user.first_name ?? ''}
-          onChange={(e) => setUser({ ...user, first_name: e.target.value || "" })}
-          className=""
-        />
-      </div>
-      <div>
-        <Label htmlFor="last_name">Last Name</Label>
-        <Input
-          id="last_name"
-          value={user.last_name || ''}
-          onChange={(e) => setUser({ ...user, last_name: e.target.value || '' })}
-          className={fieldErrors.last_name ? 'border-red-500' : ''}
-        />
-        {fieldErrors.last_name && (
-          <p className="text-sm text-red-500 mt-1">{fieldErrors.last_name}</p>
-        )}
-      </div>
+        <div>
+          <Label htmlFor="first_name">First Name</Label>
+          <Input
+            id="first_name"
+            value={user.first_name ?? ''}
+            onChange={(e) => setUser({ ...user, first_name: e.target.value || "" })}
+            className=""
+          />
+        </div>
+        <div>
+          <Label htmlFor="last_name">Last Name</Label>
+          <Input
+            id="last_name"
+            value={user.last_name || ''}
+            onChange={(e) => setUser({ ...user, last_name: e.target.value || '' })}
+            className={fieldErrors.last_name ? 'border-red-500' : ''}
+          />
+          {fieldErrors.last_name && (
+            <p className="text-sm text-red-500 mt-1">{fieldErrors.last_name}</p>
+          )}
+        </div>
       </div>
       <div>
         <Label htmlFor="email">Email</Label>
@@ -153,7 +243,7 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
         )}
       </div>
       <div className='grid grid-cols-3 gap-2'>
-      <div className='col-span-1'>
+        <div className='col-span-1'>
           <Label htmlFor="role">Role</Label>
           <Select
             onValueChange={(value) => setUser({ ...user, role: value })}
@@ -170,36 +260,61 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
           {fieldErrors.role && (
             <p className="text-sm text-red-500">{fieldErrors.role}</p>
           )}
+        </div>
+        <div className='col-span-2'>
+          <Label htmlFor="hire_date">Hire Date (This can be changed later)</Label>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                id="hire_date"
+                variant="outline"
+                className={cn(
+                  "w-full justify-start text-left font-normal",
+                  !date && "text-muted-foreground"
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {date ? format(date, "PPP") : <span>Pick a hire date</span>}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={date}
+                onSelect={setDate}
+                disabled={{ after: new Date() }}
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
       </div>
-      <div className='col-span-2'>
-        <Label htmlFor="hire_date">Hire Date (This can be changed later)</Label>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              id="hire_date"
-              variant="outline"
-              className={cn(
-                "w-full justify-start text-left font-normal",
-                !date && "text-muted-foreground"
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {date ? format(date, "PPP") : <span>Pick a hire date</span>}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={date}
-              onSelect={setDate}
-              disabled={{ after: new Date() }}
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
+
+      <div>
+        <Label htmlFor="organization">Organization</Label>
+        <Select
+          onValueChange={(value) => setOrganizationId(value)}
+          defaultValue={organizationId} 
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select an organization" />
+          </SelectTrigger>
+          <SelectContent side="top">
+            {organizations.map((org) => (
+              <SelectItem key={org.id} value={org.id.toString()}>
+                {org.name}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        {fieldErrors.organization && (
+          <p className="text-sm text-red-500">{fieldErrors.organization}</p>
+        )}
       </div>
-      </div>
-      <Button type="submit">Add Employee</Button>
+
+      <Button type="submit">
+        {isInviteEmployee ? 'Invite Employee' : 'Add Employee'}
+      </Button>
       {error && (
         <Alert variant="destructive">
           <AlertTitle>Error</AlertTitle>
