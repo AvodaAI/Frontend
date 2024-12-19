@@ -1,7 +1,7 @@
 //src/app/components/employees/AddEmployeeForm.tsx
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
@@ -19,11 +19,16 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components/ui/select"
-import { supabase } from "@/utils/supabase/supabaseClient";
 
 interface AddEmployeeFormProps {
   onClose?: () => void;
   isInviteEmployee?: boolean
+}
+
+interface Organization {
+  id: number,
+  name: string,
+  created_by: number,
 }
 
 export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormProps) {
@@ -40,7 +45,11 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
   const [success, setSuccess] = useState<boolean>(false)
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})
   const [organizationId, setOrganizationId] = useState('')
+  const [organizations, setOrganizations] = useState<Organization[]>()
 
+  useEffect(() => {
+    fetchOrganizations()
+  }, [])
 
   const validateFields = () => {
     const errors: { [key: string]: string } = {}
@@ -62,32 +71,15 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
     return Object.keys(errors).length === 0
   }
 
-  const organizations = [
-    {
-      id: 1,
-      name: 'test 1',
-      owner: 'hasemej496@lofiey.com',
-      is_active: true,
-      employees: [9, 10],
-      created_at: '2024-12-18 09:59:02.85'
-    },
-    {
-      id: 2,
-      name: 'test 2',
-      owner: 'hasemej496@lofiey.com',
-      is_active: true,
-      employees: [5, 6],
-      created_at: '2024-12-18 09:59:02.85'
-    },
-    {
-      id: 3,
-      name: 'test 3',
-      owner: 'hasemej496@lofiey.com',
-      is_active: true,
-      employees: [7, 8],
-      created_at: '2024-12-18 09:59:02.85'
+  const fetchOrganizations = async () => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/organizations/by-owner`, { credentials: 'include' })
+    if (response.ok) {
+      const data = await response.json()
+      setOrganizations(data)
+    } else {
+      console.error('Error fetching organizations')
     }
-  ]
+  }
 
   const handleAddEmployeeSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -152,8 +144,9 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
 
     if (!validateFields()) return
 
-    try {
-      const res = await fetch('/api/invitations/inviteUser', {
+    try {      
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/invitation/send-invite`, {
+        credentials: 'include',
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -165,15 +158,18 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
 
       if (!res.ok) {
         const data = await res.json()
-        throw new Error(data.error || 'Failed to invitation link')
+        throw new Error(data.error || 'Failed to generate and send an invitation link')
       }
 
       const expires_at = new Date();
       expires_at.setDate(expires_at.getDate() + 2);
-
-      const { error } = await supabase
-        .from('invitations')
-        .insert({
+      const newInvitation = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/invitation/add-invitation`, {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
           email_address: user?.email,
           hire_date: user?.hire_date,
           public_metadata: {
@@ -182,19 +178,19 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
             last_name: user.last_name,
             role: user.role
           },
-          created_at: (new Date()).toDateString(),
-          expires_at: expires_at.toISOString(),
-          revoked: null,
+          url: "",
+          revoked: false,
           status: "pending",
-          organization_id: organizationId
-        })
-
-        if (error) {
-          throw new Error(error.message);
-        }
+          organization_id: Number(organizationId)
+        }),
+      })
+      if (!newInvitation.ok) {
+        const data = await res.json();
+        throw new Error(data.error || 'Failed to add an invitation')
+      }
 
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create employee')
+      setError(err instanceof Error ? err.message : 'Failed to invite an employee')
       console.error(err)
     }
   }
@@ -300,7 +296,7 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
             <SelectValue placeholder="Select an organization" />
           </SelectTrigger>
           <SelectContent side="top">
-            {organizations.map((org) => (
+          {organizations && organizations.length > 0 && organizations.map((org) => (
               <SelectItem key={org.id} value={org.id.toString()}>
                 {org.name}
               </SelectItem>

@@ -45,7 +45,7 @@ export default function InviteUser() {
     }
 
     try {
-      const { data: userDetails, error: userError } = await supabase
+      const { data: InvitationDetails, error: userError } = await supabase
         .from('invitations')
         .select('*')
         .eq('email_address', userData?.email);
@@ -59,15 +59,15 @@ export default function InviteUser() {
       const { error: insertError } = await supabase
         .from("users")
         .insert({
-          first_name: userDetails?.[0]?.public_metadata?.first_name ?? '',
-          last_name: userDetails?.[0]?.public_metadata?.last_name ?? '',
+          first_name: InvitationDetails?.[0]?.public_metadata?.first_name ?? '',
+          last_name: InvitationDetails?.[0]?.public_metadata?.last_name ?? '',
           email: userData?.email,
           password: hashedPassword,
-          position: userDetails?.[0]?.public_metadata?.role ?? '',
-          hire_date: new Date(userDetails?.[0]?.hire_date),
+          position: InvitationDetails?.[0]?.public_metadata?.role ?? '',
+          hire_date: new Date(InvitationDetails?.[0]?.hire_date),
           created_at: new Date(),
           auth_id: userData?.id,
-          organizations: [userDetails?.[0]?.organization_id]
+          organization_ids: [InvitationDetails?.[0]?.organization_id]
         })
         .select()
         .single();
@@ -79,15 +79,16 @@ export default function InviteUser() {
       const { error } = await supabase
         .from('invitations')
         .update({ status: 'accepted' })
-        .eq('id', userDetails?.[0].id);
+        .eq('id', InvitationDetails?.[0].id);
 
       if (error) {
         throw new Error(error.message);
       }
 
-      redirect('/');
     } catch (error) {
       console.log('Error ===>: ', error);
+    } finally {
+      redirect('/');
     }
   };
 
@@ -115,7 +116,7 @@ export default function InviteUser() {
           />
           {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
         </div>
-        <Button type="submit">Set Password</Button>
+        <Button type="submit" disabled={!password || !confirmPassword || !!error}>Set Password</Button>
       </form>
     </div>
   );
