@@ -143,7 +143,11 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
     setError(null)
     setSuccess(false)
     setFieldErrors({})
-
+    if (!validateFields()) return
+    if (!organizationId) {
+      setFieldErrors({...fieldErrors, organization: 'Please select an organization'})
+      return
+    }
     if (!validateFields()) return
 
     try {
