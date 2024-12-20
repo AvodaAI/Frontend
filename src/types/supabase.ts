@@ -19,6 +19,15 @@ export interface Database {
           email: string;
           created_at: string;
           last_sign_in_at: string | null;
+          email_verified: Date;
+          role: string;
+          status: string;
+          position: string;
+          city: string;
+          country: string;
+          hire_date: Date;
+          auth_id: string;
+          organization_ids: number[];
         };
         Insert: {
           id?: string;
@@ -26,7 +35,15 @@ export interface Database {
           last_name?: string | null;
           email: string;
           created_at?: string;
-          last_sign_in_at?: string | null;
+          last_sign_in_at?: string | null;  email_verified: Date;
+          role: string;
+          status: string;
+          position: string;
+          city: string;
+          country: string;
+          hire_date: Date;
+          auth_id: string;
+          organization_ids: number[];
         };
         Update: {
           id?: string;
@@ -34,7 +51,15 @@ export interface Database {
           last_name?: string | null;
           email?: string;
           created_at?: string;
-          last_sign_in_at?: string | null;
+          last_sign_in_at?: string | null;  email_verified: Date;
+          role: string;
+          status: string;
+          position: string;
+          city: string;
+          country: string;
+          hire_date: Date;
+          auth_id: string;
+          organization_ids: number[];
         };
       };
       invitations: {

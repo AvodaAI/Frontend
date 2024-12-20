@@ -19,6 +19,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/app/components/ui/select"
+import { supabase } from '@/utils/supabase/supabaseClient'
+import { redirect } from 'next/navigation'
 
 interface AddEmployeeFormProps {
   onClose?: () => void;
@@ -144,7 +146,29 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
 
     if (!validateFields()) return
 
-    try {      
+    try {
+      const { data: userData } = await supabase
+        .from("users")
+        .select("*")
+        .eq("email", user.email)
+        .single();
+
+      if (userData) {
+        const { error } = await supabase
+          .from("users")
+          .update({ organization_ids: Array.from(new Set([...userData.organization_ids, Number(organizationId)])) })
+          .eq("email", user.email)
+          .single();
+        if (error) {
+          throw new Error(error.message);
+        }
+        setSuccess(true)
+        if (onClose) {
+          setTimeout(onClose, 2000);
+        }
+        return
+      }
+
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/invitation/send-invite`, {
         credentials: 'include',
         method: 'POST',
@@ -158,11 +182,13 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
 
       if (!res.ok) {
         const data = await res.json()
+        if (data.error === "Invalid or expired token") {
+          redirect("/")
+        }
+
         throw new Error(data.error || 'Failed to generate and send an invitation link')
       }
 
-      const expires_at = new Date();
-      expires_at.setDate(expires_at.getDate() + 2);
       const newInvitation = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/invitation/add-invitation`, {
         credentials: 'include',
         method: 'POST',
@@ -189,6 +215,10 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
         throw new Error(data.error || 'Failed to add an invitation')
       }
 
+      setSuccess(true)
+      if (onClose) {
+        setTimeout(onClose, 2000);
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to invite an employee')
       console.error(err)
@@ -290,13 +320,13 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
         <Label htmlFor="organization">Organization</Label>
         <Select
           onValueChange={(value) => setOrganizationId(value)}
-          defaultValue={organizationId} 
+          defaultValue={organizationId}
         >
           <SelectTrigger>
             <SelectValue placeholder="Select an organization" />
           </SelectTrigger>
           <SelectContent side="top">
-          {organizations && organizations.length > 0 && organizations.map((org) => (
+            {organizations && organizations.length > 0 && organizations.map((org) => (
               <SelectItem key={org.id} value={org.id.toString()}>
                 {org.name}
               </SelectItem>
