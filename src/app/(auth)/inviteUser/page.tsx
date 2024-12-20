@@ -9,7 +9,6 @@ import { redirect } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
 
-
 export default function InviteUser() {
   const [userData, setUserData] = useState<User | null>(null);
   const [password, setPassword] = useState('');
@@ -59,10 +58,11 @@ export default function InviteUser() {
       const { error: insertError } = await supabase
         .from("users")
         .insert({
-          first_name: InvitationDetails?.[0]?.public_metadata?.first_name ?? '',
-          last_name: InvitationDetails?.[0]?.public_metadata?.last_name ?? '',
+          first_name: InvitationDetails?.[0]?.public_metadata?.first_name ?? null,
+          last_name: InvitationDetails?.[0]?.public_metadata?.last_name ?? null,
           email: userData?.email,
           password: hashedPassword,
+          role: 'employee',
           position: InvitationDetails?.[0]?.public_metadata?.role ?? '',
           hire_date: new Date(InvitationDetails?.[0]?.hire_date),
           created_at: new Date(),
@@ -86,7 +86,11 @@ export default function InviteUser() {
       }
 
     } catch (error) {
-      console.log('Error ===>: ', error);
+      if (error instanceof Error) {
+        throw new Error(error.message);
+      } else {
+        throw new Error('An unexpected error occurred');
+      }
     } finally {
       redirect('/');
     }
