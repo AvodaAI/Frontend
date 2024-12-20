@@ -23,12 +23,15 @@ export default function InviteUser() {
     })
   }, [])
 
-  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleConfirmPasswordChange = (e: React.ChangeEvent) => {
     const value = e.target.value;
     setConfirmPassword(value);
-
     if (value !== password) {
       setError('Password and Confirm Password do not match');
+    } else if (value.length < 8) {
+      setError('Password must be at least 8 characters long');
+    } else if (!/(?=.*[0-9])(?=.*[!@#$%^&*])/.test(value)) {
+      setError('Password must contain at least one number and one special character');
     } else {
       setError(null);
     }
