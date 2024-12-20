@@ -5,9 +5,7 @@ import { supabase } from "@/utils/supabase/supabaseClient";
 export async function middleware(request: Request) {
   const res = NextResponse.next();
 
-  const token = request.headers
-    .get("cookie")
-    ?.match(/supabase-auth-token=([^;]+)/)?.[1];
+  const token = request.headers.get("cookie")?.match(/supabase-auth-token=([^;]+)/)?.[1];
 
   if (!token) {
     const url = new URL("/", request.url);
@@ -17,7 +15,8 @@ export async function middleware(request: Request) {
   const { data, error } = await supabase.auth.getUser(token);
 
   if (error || !data?.user) {
-    const url = new URL("/signin", request.url);
+    const url = new URL("/", request.url);
+
     return NextResponse.redirect(url);
   }
 
@@ -25,5 +24,5 @@ export async function middleware(request: Request) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/employees/:path*", "/time-tracking/:path*"], // Protect these routes
+  matcher: ["/dashboard/:path*", "/employees/:path*", "/invitations/:path*", "/time-tracking/:path*"], // Protect these routes
 };

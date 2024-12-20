@@ -1,11 +1,12 @@
 // src/types/supabase.ts
-export type Json =
-  | string
-  | number
-  | boolean
-  | null
-  | { [key: string]: Json }
-  | Json[];
+export type Json = string | number | boolean | null | { [key: string]: Json } | Json[];
+
+export interface PublicMetadata {
+  type: string;
+  first_name: string;
+  last_name: string;
+  role: string;
+}
 
 export interface Database {
   public: {
@@ -18,6 +19,15 @@ export interface Database {
           email: string;
           created_at: string;
           last_sign_in_at: string | null;
+          email_verified: Date;
+          role: string;
+          status: string;
+          position: string;
+          city: string;
+          country: string;
+          hire_date: Date;
+          auth_id: string;
+          organization_ids: number[];
         };
         Insert: {
           id?: string;
@@ -25,7 +35,15 @@ export interface Database {
           last_name?: string | null;
           email: string;
           created_at?: string;
-          last_sign_in_at?: string | null;
+          last_sign_in_at?: string | null;  email_verified: Date;
+          role: string;
+          status: string;
+          position: string;
+          city: string;
+          country: string;
+          hire_date: Date;
+          auth_id: string;
+          organization_ids: number[];
         };
         Update: {
           id?: string;
@@ -33,7 +51,15 @@ export interface Database {
           last_name?: string | null;
           email?: string;
           created_at?: string;
-          last_sign_in_at?: string | null;
+          last_sign_in_at?: string | null;  email_verified: Date;
+          role: string;
+          status: string;
+          position: string;
+          city: string;
+          country: string;
+          hire_date: Date;
+          auth_id: string;
+          organization_ids: number[];
         };
       };
       invitations: {
@@ -43,7 +69,12 @@ export interface Database {
           status: string;
           revoked: boolean;
           created_at: string;
+          hire_date: string;
+          public_metadata: PublicMetadata;
+          url: string;
           expires_at: string | null;
+          organization_id: number;
+          created_by: number;
         };
         Insert: {
           id?: string;
@@ -51,7 +82,12 @@ export interface Database {
           status?: string;
           revoked?: boolean;
           created_at?: string;
+          hire_date: string;
+          public_metadata: PublicMetadata;
+          url: string;
           expires_at?: string | null;
+          organization_id: number;
+          created_by: number;
         };
         Update: {
           id?: string;
@@ -59,7 +95,12 @@ export interface Database {
           status?: string;
           revoked?: boolean;
           created_at?: string;
+          hire_date: string;
+          public_metadata: PublicMetadata;
+          url: string;
           expires_at?: string | null;
+          organization_id: number;
+          created_by: number;
         };
       };
     };
