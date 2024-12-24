@@ -20,6 +20,10 @@ export function SignIn() {
     setError(null)
 
     try {
+      if (!process.env.NEXT_PUBLIC_API_URL) {
+        throw new Error('API URL is not configured');
+      }
+
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`, {
         method: 'POST',
         credentials: 'include',
