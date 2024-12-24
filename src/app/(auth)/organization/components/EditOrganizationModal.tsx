@@ -31,7 +31,7 @@ export function EditOrganizationModal({ org, onClose, onUpdate }: EditOrganizati
   const validateFields = () => {
     const errors: { [key: string]: string } = {}
 
-    if (!organization.name?.trim()) errors.first_name = 'Organization name is required'
+    if (!organization.name?.trim()) errors.name = 'Organization name is required'
     setFieldErrors(errors)
     return Object.keys(errors).length === 0
   }
@@ -89,7 +89,7 @@ export function EditOrganizationModal({ org, onClose, onUpdate }: EditOrganizati
                 onChange={(e) => setUser({ ...organization, name: e.target.value })}
                 className={fieldErrors.name ? 'border-red-500' : ''}
               />
-              {fieldErrors.first_name && (
+              {fieldErrors.name && (
                 <p className="text-sm text-red-500 mt-1">{fieldErrors.name}</p>
               )}
             </div>
