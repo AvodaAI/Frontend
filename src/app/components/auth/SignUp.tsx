@@ -18,8 +18,9 @@ export function SignUp() {
     setError(null)
     setSuccess(false)
 
-    const response = await fetch('/api/auth/signup', {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
       method: 'POST',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email, password }),
     })
