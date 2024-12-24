@@ -148,7 +148,6 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
       setFieldErrors({...fieldErrors, organization: 'Please select an organization'})
       return
     }
-    if (!validateFields()) return
 
     try {
       const { data: userData } = await supabase
