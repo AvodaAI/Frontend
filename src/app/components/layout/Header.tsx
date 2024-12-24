@@ -16,9 +16,9 @@ import { useUserRole } from "@/hooks/useRole";
 // Navigation links
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', adminOnly: false },
-  { name: 'Employees', href: '/employees', adminOnly: false },
+  { name: 'Employees', href: '/employees', adminOnly: true },
   { name: 'Time Tracking', href: '/time-tracking', adminOnly: false },
-  { name: 'Invitations', href: '/invitations', adminOnly: false },
+  { name: 'Invitations', href: '/invitations', adminOnly: true },
   { name: 'Settings', href: '/settings', adminOnly: false },
   { name: 'Status', href: '/status', adminOnly: false },
 ];
@@ -32,19 +32,21 @@ export function Header() {
     item => !item.adminOnly || (item.adminOnly && isAdmin)
   );
 
-  // Handle user sign out
-  const handleSignOut = async () => {
+   // Handle user sign out
+   const handleSignOut = async () => {
     try {
-      const response = await fetch('/api/auth/signout', {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signout`, {
         method: 'POST',
-      });
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' }
+      })
 
-      const data = await response.json();
+      const data = await response.json();      
       if (data.success) {
         window.location.href = '/';
       }
-
     } catch (error) {
+      console.error(error);
     }
   };
 
