@@ -32,8 +32,8 @@ export function Header() {
     item => !item.adminOnly || (item.adminOnly && isAdmin)
   );
 
-   // Handle user sign out
-   const handleSignOut = async () => {
+  // Handle user sign out
+  const handleSignOut = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signout`, {
         method: 'POST',
@@ -41,7 +41,11 @@ export function Header() {
         headers: { 'Content-Type': 'application/json' }
       })
 
-      const data = await response.json();      
+      if (!response.ok) {
+        throw new Error(`Signout failed: ${response.status}`);
+      }
+
+      const data = await response.json();
       if (data.success) {
         window.location.href = '/';
       }
@@ -60,42 +64,42 @@ export function Header() {
             </span>
           </Link>
           <div className="flex space-x-3">
-          <nav className="flex items-center space-x-6 text-sm font-medium">
-            {filteredNavigation.map((item) => (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={cn(
-                  "transition-colors hover:text-foreground/80",
-                  pathname === item.href ? "text-foreground" : "text-foreground/60"
-                )}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </nav>
-          <div className="flex  items-center justify-between space-x-2 md:justify-end min-w-[100px]">
-          <div className="flex items-center space-x-3 min-w-[100px]">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              aria-label="Notifications"
-            >
-              <Bell className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={handleSignOut}
-              aria-label="Sign Out"
-            >
-              Sign Out
-            </Button>
-          </div>
+            <nav className="flex items-center space-x-6 text-sm font-medium">
+              {filteredNavigation.map((item) => (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={cn(
+                    "transition-colors hover:text-foreground/80",
+                    pathname === item.href ? "text-foreground" : "text-foreground/60"
+                  )}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </nav>
+            <div className="flex  items-center justify-between space-x-2 md:justify-end min-w-[100px]">
+              <div className="flex items-center space-x-3 min-w-[100px]">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  aria-label="Notifications"
+                >
+                  <Bell className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={handleSignOut}
+                  aria-label="Sign Out"
+                >
+                  Sign Out
+                </Button>
+              </div>
 
+            </div>
           </div>
-        </div>
         </div>
 
         <Sheet>
@@ -131,7 +135,7 @@ export function Header() {
           </SheetContent>
         </Sheet>
 
-       
+
       </div>
     </header>
   );
