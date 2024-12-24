@@ -35,13 +35,19 @@ export default function InvitationsTable() {
     setLoading(true);
     setError(null);
     try {
-      const { data, error } = await supabase
-        .from('invitations') // Replace with your actual table name
-        .select('*');
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/invitation/get-invitation`, {
+        credentials: 'include',
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      })
 
-      if (error) {
-        throw new Error(error.message);
+      if (!response.ok) {
+        throw new Error(`Error: ${response.statusText}`);
       }
+
+      const data = await response.json();
       setInvitations(data || []);
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'Failed to fetch invitations';
