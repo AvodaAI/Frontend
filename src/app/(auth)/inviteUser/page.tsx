@@ -47,6 +47,17 @@ export default function InviteUser() {
     }
 
     try {
+      // update password in supabase authentication
+      if (userData?.id) {
+        const { error: supaBaseError } = await supabase.auth.admin.updateUserById(
+          userData?.id,
+          { password }
+        )
+        if (supaBaseError) {
+          throw new Error(supaBaseError?.message);
+        }
+      }
+
       const { data: InvitationDetails, error: userError } = await supabase
         .from('invitations')
         .select('*')
