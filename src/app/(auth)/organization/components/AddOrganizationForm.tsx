@@ -26,7 +26,7 @@ export function AddOrganizationForm({ onClose, addOrganization }: AddOrganizatio
 
   const validateFields = () => {
     const errors: { [key: string]: string } = {}
-    if (!organization.name?.trim()) errors.last_name = 'Organization name is required'
+    if (!organization.name?.trim()) errors.name = 'Organization name is required'
 
     setFieldErrors(errors)
     return Object.keys(errors).length === 0
@@ -85,20 +85,19 @@ export function AddOrganizationForm({ onClose, addOrganization }: AddOrganizatio
             id="name"
             value={organization.name ?? ''}
             onChange={(e) => setOrganization({ ...organization, name: e.target.value || "" })}
-            className=""
+            className={fieldErrors.name ? 'border-red-500' : ''}
           />
+          {fieldErrors.name && (
+            <p className="text-sm text-red-500 mt-1">{fieldErrors.name}</p>
+          )}
         </div>
         <div>
-          <Label htmlFor="last_name">Description</Label>
+          <Label htmlFor="description">Description</Label>
           <textarea
-            id="last_name"
+            id="description"
             value={organization.description || ''}
             onChange={(e) => setOrganization({ ...organization, description: e.target.value || '' })}
-            className={fieldErrors.last_name ? 'border-red-500' : ''}
           />
-          {fieldErrors.last_name && (
-            <p className="text-sm text-red-500 mt-1">{fieldErrors.last_name}</p>
-          )}
         </div>
       </div>
 
