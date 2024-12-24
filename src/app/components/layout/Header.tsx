@@ -16,6 +16,7 @@ import { useUserRole } from "@/hooks/useRole";
 // Navigation links
 const navigation = [
   { name: 'Dashboard', href: '/dashboard', adminOnly: false },
+  { name: 'Organization', href: '/organization', adminOnly: true },
   { name: 'Employees', href: '/employees', adminOnly: true },
   { name: 'Time Tracking', href: '/time-tracking', adminOnly: false },
   { name: 'Invitations', href: '/invitations', adminOnly: true },
@@ -134,8 +135,6 @@ export function Header() {
             </div>
           </SheetContent>
         </Sheet>
-
-
       </div>
     </header>
   );
