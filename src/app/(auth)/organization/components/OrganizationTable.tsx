@@ -34,7 +34,7 @@ export function OrganizationTable({ children, organizations, setOrganizations }:
         if (response.ok) {
             setOrganizations(organizations.filter((org) => org.id !== id));
         } else {
-            console.error("Error deleting employee");
+            console.error("Error deleting organization");
         }
     };
 
