@@ -44,7 +44,8 @@ export default function InvitationsTable() {
       })
 
       if (!response.ok) {
-        throw new Error(`Error: ${response.statusText}`);
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(`Error: ${errorData.message || response.statusText}`);
       }
 
       const data = await response.json();
