@@ -7,6 +7,7 @@ import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import { Organization } from '@/types'
+import { fetchWrapper } from '@/utils/fetchWrapper'
 
 interface AddOrganizationFormProps {
   onClose?: () => void;
@@ -41,7 +42,7 @@ export function AddOrganizationForm({ onClose, addOrganization }: AddOrganizatio
     if (!validateFields()) return
 
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/organizations`, {
+      const res = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -53,7 +54,7 @@ export function AddOrganizationForm({ onClose, addOrganization }: AddOrganizatio
       if (!res.ok) {
         const data = await res.json()
 
-        throw new Error(data.error || 'Failed to add Organization')
+        throw new Error(data.error || data.message || 'Failed to add Organization')
       }
 
       const { organization: resOrg } = await res.json();
@@ -68,7 +69,7 @@ export function AddOrganizationForm({ onClose, addOrganization }: AddOrganizatio
         description: '',
       })
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create employee')
+      setError(err instanceof Error ? err.message : 'Failed to create Organization')
       console.error(err)
     } finally {
 

@@ -7,10 +7,25 @@ import { supabase } from "@/utils/supabase/supabaseClient";
 import { getLoggedUser } from "./getLoggedUser";
 import { User } from "@supabase/supabase-js";
 
+// Defined a type for the user data fetched from the database
+export interface LoggedUserData {
+  id: string;
+  first_name: string | null;
+  last_name: string | null;
+  email: string;
+  created_at: string;
+  last_sign_in_at: string | null;
+  email_verified: Date;
+  role: string;
+  status: string;
+  organization_ids: number[];
+}
+
 export function useUserRole() {
   const [role, setRole] = useState<string | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [loggedUserData, setLoggedUserData] = useState<LoggedUserData | null>(null);
 
   useEffect(() => {
     async function fetchUserRole() {
@@ -38,15 +53,17 @@ export function useUserRole() {
     const fetchRole = async () => {
       const { data, error } = await supabase
         .from("users") // Assuming the table is named "users"
-        .select("role") // Assuming "role" column stores the user role
+        .select("*") // Assuming "role" column stores the user role
         .eq("auth_id", user?.id)
         .single();
 
       if (error) {
         console.error("Error fetching user role:", error.message);
         setRole(null);
+        setLoggedUserData(null);
       } else {
-        setRole(data?.role || "admin"); // Default to 'admin' if no role is found
+        setLoggedUserData(data);
+        setRole(data?.role || null);
       }
 
       setIsLoaded(true);
@@ -60,5 +77,6 @@ export function useUserRole() {
     isAdmin: role === "admin",
     isEmployee: role === "employee",
     isLoaded,
+    loggedUserData,
   };
 }

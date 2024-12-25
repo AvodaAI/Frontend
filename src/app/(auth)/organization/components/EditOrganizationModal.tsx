@@ -14,6 +14,7 @@ import {
   DialogFooter,
 } from '@components/ui/dialog'
 import { Organization, } from '@/types'
+import { fetchWrapper } from '@/utils/fetchWrapper'
 
 interface EditOrganizationModalProps {
   org: Organization
@@ -51,7 +52,7 @@ export function EditOrganizationModal({ org, onClose, onUpdate }: EditOrganizati
         description: organization.description
       }
 
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/organizations/${organization.id}`, {
+      const res = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/${organization.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
