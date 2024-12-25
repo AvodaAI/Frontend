@@ -56,12 +56,13 @@ export function useUserRole() {
         .select("*") // Assuming "role" column stores the user role
         .eq("auth_id", user?.id)
         .single();
-      setLoggedUserData(data);
 
       if (error) {
         console.error("Error fetching user role:", error.message);
         setRole(null);
+        setLoggedUserData(null);
       } else {
+        setLoggedUserData(data);
         setRole(data?.role || null);
       }
 

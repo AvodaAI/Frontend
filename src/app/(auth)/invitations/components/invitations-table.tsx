@@ -1,7 +1,7 @@
+// src/app/(auth)/invitations/components/invitations-table.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
-import { supabase } from '@/utils/supabase/supabaseClient';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/ui/table';
 import { Button } from '@components/ui/button';
 import { Loader2 } from 'lucide-react';
@@ -13,6 +13,7 @@ import { Input } from '@components/ui/input';
 import { formatUnixDate } from '@/utils/unixdate';
 import { useToast } from '@/hooks/useToast';
 import { RevokeSuccessToast } from './RevokeSuccessToast';
+import { fetchWrapper } from '@/utils/fetchWrapper';
 
 export default function InvitationsTable() {
   const { toast } = useToast();
@@ -35,7 +36,7 @@ export default function InvitationsTable() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/invitation/get-invitation`, {
+      const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/invitation/get-invitation`, {
         credentials: 'include',
         method: 'GET',
         headers: {
@@ -59,32 +60,44 @@ export default function InvitationsTable() {
   };
 
   const handleRevokeInvitation = async (invitationId: string) => {
-    try {
-      const { error } = await supabase
-        .from('invitations')
-        .update({ status: 'revoked', revoked: true })
-        .eq('id', invitationId);
 
-      if (error) {
-        throw new Error(error.message);
+    try {
+      const updatedInvitation = {
+        status: 'revoked',
+        revoked: true
       }
+
+      const res = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/invitation/${invitationId}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(updatedInvitation),
+        credentials: "include"
+      })
+
+      if (!res.ok) {
+        const errorData = await res.json()
+        throw new Error(errorData.error || 'Failed to update invitation')
+      }
+
+      const data = await res.json()
 
       // Refresh invitations after successful revoke
       fetchInvitations();
       setRevokedId(invitationId);
       toast({
         title: 'Invitation Revoked',
-        description: `Invitation with ID ${invitationId} was successfully revoked.`,
+        description: `Invitation is successfully revoked.`,
       });
-    }
-    catch (err) {
+    } catch (err) {
       setError('An error occurred while revoking the invitation');
       toast({
         title: 'Error',
         description: 'Failed to revoke the invitation.',
       });
     }
-  };
+  }
 
   if (loading) {
     return (

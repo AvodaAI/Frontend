@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { OrganizationTable } from './components/OrganizationTable'
 import { AddOrganizationForm } from './components/AddOrganizationForm'
 import { Organization } from '@/types'
+import { fetchWrapper } from '@/utils/fetchWrapper'
 export default function OrganizationPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [organizations, setOrganizations] = useState<Organization[]>([]);
@@ -20,7 +21,7 @@ export default function OrganizationPage() {
   }, []);
 
   const fetchOrganizations = async () => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/organizations/by-owner`, { credentials: "include" });
+    const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/by-owner`, { credentials: "include" });
     if (response.ok) {
       const data = await response.json();
       setOrganizations(data);

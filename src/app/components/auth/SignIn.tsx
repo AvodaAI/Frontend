@@ -7,12 +7,13 @@ import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
-
+import { fetchWrapper } from '@/utils/fetchWrapper'
 
 export function SignIn() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState<boolean>(false)
   const router = useRouter()
 
   const handleSignIn = async (e: React.FormEvent) => {
@@ -24,7 +25,7 @@ export function SignIn() {
         throw new Error('API URL is not configured');
       }
 
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`, {
+      const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -32,10 +33,11 @@ export function SignIn() {
       })
 
       if (response.ok) {
+        setSuccess(response.ok)
         // Add a small delay before navigation
         setTimeout(() => {
           router.replace('/dashboard')
-        }, 100)
+        }, 1000)
       } else {
         const data = await response.json()
         setError(data.error || 'Invalid email or password')
@@ -74,7 +76,7 @@ export function SignIn() {
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-      {!error && (
+      {success && (
         <Alert variant="default">
           <AlertTitle>Success</AlertTitle>
           <AlertDescription>
