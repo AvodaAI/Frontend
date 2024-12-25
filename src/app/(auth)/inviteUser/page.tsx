@@ -8,6 +8,7 @@ import { supabase } from '@/utils/supabase/supabaseClient';
 import { redirect } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
+import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 
 export default function InviteUser() {
   const [userData, setUserData] = useState<User | null>(null);
@@ -48,6 +49,21 @@ export default function InviteUser() {
 
     try {
       // update password in supabase authentication
+
+      const { data: InvitationDetails, error: userError } = await supabase
+        .from('invitations')
+        .select('*')
+        .eq('email_address', userData?.email);
+
+      if (InvitationDetails?.[0].revoked) {
+        setError('Your invitation has been revoked by admin.');
+        return;
+      }
+
+      if (userError) {
+        throw new Error(userError?.message);
+      }
+
       if (userData?.id) {
         const { error: supaBaseError } = await supabase.auth.admin.updateUserById(
           userData?.id,
@@ -56,15 +72,6 @@ export default function InviteUser() {
         if (supaBaseError) {
           throw new Error(supaBaseError?.message);
         }
-      }
-
-      const { data: InvitationDetails, error: userError } = await supabase
-        .from('invitations')
-        .select('*')
-        .eq('email_address', userData?.email);
-
-      if (userError) {
-        throw new Error(userError?.message);
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -106,7 +113,9 @@ export default function InviteUser() {
         throw new Error('An unexpected error occurred');
       }
     } finally {
-      redirect('/');
+      setTimeout(() => {
+        redirect('/');
+      }, 3000)
     }
   };
 
@@ -132,9 +141,15 @@ export default function InviteUser() {
             onChange={handleConfirmPasswordChange}
             required
           />
-          {error && <p className="text-red-600 text-sm mt-1">{error}</p>}
+          {/* {error && <p className="text-red-600 text-sm mt-1">{error}</p>} */}
         </div>
         <Button type="submit" disabled={!password || !confirmPassword || !!error}>Set Password</Button>
+        {error && (
+          <Alert variant="destructive">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
       </form>
     </div>
   );

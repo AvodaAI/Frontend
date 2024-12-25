@@ -17,6 +17,7 @@ import {
 } from "@components/ui/alert-dialog";
 import { Organization } from "@/types";
 import { EditOrganizationModal } from "./EditOrganizationModal";
+import { fetchWrapper } from "@/utils/fetchWrapper";
 
 export function OrganizationTable({ children, organizations, setOrganizations }: {
     children?: (organization: Organization) => React.ReactNode,
@@ -26,11 +27,11 @@ export function OrganizationTable({ children, organizations, setOrganizations }:
     const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
 
     const handleDelete = async (id: number) => {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/organizations/${id}`, {
+        const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/${id}`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-        });
+        })
         if (response.ok) {
             setOrganizations(organizations.filter((org) => org.id !== id));
         } else {
@@ -57,9 +58,9 @@ export function OrganizationTable({ children, organizations, setOrganizations }:
                     </TableHeader>
                     <TableBody>
                         {organizations && organizations.length > 0 && organizations.map((organization) => (
-                            <TableRow key={organization.id} className="hover:bg-muted/50">
-                                <TableCell>{organization.name}</TableCell>
-                                <TableCell>{organization.description}</TableCell>
+                            <TableRow key={organization?.id} className="hover:bg-muted/50">
+                                <TableCell>{organization?.name}</TableCell>
+                                <TableCell>{organization?.description}</TableCell>
                                 <TableCell className="text-right space-x-2">
                                     <Button onClick={() => setEditingOrganization(organization)} size="sm">
                                         Edit
@@ -99,11 +100,10 @@ export function OrganizationTable({ children, organizations, setOrganizations }:
             {/* Mobile view */}
             <div className="grid grid-cols-1 gap-4 md:hidden">
                 {organizations.map((organization) => (
-                    <div key={organization.id} className="bg-white p-4 rounded-lg border shadow-sm space-y-4">
+                    <div key={organization?.id} className="bg-white p-4 rounded-lg border shadow-sm space-y-4">
                         <div className="space-y-1">
-                            <div className="font-medium text-lg">{organization.name}</div>
-                            <div className="text-sm text-muted-foreground">{organization.description}</div>
-                            <div className="text-sm text-muted-foreground">{organization.is_active}</div>
+                            <div className="font-medium text-lg">{organization?.name}</div>
+                            <div className="text-sm text-muted-foreground">{organization?.description}</div>
                         </div>
 
                         <div className="grid grid-cols-2 gap-2 pt-2">

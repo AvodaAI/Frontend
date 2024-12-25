@@ -17,13 +17,13 @@ const UserDetails = () => {
 
           <p className="text-muted-foreground">
             Name: {loggedUserData?.first_name && loggedUserData?.last_name
-              ? `${loggedUserData.first_name} ${loggedUserData.last_name}`
+              ? `${loggedUserData?.first_name} ${loggedUserData?.last_name}`
               : 'Admin'}
           </p>
           {loggedUserData?.role ? (
             <>
               <p className="text-muted-foreground">
-                Role: {loggedUserData.role === 'admin' ? 'Administrator' : 'Employee'}
+                Role: {loggedUserData?.role === 'admin' ? 'Administrator' : 'Employee'}
               </p>
             </>
           ) : (
