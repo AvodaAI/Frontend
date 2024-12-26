@@ -36,7 +36,7 @@
     "drizzle-orm": "^0.36.4",
     "framer-motion": "^11.13.3",
     "lucide-react": "^0.294.0",
-    "next": "15.0.3",
+    "next": "15.1.2",
     "pg": "^8.13.1",
     "postgres": "^3.4.3",
     "react": "18.2.0 || ^19",
