@@ -24,6 +24,14 @@ export async function GET(req: NextRequest) {
   try {
     const supabase = createClient();
     const { data: { user }, error } = await (await supabase).auth.getUser();
+    if (error) {
+      console.error('Supabase error getting user:', error);
+      return NextResponse.json(
+        { error: 'Failed to get user from Supabase', code: 'SUPABASE_ERROR' },
+        { status: 500 }
+      );
+    }
+
     const userId = user?.id;
 
     if (!userId) {

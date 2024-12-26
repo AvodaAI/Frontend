@@ -1,11 +1,11 @@
 //src/app/components/layout/Header.tsx
-
 'use client';
+
 import React from 'react';
 
 import { Bell, Menu } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Button } from "@components/ui/button";
 import {
   Sheet,
@@ -29,6 +29,7 @@ const navigation = [
 export function Header() {
   const pathname = usePathname();
   const { isAdmin } = useUserRole();
+  const router = useRouter();
 
   // Filter navigation based on the user's role
   const filteredNavigation = navigation.filter(
@@ -50,7 +51,7 @@ export function Header() {
 
       const data = await response.json();
       if (data.success) {
-        window.location.href = '/';
+        router.push('/');
       }
     } catch (error) {
       console.error(error);

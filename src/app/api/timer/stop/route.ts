@@ -37,8 +37,19 @@ export async function POST(request: Request) {
     // Robust authentication check
     const supabase = createClient();
     const { data: { user }, error } = await (await supabase).auth.getUser();
-    const userId = user?.id;
     const orgId = user?.user_metadata?.organizationId;
+
+    if (error) {
+      return NextResponse.json(
+        { 
+          error: 'Authentication failed', 
+          code: 'SUPABASE_ERROR' 
+        },
+        { status: 500 }
+      );
+    }
+
+    const userId = user?.id;
 
     if (!userId || !user) {
       return NextResponse.json(
