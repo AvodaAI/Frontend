@@ -1,4 +1,5 @@
 // components/layout/section.tsx
+import React from 'react';
 import { cn } from "@/lib/utils"
 
 interface SectionProps extends React.HTMLAttributes<HTMLElement> {

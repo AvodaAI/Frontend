@@ -1,5 +1,7 @@
 //src/app/components/layout/Header.tsx
+
 'use client';
+import React from 'react';
 
 import { Bell, Menu } from "lucide-react";
 import Link from "next/link";

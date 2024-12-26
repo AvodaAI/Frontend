@@ -1,4 +1,7 @@
 //src/app/page.tsx
+
+import React from 'react';
+
 import { Header } from "./components/header";
 import { SignIn } from "@components/auth/SignIn";
 import { SignUp } from "@components/auth/SignUp";

@@ -1,4 +1,4 @@
-// src/app/invitations/get/route.ts
+// src/app/api/invitations/get/route.ts
 import { getInvitations } from "@/app/(auth)/invitations/actions/getInvitations";
 import { NextRequest, NextResponse } from "next/server";
 

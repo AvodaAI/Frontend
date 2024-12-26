@@ -1,10 +1,11 @@
+import React from 'react';
 //src/components/container.tsx
 //TODO: Fix JSX issues
 import { cn } from "@/lib/utils"
 
 interface ContainerProps extends React.HTMLAttributes<HTMLDivElement> {
   children: React.ReactNode
-  as?: keyof JSX.IntrinsicElements
+  as?: React.ElementType
   className?: string
 }
 

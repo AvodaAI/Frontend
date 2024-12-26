@@ -1,4 +1,5 @@
 // src/app/api/timer/stop/route.ts
+//FIXED: wrap in a database transaction to prevent race conditions where multiple timers could be started simultaneously.
 import { NextResponse } from 'next/server';
 import { db } from '@/db';
 import { timeLogs } from '@/db/schema';
@@ -37,7 +38,7 @@ export async function POST(request: Request) {
     const supabase = createClient();
     const { data: { user }, error } = await (await supabase).auth.getUser();
     const userId = user?.id;
-    const orgId = user?.organizationId;
+    const orgId = user?.user_metadata?.organizationId;
 
     if (!userId || !user) {
       return NextResponse.json(
@@ -53,7 +54,7 @@ export async function POST(request: Request) {
     const body = await request.json();
     const validatedData = stopTimerSchema.parse(body);
 
-    // Database transaction for atomicity
+    // Database transaction to prevent race conditions
     const stoppedTimeLog = await db.transaction(async (tx) => {
       // Find the active time log
       const activeTimeLog = await tx.query.timeLogs.findFirst({
@@ -80,9 +81,9 @@ export async function POST(request: Request) {
           duration_minutes: duration.minutes,
           description: validatedData.description,
           updated_at: endTime,
-          updated_by: user.firstName 
-            ? `${user.firstName} ${user.lastName || ''}`.trim() 
-            : user.username || userId,
+          updated_by: user.user_metadata?.firstName 
+            ? `${user.user_metadata.firstName} ${user.user_metadata.lastName || ''}`.trim() 
+            : user.user_metadata?.username || userId,
         })
         .where(eq(timeLogs.id, activeTimeLog.id))
         .returning();
@@ -98,9 +99,9 @@ export async function POST(request: Request) {
       timeLog: stoppedTimeLog.timeLog,
       user: {
         id: userId,
-        name: user.firstName 
-          ? `${user.firstName} ${user.lastName || ''}`.trim() 
-          : user.username,
+        name: user.user_metadata?.firstName 
+          ? `${user.user_metadata.firstName} ${user.user_metadata.lastName || ''}`.trim() 
+          : user.user_metadata?.username,
         organization: orgId ? { id: orgId } : null
       },
       duration: {

@@ -1,3 +1,4 @@
+// src/app/api/auth/signout.ts
 import { supabase } from "@/utils/supabase/supabaseClient";
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";

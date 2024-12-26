@@ -1,5 +1,6 @@
 // src/providers/SupabaseProvider.tsx
 'use client';
+import React from 'react';
 
 import { createContext, useContext } from 'react';
 import { SupabaseClient } from '@supabase/auth-helpers-nextjs';

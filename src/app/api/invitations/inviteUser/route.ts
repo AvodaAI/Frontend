@@ -1,3 +1,4 @@
+// src/app/api/invitations/inviteUser/route.ts
 import { supabase } from "@/utils/supabase/supabaseClient";
 import { NextResponse } from "next/server";
 

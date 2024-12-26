@@ -1,9 +1,11 @@
 //src/app/layout.tsx
-//TODO : Add Google Tag Manager + Config Analytics
+import React from 'react';
+
+//MediumTODO : Add Google Tag Manager + Config Analytics
 import './globals.css';
 import { Toaster } from '@components/ui/toaster';
 import { Inter } from 'next/font/google';
-import { cn } from '@/lib/utils';
+import { cn } from "@/lib/utils";
 import SupabaseClientWrapper from './SupabaseClientWrapper';
 import { GoogleTagManager } from '@next/third-parties/google'
 import { GoogleAnalytics } from '@next/third-parties/google'
