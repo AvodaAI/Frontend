@@ -18,6 +18,7 @@ import {
 import { Organization } from "@/types";
 import { EditOrganizationModal } from "./EditOrganizationModal";
 import { fetchWrapper } from "@/utils/fetchWrapper";
+import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
 
 export function OrganizationTable({ children, organizations, setOrganizations }: {
     children?: (organization: Organization) => React.ReactNode,
@@ -25,17 +26,20 @@ export function OrganizationTable({ children, organizations, setOrganizations }:
     setOrganizations: React.Dispatch<React.SetStateAction<Organization[]>>;
 }) {
     const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
+    const [error, setError] = useState<string | null>(null);
 
     const handleDelete = async (id: number) => {
-        const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/${id}`, {
+        const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/${id}?organization_id=88&action=delete-organization`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
         })
+
         if (response.ok) {
             setOrganizations(organizations.filter((org) => org.id !== id));
         } else {
-            console.error("Error deleting organization");
+            const data = await response.json();
+            setError(data.error || 'Error deleting organizations');
         }
     };
 
@@ -95,6 +99,13 @@ export function OrganizationTable({ children, organizations, setOrganizations }:
                         ))}
                     </TableBody>
                 </Table>
+
+                {error && (
+                    <Alert variant="destructive">
+                        <AlertTitle>Error</AlertTitle>
+                        <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                )}
             </div>
 
             {/* Mobile view */}

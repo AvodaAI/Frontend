@@ -14,11 +14,16 @@ const TimelogsPage = () => {
   const fetchTimelogs = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/timelogs`, { credentials: "include" });
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/timelogs?organization_id=88&action=get-timelog`, { credentials: "include" });
       const data = await response.json();
-      setTimelogs(data.data);
-    } catch (err) {
-      setError('Failed to fetch timelogs.');
+      if (response.ok) {
+        setTimelogs(data.data);
+      } else {
+        setError(data.error || 'Failed to fetch timelogs.');
+      }
+    } catch (error) {
+      setLoading(false);
+      throw new Error('Failed to fetch timelogs.');
     } finally {
       setLoading(false);
     }
