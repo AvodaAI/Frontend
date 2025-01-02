@@ -42,12 +42,17 @@ export function AddOrganizationForm({ onClose, addOrganization }: AddOrganizatio
     if (!validateFields()) return
 
     try {
+      const organizationWithAction = {
+        ...organization,
+        action: 'create-organization'
+      }
+
       const res = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(organization),
+        body: JSON.stringify(organizationWithAction),
         credentials: 'include'
       })
 

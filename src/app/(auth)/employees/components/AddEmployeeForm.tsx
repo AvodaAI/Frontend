@@ -74,7 +74,7 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
   }
 
   const fetchOrganizations = async () => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/organizations/by-owner`, { credentials: 'include' })
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/organizations/by-user?organization_id=88&action=get-organization`, { credentials: 'include' })
     if (response.ok) {
       const data = await response.json()
       setOrganizations(data)
@@ -145,7 +145,7 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
     setFieldErrors({})
     if (!validateFields()) return
     if (!organizationId) {
-      setFieldErrors({...fieldErrors, organization: 'Please select an organization'})
+      setFieldErrors({ ...fieldErrors, organization: 'Please select an organization' })
       return
     }
 
@@ -157,14 +157,24 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
         .single();
 
       if (userData) {
-        const { error } = await supabase
-          .from("users")
-          .update({ organization_ids: Array.from(new Set([...userData.organization_ids, Number(organizationId)])) })
-          .eq("email", user.email)
-          .single();
-        if (error) {
-          throw new Error(error.message);
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/employee/${user.id}`, {
+          credentials: 'include',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            userData: userData,
+            organization_id: Number(organizationId),
+            action: "update-employee"
+          }),
+        })
+
+        if (!res.ok) {
+          const data = await res.json();
+          throw new Error(data.error || 'Failed to add user into organization.')
         }
+
         setSuccess(true)
         if (onClose) {
           setTimeout(onClose, 2000);
@@ -179,7 +189,9 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          email: user?.email
+          email: user?.email,
+          organization_id: Number(organizationId),
+          action: "invite-user"
         }),
       })
 
@@ -210,11 +222,12 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
           url: "",
           revoked: false,
           status: "pending",
-          organization_id: Number(organizationId)
+          organization_id: Number(organizationId),
+          action: "create-invitation"
         }),
       })
       if (!newInvitation.ok) {
-        const data = await res.json();
+        const data = await newInvitation.json();
         throw new Error(data.error || 'Failed to add an invitation')
       }
 

@@ -106,6 +106,33 @@ export default function InviteUser() {
         throw new Error(error.message);
       }
 
+      const newPermissions = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/permissions`, {
+        credentials: 'include',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          permissions: {
+            "get-task": true,
+            "get-project": true,
+            "get-timelog": true,
+            "get-tracker-status": true,
+            "timer-start": true,
+            "timer-stop": true,
+            "timer-pause": true,
+            "timer-resume": true,
+          },
+          "organization_id": Number(InvitationDetails?.[0]?.organization_id),
+          "user_id": userData?.id,
+          "action": "create-permission"
+        }),
+      })
+      if (!newPermissions.ok) {
+        const data = await newPermissions.json();
+        throw new Error(data.error || 'Failed to add an invitation')
+      }
+
     } catch (error) {
       if (error instanceof Error) {
         throw new Error(error.message);

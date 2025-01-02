@@ -49,7 +49,9 @@ export function EditOrganizationModal({ org, onClose, onUpdate }: EditOrganizati
     try {
       const updatedOrganization = {
         name: organization.name,
-        description: organization.description
+        description: organization.description,
+        organization_id: organization.id,
+        action: "update-organization"
       }
 
       const res = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/${organization.id}`, {
