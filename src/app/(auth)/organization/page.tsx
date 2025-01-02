@@ -8,9 +8,11 @@ import { OrganizationTable } from './components/OrganizationTable'
 import { AddOrganizationForm } from './components/AddOrganizationForm'
 import { Organization } from '@/types'
 import { fetchWrapper } from '@/utils/fetchWrapper'
+import { Alert, AlertDescription, AlertTitle } from '@/app/components/ui/alert'
 export default function OrganizationPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [organizations, setOrganizations] = useState<Organization[]>([]);
+  const [error, setError] = useState<string | null>(null);
 
   const addOrganization = (organization: Organization) => {
     setOrganizations((prev) => ([organization, ...prev,]))
@@ -21,12 +23,13 @@ export default function OrganizationPage() {
   }, []);
 
   const fetchOrganizations = async () => {
-    const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/by-owner`, { credentials: "include" });
+    const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/by-user?organization_id=88&action=get-organization`, { credentials: "include" });
+    const data = await response.json();
     if (response.ok) {
-      const data = await response.json();
       setOrganizations(data);
     } else {
-      console.error("Error fetching organizations");
+      setError(data.error || 'Error fetching organizations');
+      throw new Error(data.error || 'Error fetching organizations')
     }
   };
 
@@ -50,9 +53,18 @@ export default function OrganizationPage() {
           </Dialog>
         </div>
 
-        <div className="rounded-lg">
-          <OrganizationTable organizations={organizations} setOrganizations={setOrganizations} />
-        </div>
+        {!error && (
+          <div className="rounded-lg">
+            <OrganizationTable organizations={organizations} setOrganizations={setOrganizations} />
+          </div>
+        )}
+
+        {error && (
+          <Alert variant="destructive">
+            <AlertTitle>Error</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
       </div>
     </div>
   )

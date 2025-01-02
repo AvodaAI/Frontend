@@ -36,7 +36,7 @@ export default function InvitationsTable() {
     setLoading(true);
     setError(null);
     try {
-      const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/invitation/get-invitation`, {
+      const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/invitation/get-invitation?organization_id=88&action=get-invitation`, {
         credentials: 'include',
         method: 'GET',
         headers: {
@@ -60,11 +60,12 @@ export default function InvitationsTable() {
   };
 
   const handleRevokeInvitation = async (invitationId: string) => {
-
     try {
       const updatedInvitation = {
         status: 'revoked',
-        revoked: true
+        revoked: true,
+        organization_id: 88,
+        action: "update-invitation"
       }
 
       const res = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/invitation/${invitationId}`, {

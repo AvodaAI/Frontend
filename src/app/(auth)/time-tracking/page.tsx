@@ -53,15 +53,15 @@ const TimerPage = () => {
   const checkTimerStatus = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/status`, {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/status?organization_id=88&action=get-tracker-status`, {
         credentials: 'include',
       });
 
+      const data = await res.json();
       if (!res.ok) {
-        const data = await res.json();
         throw new Error(data.error || data.message || 'Failed to start timer.');
       }
-      const data = await res.json();
+
       if (data.data) setIsActive(true);
       else if (data && data.data && data.data.status === "Paused") setIsPaused(true);
     } catch (err) {
@@ -74,9 +74,16 @@ const TimerPage = () => {
   const handleClockIn = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/clock-in`, {
-        credentials: 'include',
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/start`, {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          organization_id: 88,
+          action: "timer-start"
+        }),
+        credentials: 'include',
       });
 
       if (!res.ok) {
@@ -97,8 +104,15 @@ const TimerPage = () => {
     try {
       setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/pause`, {
-        credentials: 'include',
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          organization_id: 88,
+          action: "timer-pause"
+        }),
+        credentials: 'include'
       });
 
       if (!res.ok) {
@@ -118,8 +132,15 @@ const TimerPage = () => {
     try {
       setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/resume`, {
-        credentials: 'include',
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          organization_id: 88,
+          action: "timer-resume"
+        }),
+        credentials: 'include'
       });
       if (!res.ok) {
         const data = await res.json();
@@ -137,8 +158,15 @@ const TimerPage = () => {
     try {
       setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/stop`, {
-        credentials: 'include',
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          organization_id: 88,
+          action: "timer-stop"
+        }),
+        credentials: 'include'
       });
       if (!res.ok) {
         const data = await res.json();
