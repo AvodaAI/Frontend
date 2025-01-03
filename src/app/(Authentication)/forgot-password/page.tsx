@@ -113,9 +113,15 @@ export default function AuthPage() {
             <div>
                 <form className="space-y-6" onSubmit={handleSendEmail}>
                     {successMessage && (
-                        <div className="bg-green-100 text-green-800 p-2 rounded-md mb-4 flex justify-center items-center text-sm">
+                        <motion.div
+                            initial={{ opacity: 0, y: -20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.5 }}
+                            className="bg-green-100 text-green-800 p-2 rounded-md mb-4 flex justify-center items-center text-sm"
+                        >
                             {successMessage}
-                        </div>
+                        </motion.div>
                     )}
                     <div>
                         <Input
@@ -138,7 +144,7 @@ export default function AuthPage() {
                             className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition duration-150 ease-in-out"
                             disabled={loading} // Disable button while loading
                         >
-                            {loading ? 'Sending...' : 'Send Email'}
+                            {loading ? <Icon icon="eos-icons:three-dots-loading" width="35" height="35" /> : 'Send Email'}
                         </Button>
                     </div>
                 </form>
