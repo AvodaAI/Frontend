@@ -3,8 +3,6 @@ import { useRouter } from 'next/navigation'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
-import { Container } from '@components/container'
-import { Section } from '@components/section'
 import { motion } from 'framer-motion'
 import { Icon } from '@iconify-icon/react'
 import Link from 'next/link'
@@ -26,6 +24,8 @@ export default function AuthPage() {
     
     const [error, setError] = useState<string | null>(null);
 
+    const [showPassword, setShowPassword] = useState(false);
+
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); 
         setLoading(true); 
@@ -37,13 +37,32 @@ export default function AuthPage() {
             return;
         }
 
-        console.log('Email:', email);
-        console.log('Password:', password);
-        
-        setTimeout(() => {
+        try {
+            if (!process.env.NEXT_PUBLIC_API_URL) {
+                throw new Error('API URL is not configured');
+            }
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password }),
+            });
+
+            if (response.ok) {
+                // Add a small delay before navigation
+                setTimeout(() => {
+                    router.replace('/dashboard');
+                }, 1000);
+            } else {
+                const data = await response.json();
+                setError(data.error || 'Invalid email or password');
+            }
+        } catch (error) {
+            setError('An error occurred during sign in');
+        } finally {
             setLoading(false); 
-        }, 3000);
-        
+        }
     };
 
     const [email, setEmail] = useState('');
@@ -102,7 +121,17 @@ export default function AuthPage() {
                         </div>
                 </div>
                 <div>
-                    {error && <div className="text-red-500 pb-3">{error}</div>} {/* Error message */}
+                    {error && (
+                        <motion.div
+                            initial={{ opacity: 0, y: -10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -10 }}
+                            transition={{ duration: 0.3 }}
+                            className="bg-red-100 text-red-800 p-2 rounded-md mb-4 flex justify-center items-center text-sm"
+                        >
+                            {error}
+                        </motion.div>
+                    )} {/* Error message */}
                     <form className="space-y-6" onSubmit={handleLogin}>
                         <div className="space-y-4">
                             <div>
@@ -119,11 +148,11 @@ export default function AuthPage() {
                                     icon={<Icon icon="material-symbols-light:mail-outline-sharp" className='text-secondary' width="24" height="24" />}
                                 />
                             </div>
-                            <div>
+                            <div className='relative'>
                                 <Input
                                     id="password"
                                     name="password"
-                                    type="password"
+                                    type={showPassword ? 'text' : 'password'}
                                     autoComplete="current-password"
                                     required
                                     placeholder="Password"
@@ -132,6 +161,13 @@ export default function AuthPage() {
                                     className={`w-full px-4 py-2 rounded-md border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 transition duration-150 ease-in-out ${error ? 'border-red-500' : ''}`} // Error border
                                     icon={<Icon icon="carbon:password" className='text-secondary' width="22" height="22" />}
                                 />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-[11px] z-10"
+                                >
+                                    <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"} className='text-secondary' width="22" height="22" />
+                                </button>
                             </div>
                         </div>
 

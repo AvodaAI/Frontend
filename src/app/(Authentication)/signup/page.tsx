@@ -21,25 +21,50 @@ export default function AuthPage() {
     const supabase = createClientComponentClient()
 
     const [isLoading, setIsLoading] = useState(false); 
+    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null); // Added message state
+    const [showPassword, setShowPassword] = useState(false); // State for password visibility
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Added state for confirm password visibility
 
     const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); 
         setIsLoading(true); 
-        const { firstName, lastName, email, password } = formData; 
+        console.log(formData)
+        const { firstName, lastName, email, password, confirmPassword } = formData; 
         
+        // Check if passwords match (frontend validation only)
+        const passwordsMatch = password === confirmPassword; // Store match result
+        if (!passwordsMatch) {
+            setMessage({ type: 'error', text: 'Passwords do not match' }); // Set error message
+            setIsLoading(false);
+            return;
+        }
         
-        setTimeout(async () => {
-            
-            setIsLoading(false); 
-        }, 3000);
+        // API integration for sign up
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
+            method: 'POST',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password, first_name: firstName, last_name: lastName }),
+        });
+
+        if (response.ok) {
+            setMessage({ type: 'success', text: 'Signup successful! Redirecting...' }); // Set success message
+            router.push('/dashboard'); // Redirect on success
+        } else {
+            const data = await response.json();
+            setMessage({ type: 'error', text: data.error || 'An error occurred during sign up' }); // Set error message
+        }
+
+        setIsLoading(false); 
     };
 
-    // New state variable for form data
+    // Updated state variable for form data
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
         password: '',
+        confirmPassword: '', // Added confirmPassword field
     });
 
     // Updated handle functions
@@ -107,6 +132,12 @@ export default function AuthPage() {
                         </div>
                 </div>
                 <div>
+                    {/* Message Section */}
+                {message && (
+                    <div className={`p-4 mb-4 text-sm ${message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} rounded-lg`} role="alert">
+                        {message.text}
+                    </div>
+                )}
                     <form className="space-y-4" onSubmit={handleSignUp}>
                         <div className="flex space-x-2">
                             <Input
@@ -143,18 +174,45 @@ export default function AuthPage() {
                                 icon={<Icon icon="material-symbols-light:mail-outline-sharp" className='text-secondary' width="24" height="24" />}
                             />
                         </div>
-                        <div>
+                        <div className='relative'>
                             <Input
                                 id="password"
                                 name="password"
-                                type="password"
+                                type={showPassword ? 'text' : 'password'}
                                 required
                                 placeholder="Password"
                                 value={formData.password}
                                 onChange={handleInputChange}
-                                className="w-full"
+                                className={`w-full ${formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword ? 'border-red-500' : ''}`}
                                 icon={<Icon icon="carbon:password" className='text-secondary' width="22" height="22" />}
                             />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute right-4 top-[11px] z-10"
+                            >
+                                <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"} className='text-secondary' width="22" height="22" />
+                            </button>
+                        </div>
+                        <div className='relative'>
+                            <Input
+                                id="confirmPassword"
+                                name="confirmPassword"
+                                type={showConfirmPassword ? 'text' : 'password'}
+                                required
+                                placeholder="Confirm Password"
+                                value={formData.confirmPassword}
+                                onChange={handleInputChange}
+                                className={`w-full ${formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword ? 'border-red-500' : ''}`}
+                                icon={<Icon icon="carbon:password" className='text-secondary' width="22" height="22" />}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                                className="absolute right-4 top-[11px] z-10"
+                            >
+                                <Icon icon={showConfirmPassword ? "mdi:eye-off" : "mdi:eye"} className='text-secondary' width="22" height="22" />
+                            </button>
                         </div>
                         <div>
                             <Button
