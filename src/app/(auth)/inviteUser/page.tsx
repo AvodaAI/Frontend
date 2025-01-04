@@ -24,7 +24,7 @@ export default function InviteUser() {
     })
   }, [])
 
-  const handleConfirmPasswordChange = (e: React.ChangeEvent) => {
+  const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setConfirmPassword(value);
     if (value !== password) {
@@ -48,8 +48,6 @@ export default function InviteUser() {
     }
 
     try {
-      // update password in supabase authentication
-
       const { data: InvitationDetails, error: userError } = await supabase
         .from('invitations')
         .select('*')
@@ -83,8 +81,8 @@ export default function InviteUser() {
           last_name: InvitationDetails?.[0]?.public_metadata?.last_name ?? null,
           email: userData?.email,
           password: hashedPassword,
-          role: 'employee',
-          position: InvitationDetails?.[0]?.public_metadata?.role ?? '',
+          role: InvitationDetails?.[0]?.public_metadata?.role ?? 'employee',
+          position: InvitationDetails?.[0]?.public_metadata?.role ?? 'employee',
           hire_date: new Date(InvitationDetails?.[0]?.hire_date),
           created_at: new Date(),
           auth_id: userData?.id,
@@ -106,31 +104,24 @@ export default function InviteUser() {
         throw new Error(error.message);
       }
 
-      const newPermissions = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/permissions`, {
-        credentials: 'include',
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
+      const { error: permissionError } = await supabase.from("permissions").insert({
+        permissions: {
+          "get-organization": true,
+          "get-task": true,
+          "get-project": true,
+          "get-timelog": true,
+          "get-tracker-status": true,
+          "timer-start": true,
+          "timer-stop": true,
+          "timer-pause": true,
+          "timer-resume": true,
         },
-        body: JSON.stringify({
-          permissions: {
-            "get-task": true,
-            "get-project": true,
-            "get-timelog": true,
-            "get-tracker-status": true,
-            "timer-start": true,
-            "timer-stop": true,
-            "timer-pause": true,
-            "timer-resume": true,
-          },
-          "organization_id": Number(InvitationDetails?.[0]?.organization_id),
-          "user_id": userData?.id,
-          "action": "create-permission"
-        }),
+        "organization_id": Number(InvitationDetails?.[0]?.organization_id),
+        "user_id": userData?.id,
+        "granted_by": InvitationDetails?.[0]?.created_by
       })
-      if (!newPermissions.ok) {
-        const data = await newPermissions.json();
-        throw new Error(data.error || 'Failed to add an invitation')
+      if (permissionError) {
+        throw new Error(permissionError?.message || 'Failed to add permission');
       }
 
     } catch (error) {
@@ -168,7 +159,6 @@ export default function InviteUser() {
             onChange={handleConfirmPasswordChange}
             required
           />
-          {/* {error && <p className="text-red-600 text-sm mt-1">{error}</p>} */}
         </div>
         <Button type="submit" disabled={!password || !confirmPassword || !!error}>Set Password</Button>
         {error && (

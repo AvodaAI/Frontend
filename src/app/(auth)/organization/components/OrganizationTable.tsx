@@ -19,12 +19,15 @@ import { Organization } from "@/types";
 import { EditOrganizationModal } from "./EditOrganizationModal";
 import { fetchWrapper } from "@/utils/fetchWrapper";
 import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
+import { usePagination } from '@/utils/invitations-pagination';
 
 export function OrganizationTable({ children, organizations, setOrganizations }: {
     children?: (organization: Organization) => React.ReactNode,
     organizations: Organization[];
     setOrganizations: React.Dispatch<React.SetStateAction<Organization[]>>;
 }) {
+    // Pagination
+    const { paginatedItems, paginationState, totalPages, goToNextPage, goToPreviousPage } = usePagination(organizations, 5);
     const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
     const [error, setError] = useState<string | null>(null);
 
@@ -61,7 +64,7 @@ export function OrganizationTable({ children, organizations, setOrganizations }:
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {organizations && organizations.length > 0 && organizations.map((organization) => (
+                    {paginatedItems && paginatedItems.length > 0 && paginatedItems.map((organization) => (
                             <TableRow key={organization?.id} className="hover:bg-muted/50">
                                 <TableCell>{organization?.name}</TableCell>
                                 <TableCell>{organization?.description}</TableCell>
@@ -100,6 +103,27 @@ export function OrganizationTable({ children, organizations, setOrganizations }:
                     </TableBody>
                 </Table>
 
+                 {/* Pagination Controls */}
+                 <div className="flex justify-between items-center mt-4">
+                    <Button
+                        variant="outline"
+                        onClick={goToPreviousPage}
+                        disabled={paginationState.currentPage === 1}
+                    >
+                        Previous
+                    </Button>
+                    <span>
+                        Page {paginationState.currentPage} of {totalPages}
+                    </span>
+                    <Button
+                        variant="outline"
+                        onClick={goToNextPage}
+                        disabled={paginationState.currentPage === totalPages}
+                    >
+                        Next
+                    </Button>
+                </div>
+
                 {error && (
                     <Alert variant="destructive">
                         <AlertTitle>Error</AlertTitle>
@@ -110,7 +134,7 @@ export function OrganizationTable({ children, organizations, setOrganizations }:
 
             {/* Mobile view */}
             <div className="grid grid-cols-1 gap-4 md:hidden">
-                {organizations.map((organization) => (
+                {paginatedItems.map((organization) => (
                     <div key={organization?.id} className="bg-white p-4 rounded-lg border shadow-sm space-y-4">
                         <div className="space-y-1">
                             <div className="font-medium text-lg">{organization?.name}</div>

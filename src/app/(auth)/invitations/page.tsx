@@ -6,7 +6,7 @@ import { Button } from "@components/ui/button"
 import { Plus } from "lucide-react"
 import { useState } from "react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@components/ui/dialog'
-import { AddEmployeeForm } from "../employees/components/AddEmployeeForm"
+import { InviteEmployeeForm } from "./components/InviteEmployeeForm"
 
 export default function InvitationsPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -27,7 +27,7 @@ export default function InvitationsPage() {
               <DialogHeader>
                 <DialogTitle>Invite Employee</DialogTitle>
               </DialogHeader>
-              <AddEmployeeForm onClose={() => setIsDialogOpen(false)} isInviteEmployee />
+              <InviteEmployeeForm onClose={() => setIsDialogOpen(false)} />
             </DialogContent>
           </Dialog>
         </div>
