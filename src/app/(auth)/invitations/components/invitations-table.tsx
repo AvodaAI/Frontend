@@ -12,7 +12,6 @@ import { useSearch } from '@/utils/invitations-search';
 import { Input } from '@components/ui/input';
 import { formatUnixDate } from '@/utils/unixdate';
 import { useToast } from '@/hooks/useToast';
-import { RevokeSuccessToast } from './RevokeSuccessToast';
 import { fetchWrapper } from '@/utils/fetchWrapper';
 
 export default function InvitationsTable() {
@@ -20,7 +19,6 @@ export default function InvitationsTable() {
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [revokedId, setRevokedId] = useState<string | null>(null);
 
   // Search functionality
   const { searchTerm, setSearchTerm, filteredItems: filteredInvitations } = useSearch(invitations);
@@ -79,6 +77,7 @@ export default function InvitationsTable() {
 
       if (!res.ok) {
         const errorData = await res.json()
+        setError('Failed to revoke the invitation.')
         throw new Error(errorData.error || 'Failed to update invitation')
       }
 
@@ -86,13 +85,12 @@ export default function InvitationsTable() {
 
       // Refresh invitations after successful revoke
       fetchInvitations();
-      setRevokedId(invitationId);
       toast({
         title: 'Invitation Revoked',
-        description: `Invitation is successfully revoked.`,
+        description: `Invitation is revoked.`,
       });
     } catch (err) {
-      setError('An error occurred while revoking the invitation');
+      setError('Failed to revoke the invitation.');
       toast({
         title: 'Error',
         description: 'Failed to revoke the invitation.',
@@ -114,7 +112,6 @@ export default function InvitationsTable() {
 
   return (
     <div className="w-full space-y-4">
-      {revokedId && <RevokeSuccessToast invitationId={revokedId} />}
       {/* Search Input */}
       <Input
         placeholder="Search invitations..."
