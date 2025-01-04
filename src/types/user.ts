@@ -1,15 +1,5 @@
 //src/types/user.ts
 import { z } from 'zod';
-import { users } from '@/db/schema';
-import { InferModel } from 'drizzle-orm';
-
-// User type from database schema
-export type User = InferModel<typeof users>;
-
-// User type for creating new users
-export type NewUser = InferModel<typeof users, 'insert'> & {
-  hire_date?: Date | string | null;
-}
 
 // Zod validation schema for user creation
 export const UserSchema = z.object({
@@ -23,6 +13,21 @@ export const UserSchema = z.object({
   country: z.string().optional(),
   hire_date: z.date().optional(),
 });
+
+// Type for new user
+export interface NewUser {
+  id?: number,
+  email: string,
+  password?: string,
+  role: string,
+  last_name: string,
+  first_name: string,
+  position?: string,
+  city?: string,
+  country?: string,
+  hire_date?: Date | string | null,
+  auth_id?: string,
+}
 
 // Type for user authentication
 export interface AuthUser {
