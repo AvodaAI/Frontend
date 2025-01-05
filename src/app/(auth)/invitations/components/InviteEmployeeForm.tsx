@@ -1,4 +1,4 @@
-//src/app/components/employees/AddEmployeeForm.tsx
+// src\app\(auth)\invitations\components\InviteEmployeeForm.tsx
 'use client'
 
 import { useEffect, useState } from 'react'
@@ -6,7 +6,6 @@ import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
-import { NewUser } from '@/types/user'
 import { Calendar } from '@components/ui/calendar'
 import { Popover, PopoverContent, PopoverTrigger } from '@components/ui/popover'
 import { format } from 'date-fns'
@@ -21,10 +20,10 @@ import {
 } from "@/app/components/ui/select"
 import { supabase } from '@/utils/supabase/supabaseClient'
 import { redirect } from 'next/navigation'
+import { NewUser } from '@/types'
 
 interface AddEmployeeFormProps {
   onClose?: () => void;
-  isInviteEmployee?: boolean
 }
 
 interface Organization {
@@ -33,7 +32,7 @@ interface Organization {
   created_by: number,
 }
 
-export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormProps) {
+export function InviteEmployeeForm({ onClose }: AddEmployeeFormProps) {
   const [user, setUser] = useState<NewUser>({
     first_name: '',
     last_name: '',
@@ -83,61 +82,6 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
     }
   }
 
-  const handleAddEmployeeSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setError(null)
-    setSuccess(false)
-    setFieldErrors({})
-
-    if (!validateFields()) return
-
-    try {
-      const res = await fetch('/api/employee/add', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          ...user,
-          isFromDashboard: true,
-          hire_date: date,
-        }),
-      })
-
-      if (!res.ok) {
-        const data = await res.json()
-        throw new Error(data.error || 'Failed to add employee')
-      }
-
-      const data = await res.json()
-
-      // Handle invitation status
-      if (data.invitation?.status === 'failed') {
-        setSuccess(true)
-        setError(`Employee added but invitation failed: ${data.invitation.error}`)
-      } else {
-        setSuccess(true)
-        if (onClose) {
-          setTimeout(onClose, 2000);
-        }
-      }
-
-      // Reset form
-      setUser({
-        first_name: '',
-        last_name: '',
-        email: '',
-        password: '',
-        role: '',
-        hire_date: new Date(Date.now() - 86400000), // Subtract 24 hours in milliseconds
-      })
-      setDate(undefined)
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to create employee')
-      console.error(err)
-    }
-  }
-
   const handleInviteEmployeeSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
@@ -173,6 +117,35 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
         if (!res.ok) {
           const data = await res.json();
           throw new Error(data.error || 'Failed to add user into organization.')
+        }
+
+        const newPermissions = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/permissions`, {
+          credentials: 'include',
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            permissions: {
+              "get-organization": true,
+              "get-task": true,
+              "get-project": true,
+              "get-timelog": true,
+              "get-tracker-status": true,
+              "timer-start": true,
+              "timer-stop": true,
+              "timer-pause": true,
+              "timer-resume": true,
+            },
+            "organization_id": Number(organizationId),
+            "user_id": userData?.id,
+            "action": "create-permission"
+          }),
+        })
+
+        if (!newPermissions.ok) {
+          const data = await newPermissions.json();
+          throw new Error(data.error || 'Failed to add an permission')
         }
 
         setSuccess(true)
@@ -242,11 +215,7 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
   }
 
   return (
-    <form onSubmit={
-      isInviteEmployee
-        ? handleInviteEmployeeSubmit
-        : handleAddEmployeeSubmit
-    }
+    <form onSubmit={handleInviteEmployeeSubmit}
       className="space-y-4" autoComplete='off' noValidate>
       <div className='grid grid-cols-2 gap-4'>
         <div>
@@ -355,7 +324,7 @@ export function AddEmployeeForm({ onClose, isInviteEmployee }: AddEmployeeFormPr
       </div>
 
       <Button type="submit">
-        {isInviteEmployee ? 'Invite Employee' : 'Add Employee'}
+        Invite Employee
       </Button>
       {error && (
         <Alert variant="destructive">
