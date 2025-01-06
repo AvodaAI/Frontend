@@ -1,4 +1,3 @@
-//src/app/components/auth/SignIn.tsx
 'use client'
 
 import { useState } from 'react'
@@ -7,6 +6,7 @@ import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
+import { Loader2 } from 'lucide-react'
 import { fetchWrapper } from '@/utils/fetchWrapper'
 
 export function SignIn() {
@@ -14,11 +14,13 @@ export function SignIn() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<boolean>(false)
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   const handleSignIn = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
+    setLoading(true)
 
     try {
       if (!process.env.NEXT_PUBLIC_API_URL) {
@@ -44,6 +46,8 @@ export function SignIn() {
       }
     } catch (error) {
       setError('An error occurred during sign in')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -69,7 +73,9 @@ export function SignIn() {
           required
         />
       </div>
-      <Button type="submit">Sign In</Button>
+      <Button type="submit" disabled={loading}>
+        {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Sign In'}
+      </Button>
       {error && (
         <Alert variant="destructive">
           <AlertTitle>Error</AlertTitle>
