@@ -101,14 +101,13 @@ export function InviteEmployeeForm({ onClose }: AddEmployeeFormProps) {
         .single();
 
       if (userData) {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/employee/${user.id}`, {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/employee/add-org/${user.id}`, {
           credentials: 'include',
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
           },
           body: JSON.stringify({
-            userData: userData,
             organization_id: Number(organizationId),
             action: "update-employee"
           }),
