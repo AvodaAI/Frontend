@@ -229,17 +229,6 @@ export default function AuthPage() {
                             </Button>
                         </div>
                     </form>
-
-
-                    {/* <div className="text-center">
-                        <Button
-                            variant="link"
-                            onClick={() => dispatch({ ...state, isSignUp: !state.isSignUp })}
-                            className="text-primary hover:text-primary-foreground transition duration-150 ease-in-out"
-                        >
-                            {state.isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
-                        </Button>
-                    </div> */}
                 </div>
             </motion.div>
     )

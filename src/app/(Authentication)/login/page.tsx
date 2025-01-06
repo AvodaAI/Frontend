@@ -26,13 +26,30 @@ export default function AuthPage() {
 
     const [showPassword, setShowPassword] = useState(false);
 
+    const [step, setStep] = useState(1);
+
     const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); 
         setLoading(true); 
         setError(null); 
 
-        if (!email || !password) {
-            setError('Email and password are required.');
+        // Validate email first
+        if (!email) {
+            setError('Email is required.');
+            setLoading(false);
+            return;
+        }
+
+        // If step is 1, just set the step to 2
+        if (step === 1) {
+            setStep(2);
+            setLoading(false);
+            return;
+        }
+
+        // Validate password only if step is 2
+        if (step === 2 && !password) {
+            setError('Password is required.');
             setLoading(false);
             return;
         }
@@ -148,27 +165,29 @@ export default function AuthPage() {
                                     icon={<Icon icon="material-symbols-light:mail-outline-sharp" className='text-secondary' width="24" height="24" />}
                                 />
                             </div>
-                            <div className='relative'>
-                                <Input
-                                    id="password"
-                                    name="password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    autoComplete="current-password"
-                                    required
-                                    placeholder="Password"
-                                    value={password}
-                                    onChange={(e) => handlePasswordChange(e.target.value)}
-                                    className={`w-full px-4 py-2 rounded-md border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 transition duration-150 ease-in-out ${error ? 'border-red-500' : ''}`} // Error border
-                                    icon={<Icon icon="carbon:password" className='text-secondary' width="22" height="22" />}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-[11px] z-10"
-                                >
-                                    <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"} className='text-secondary' width="22" height="22" />
-                                </button>
-                            </div>
+                            {step === 2 && (
+                                <div className='relative'>
+                                    <Input
+                                        id="password"
+                                        name="password"
+                                        type={showPassword ? 'text' : 'password'}
+                                        autoComplete="current-password"
+                                        required
+                                        placeholder="Password"
+                                        value={password}
+                                        onChange={(e) => handlePasswordChange(e.target.value)}
+                                        className={`w-full px-4 py-2 rounded-md border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 transition duration-150 ease-in-out ${error ? 'border-red-500' : ''}`} // Error border
+                                        icon={<Icon icon="carbon:password" className='text-secondary' width="22" height="22" />}
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute right-4 top-[11px] z-10"
+                                    >
+                                        <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"} className='text-secondary' width="22" height="22" />
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         <div>
@@ -177,7 +196,7 @@ export default function AuthPage() {
                                 className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition duration-150 ease-in-out"
                                 disabled={loading} // Disable button while loading
                             >
-                                {loading ? <Icon icon="eos-icons:three-dots-loading" width="35" height="35" /> : 'Login'} {/* Show loading text */}
+                                {loading ? <Icon icon="eos-icons:three-dots-loading" width="35" height="35" /> : (step === 1 ? 'Next' : 'Login')} {/* Show loading text */}
                             </Button>
                         </div>
                     </form>
