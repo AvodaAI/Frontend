@@ -38,24 +38,29 @@ export default function AuthPage() {
             setIsLoading(false);
             return;
         }
-        
-        // API integration for sign up
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
-            method: 'POST',
-            credentials: 'include',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ email, password, first_name: firstName, last_name: lastName }),
-        });
 
-        if (response.ok) {
-            setMessage({ type: 'success', text: 'Signup successful! Redirecting...' }); // Set success message
-            router.push('/dashboard'); // Redirect on success
-        } else {
-            const data = await response.json();
-            setMessage({ type: 'error', text: data.error || 'An error occurred during sign up' }); // Set error message
+        try {
+            // API integration for sign up
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signup`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password, first_name: firstName, last_name: lastName }),
+            });
+
+            if (response.ok) {
+                setMessage({ type: 'success', text: 'Signup successful! Redirecting...' }); // Set success message
+                router.push('/dashboard'); // Redirect on success
+            } else {
+                console.log(response)
+                const data = await response.json();
+                setMessage({ type: 'error', text: data.error || 'An error occurred during sign up' }); // Set error message
+            }
+        } catch (error) {
+            setMessage({ type: 'error', text: 'An unexpected error occurred. Please try again.' }); // Handle unexpected errors
+        } finally {
+            setIsLoading(false);
         }
-
-        setIsLoading(false); 
     };
 
     // Updated state variable for form data
@@ -64,7 +69,7 @@ export default function AuthPage() {
         lastName: '',
         email: '',
         password: '',
-        confirmPassword: '', // Added confirmPassword field
+        confirmPassword: '', 
     });
 
     // Updated handle functions
@@ -224,17 +229,6 @@ export default function AuthPage() {
                             </Button>
                         </div>
                     </form>
-
-
-                    {/* <div className="text-center">
-                        <Button
-                            variant="link"
-                            onClick={() => dispatch({ ...state, isSignUp: !state.isSignUp })}
-                            className="text-primary hover:text-primary-foreground transition duration-150 ease-in-out"
-                        >
-                            {state.isSignUp ? 'Already have an account? Sign in' : "Don't have an account? Sign up"}
-                        </Button>
-                    </div> */}
                 </div>
             </motion.div>
     )
