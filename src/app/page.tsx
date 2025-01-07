@@ -15,7 +15,7 @@ export default async function Home() {
   if (token) {
     const { error } = await supabase.auth.getUser(token.value);
     if (!error) {
-      redirect("/dashboard");
+      redirect("/org");
     }
   }
   return (

@@ -38,7 +38,7 @@ export function SignIn() {
         setSuccess(response.ok)
         // Add a small delay before navigation
         setTimeout(() => {
-          router.replace('/dashboard')
+          router.replace('/org')
         }, 1000)
       } else {
         const data = await response.json()
