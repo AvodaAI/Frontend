@@ -75,10 +75,12 @@ export function Header() {
       if (data) {
         setOrgList(data);
       } else {
-        throw new Error(data.error || "Error fetching organizations");
+        console.error(data.error || "Error fetching organizations");
+        setError(data.error || "Error fetching organizations");
       }
     } catch (err) {
-      throw new Error("Error fetching organizations");
+      console.error("Error fetching organizations:", err);
+      setError("Failed to fetch organizations");
     }
   };
 
