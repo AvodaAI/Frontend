@@ -1,30 +1,47 @@
-Last Updated: 2024-12-02
+V1. 2024-12-02
+V2. 2024-01-07
 # Custom React Hooks Directory
 
 This directory contains reusable custom React hooks that provide shared functionality across the Employee Management System. These hooks encapsulate common logic and state management patterns used throughout the application.
 
 ## Directory Structure
 
+
 ```
 hooks/
-├── use-role.ts     # User role management hook
-├── use-toast.ts    # Toast notification system hook
-├── useTimer.ts     # Timer functionality hook
-└── readme.md       # This file
+├── getLoggedUser.ts # Server-side function to get the logged-in user
+├── use-role.ts # User role management hook
+├── use-toast.ts # Toast notification system hook
+├── useTimer.ts # Timer functionality hook
+└── readme.md # This file
 ```
 
+
 ## Available Hooks
+
+### getLoggedUser
+**Purpose**: Server-side function to get the logged-in user
+
+```typescript
+const user = await getLoggedUser()
+```
+
+**Features**:
+- Fetches user data from Supabase using cookies
+- Server-side function for secure user retrieval
+- Returns user object or null if not authenticated
 
 ### useUserRole
 **Purpose**: Manages user role and permissions
 ```typescript
-const { role, isAdmin, isEmployee, isLoaded } = useUserRole()
+const { role, isAdmin, isEmployee, isLoaded, loggedUserData } = useUserRole()
 ```
 **Features**:
-- Integrates with Clerk authentication
+- Integrates with Supabase authentication
 - Provides role-based access control
 - Automatically updates on user changes
 - Type-safe role checking with `isAdmin` and `isEmployee`
+- Includes user data object `loggedUserData`
 
 ### useToast
 **Purpose**: Manages toast notifications system
@@ -54,7 +71,8 @@ const {
   start,
   pause,
   reset,
-  getElapsedTime
+  formattedTime,
+  startTime
 } = useTimer()
 ```
 **Features**:
@@ -63,6 +81,7 @@ const {
 - Memory leak prevention
 - Elapsed time calculation
 - Auto-cleanup on component unmount
+- Returns formatted time string and start time
 
 ## Best Practices
 

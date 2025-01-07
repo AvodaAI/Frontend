@@ -1,4 +1,5 @@
-Last Updated: 2024-12-02
+V1. 2024-12-02
+V2. 2024-01-07
 # Server Actions Directory
 
 This directory contains Next.js server actions for the Employee Management System. These actions provide secure, server-side functionality for data fetching and manipulation, leveraging Next.js 'use server' directives for enhanced security and performance.
@@ -7,9 +8,10 @@ This directory contains Next.js server actions for the Employee Management Syste
 
 ```
 actions/
-├── getEmployees.ts    # Employee data fetching action
-├── getInvitations.ts  # Invitation data fetching action
-└── readme.md         # This file
+├── getEmployees.ts # Employee data fetching action
+├── getInvitations.ts # Invitation data fetching action
+├── revokeInvitation.ts # Revokes an invitation
+└── readme.md # This file
 ```
 
 ## Available Actions
@@ -22,7 +24,6 @@ interface GetEmployeesParams {
   offset?: number
   status?: 'active' | 'inactive'
 }
-
 const response = await getEmployees({
   limit: 10,
   offset: 0,
@@ -58,6 +59,19 @@ const response = await getInvitations({
 - Type-safe invitation handling
 - Error handling with detailed responses
 
+```typescript
+interface RevokeInvitationResponse {
+  success: boolean;
+  error?: string;
+}
+const response = await revokeInvitation(invitationId);
+```
+
+**Features**:
+- Updates the invitation status to 'revoked' in the database.
+- Handles errors gracefully and returns a typed response.
+- Uses Supabase for database interaction.
+
 ## Response Format
 
 All actions follow a consistent response format:
@@ -69,6 +83,7 @@ interface ActionResponse<T> {
   total?: number
 }
 ```
+
 
 ## Integration Points
 
@@ -135,3 +150,4 @@ const response = await getEmployees({
   limit: 10,
   offset: (page - 1) * 10
 })
+```

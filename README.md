@@ -1,15 +1,16 @@
+V2. 2024-01-07
 ## Getting Started
 
 First, install dependencies:
 
 ```bash
-npm install
+pnpm install
 ````
 
 Then run the development server:
 
 ```bash
-npm run dev
+pnpm run dev
 ````
 
 This project uses modularization to ensure code reusability and maintainability.
@@ -19,18 +20,12 @@ This project uses modularization to ensure code reusability and maintainability.
 - Tailwind CSS V4
 - Supabase Auth
 - Supabase Database
-- Drizzle ORM
 - Github
 - Sentry
 
 ## Git Process:
-- Ensure you are assigned the task on Airtable and it exists on Github
-- Create a branch for the task.
-- The branch name should follow this syntax: `[property]/[your initials]/[what you are trying to do]`.
-- Spaces should be "_"
-> #### Examples:
-> `_feature/sfk/adding_employee_creation_module_`
-> `_bugfix/sfk/auth_issue_fixes_`
+- Ensure you are assigned the task on Jira
+- Create a branch for the task (copy the one Jira generates).
 
 ## MISC
 https://ca6.sentry.io/issues/?project=4508429367836672&referrer=sidebar
