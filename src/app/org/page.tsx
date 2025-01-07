@@ -44,10 +44,9 @@ const OrganizationsPage = () => {
       {error && <p className="text-red-500">{error}</p>}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
         {organizations && organizations.length > 0 && organizations.map((organization) => (
-          <div key={organization.organization_id} className="max-w-xs mx-auto" onClick={() => {
-            console.log("clicked")
-            redirect(`org/${organization.organization_id}/dashboard`)
-          }}>
+          {
+           router.push(`/org/${organization.organization_id}/dashboard`);
+         }}>
             <Card>
               <CardHeader>
                 <CardTitle>{organization.organization_name}</CardTitle>
