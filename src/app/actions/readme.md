@@ -32,8 +32,7 @@ const response = await getEmployees({
 **Features**:
 - Pagination support
 - Status filtering
-- Integration with Clerk user management
-- Database querying with Drizzle ORM
+- Integration with Supabase for user management
 - Type-safe response format
 
 ### getInvitations
@@ -72,7 +71,7 @@ interface ActionResponse<T> {
 
 ## Integration Points
 
-- **Database**: Uses Drizzle ORM with PostgreSQL via `@/db`
+- **Database**: Uses Supabase with PostgreSQL via `@/db`
 - **Authentication**: Integrates with Supabase Auth via `?`
 - **Types**: Leverages shared types from `@/db/types` and `@/types`
 - **Schema**: Uses database schema from `@/db/schema`
