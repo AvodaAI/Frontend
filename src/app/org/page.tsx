@@ -4,15 +4,16 @@
 import React, { useEffect, useState } from "react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/app/components/ui/card";
 import { fetchWrapper } from "@/utils/fetchWrapper";
-import { redirect } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 interface Organizations {
-  "organization_id": number,
-  "organization_name": string,
-  "organization_description": string
+  organization_id: number;
+  organization_name: string;
+  organization_description: string;
 }
 
 const OrganizationsPage = () => {
+  const router = useRouter();
   const [organizations, setOrganizations] = useState<Organizations[]>([]);
   const [error, setError] = useState<string | null>(null);
 
@@ -22,10 +23,7 @@ const OrganizationsPage = () => {
 
   const fetchOrganizations = async () => {
     try {
-      const response = await fetchWrapper(
-        `${process.env.NEXT_PUBLIC_API_URL}/organizations/?action=get-organization`,
-        { credentials: "include" }
-      );
+      const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/?action=get-organization`, { credentials: "include" });
       const data = await response.json();
 
       if (response.ok) {
@@ -43,18 +41,16 @@ const OrganizationsPage = () => {
       <h1 className="text-4xl font-bold mb-6">Organizations</h1>
       {error && <p className="text-red-500">{error}</p>}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-        {organizations && organizations.length > 0 && organizations.map((organization) => (
-          {
-           router.push(`/org/${organization.organization_id}/dashboard`);
-         }}>
-            <Card>
+        {organizations &&
+          organizations.length > 0 &&
+          organizations.map((organization) => (
+            <Card onClick={() => router.push(`/org/${organization.organization_id}/dashboard`)}>
               <CardHeader>
                 <CardTitle>{organization.organization_name}</CardTitle>
                 <CardDescription>{organization.organization_description}</CardDescription>
               </CardHeader>
             </Card>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );
