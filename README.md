@@ -19,8 +19,8 @@ This project uses modularization to ensure code reusability and maintainability.
 - Tailwind CSS V4
 - Supabase Auth
 - Supabase Database
-- Drizzle ORM
 - Github
+- Jira
 - Sentry
 
 ## Git Process:
