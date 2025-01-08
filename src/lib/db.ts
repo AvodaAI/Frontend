@@ -30,31 +30,6 @@ const db = {
     }
   },
 
-  async initializeTables() {
-    const createUsersTable = `
-      CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        email VARCHAR(255) UNIQUE NOT NULL,
-        password VARCHAR(255) NOT NULL,
-        first_name VARCHAR(255),
-        last_name VARCHAR(255),
-        position VARCHAR(255),
-        hire_date DATE,
-        city VARCHAR(255),
-        country VARCHAR(255),
-        created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
-      );
-    `;
-
-    try {
-      await this.query(createUsersTable);
-      console.log('Tables initialized successfully');
-    } catch (error) {
-      console.error('Error initializing tables:', error);
-      throw error;
-    }
-  },
-
   pool
 };
 

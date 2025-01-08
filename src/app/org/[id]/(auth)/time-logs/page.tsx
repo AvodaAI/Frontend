@@ -50,15 +50,15 @@ const TimelogsPage = () => {
               </thead>
               <tbody>
                 {timelogs.map((timelog) => (
-                  <tr key={timelog.startTime}>
+                  <tr key={timelog.start_time}>
                     <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                      {new Date(timelog.startTime).toLocaleString()}
+                      {new Date(timelog.start_time).toLocaleString()}
                     </td>
                     <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                      {new Date(timelog.endTime).toLocaleString()}
+                      {new Date(timelog.end_time).toLocaleString()}
                     </td>
                     <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                      {timelog.totalActiveTime}
+                      {timelog.total_active_time}
                     </td>
                   </tr>
                 ))}
