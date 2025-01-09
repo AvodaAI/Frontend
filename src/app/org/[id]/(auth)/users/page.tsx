@@ -1,21 +1,20 @@
 // src/app/org/[id]/(auth)/users/page.tsx
 'use client'
 
-import SupabaseUsersTable from "./components/SupabaseUsersTable"
-import { Button } from "@components/ui/button"
-import { UserPlus } from "lucide-react"
-import { Suspense } from "react"
-import { ErrorBoundary } from "@components/ui/error-boundary"
 import { Container } from "@/app/components/container"
+import { AddUserModal } from "@/app/components/modals/AddUserModal"
+import { EditUserModal } from "@/app/components/modals/EditUserModal"
 import { Section } from "@/app/components/section"
+import { ErrorBoundary } from "@components/ui/error-boundary"
+import { Suspense } from "react"
+import SupabaseUsersTable from "./components/SupabaseUsersTable"
 
 export default function ClerkUsersPage() {
   return (
     <Section>
       <Container>
-        {/* <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-4 mb-8 mx-5">
-          
-        </div> */}
+        <AddUserModal />
+        <EditUserModal />
         <div>
           <ErrorBoundary fallback={<div>Error loading users. Please try refreshing the page.</div>}>
             <Suspense fallback={<div>Loading users...</div>}>

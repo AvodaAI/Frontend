@@ -14,11 +14,13 @@ import ExportUsersDataToExcel from './ExportUsersDataToExcel';
 import { columns } from './columns';
 import { SupabaseUser } from '@/types';
 import { Heading } from '@/app/components/ui/heading';
+import { useAddUserModal } from '@/hooks/use-add-user-modal';
 
 export default function SupabaseUsersTable() {
   const { users, loading, error, fetchSupabaseUsers } = useSupabaseUsers();
 
   const deleteselectedUsers = () => { };
+  const { onOpen } = useAddUserModal();
 // console.log(users)
   const formattedUsers: SupabaseUser[] = users.map((user: any) => ({
     id: user.id,
@@ -95,7 +97,7 @@ export default function SupabaseUsersTable() {
         <div className='flex space-x-2'>
           <Button
             className="bg-blue-500 hover:bg-blue-500"
-          // onClick={() => onOpen()}
+          onClick={() => onOpen()}
           >
             <UserPlus className="mr-2 h-4 w-4" />
             Add User
@@ -105,7 +107,6 @@ export default function SupabaseUsersTable() {
             onClick={() =>
               ExportUsersDataToExcel("notfiltered", formattedUsers)
             }
-            title="disabled"
           >
             <Download className="mr-2 h-4 w-4" />
             Export All
