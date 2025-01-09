@@ -1,10 +1,10 @@
 //src/types/user.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 // Zod validation schema for user creation
 export const UserSchema = z.object({
   email: z.string().email(),
-  role: z.string().optional().default('user'),
+  role: z.string().optional().default("user"),
   auth_id: z.string().optional(),
   first_name: z.string().optional(),
   last_name: z.string().min(1),
@@ -16,17 +16,17 @@ export const UserSchema = z.object({
 
 // Type for new user
 export interface NewUser {
-  id?: number,
-  email: string,
-  password?: string,
-  role: string,
-  last_name: string,
-  first_name: string,
-  position?: string,
-  city?: string,
-  country?: string,
-  hire_date?: Date | string | null,
-  auth_id?: string,
+  id?: number;
+  email: string;
+  password?: string;
+  role: string;
+  last_name: string;
+  first_name: string;
+  position?: string;
+  city?: string;
+  country?: string;
+  hire_date?: Date | string | null;
+  auth_id?: string;
 }
 
 // Type for user authentication
@@ -48,4 +48,13 @@ export interface SessionUser {
   id: number;
   email: string;
   role: string;
+}
+
+// Type for user session
+export interface SupabaseUser {
+  id: number;
+  name: string;
+  email: string;
+  created_at: string;
+  last_login: string;
 }
