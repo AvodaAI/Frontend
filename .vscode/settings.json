@@ -90,5 +90,6 @@
     "cSpell.words": [
         "signup",
         "unixdate"
-    ]
+    ],
+    "typescript.tsdk": "node_modules\\typescript\\lib"
 }
