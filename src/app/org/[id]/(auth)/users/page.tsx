@@ -14,9 +14,8 @@ export default function ClerkUsersPage() {
     <Section>
       <Container>
         <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-4 mb-8 mx-5">
-          {/* <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Clerk Users</h1> */}
           <Button
-            className="bg-cyan-600 hover:bg-cyan-600"
+            className="bg-blue-600 hover:bg-blue-600"
           // onClick={() => onOpen()}
           >
             <UserPlus className="mr-2 h-4 w-4" />

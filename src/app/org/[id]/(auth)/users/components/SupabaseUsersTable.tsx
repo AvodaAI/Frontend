@@ -94,7 +94,7 @@ export default function SupabaseUsersTable() {
         <div></div>
         <div>
           <Button
-            className={`bg-cyan-600 hover:bg-cyan-600`}
+            className={`bg-blue-600 hover:bg-blue-600`}
             onClick={() =>
               ExportUsersDataToExcel("notfiltered", formattedUsers)
             }
