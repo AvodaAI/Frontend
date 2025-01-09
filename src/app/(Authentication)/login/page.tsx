@@ -35,8 +35,7 @@ export default function AuthPage() {
 
         // Validate email first
         if (!email) {
-            setError('Email is required.');
-            setLoading(false);
+            // Remove debug logging of credentials
             return;
         }
 
