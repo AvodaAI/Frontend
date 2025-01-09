@@ -50,11 +50,4 @@ export interface SessionUser {
   role: string;
 }
 
-// Type for user session
-export interface SupabaseUser {
-  id: number;
-  name: string;
-  email: string;
-  created_at: string;
-  last_login: string;
-}
+

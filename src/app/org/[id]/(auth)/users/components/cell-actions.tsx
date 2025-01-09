@@ -9,12 +9,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/app/components/ui/dropdown-menu";
-import { SupabaseUser } from "@/types";
+import { useEditUserModal } from "@/hooks/use-edit-user-modal";
+import { NewUser } from "@/types";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
-export const CellAction: React.FC<{ data: SupabaseUser }> = ({ data }) => {
+export const CellAction: React.FC<{ data: NewUser }> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [openDisable, setOpenDisable] = useState(false);
@@ -22,7 +23,7 @@ export const CellAction: React.FC<{ data: SupabaseUser }> = ({ data }) => {
 
   // const dispatch = useAppDispatch();
   // const user = useAppSelector(usersPageSelector);
-  // const editAgencyModal = useEditUserModal();
+  const editUserModal = useEditUserModal();
   const onDelete = async () => {
     try {
       setLoading(true);
@@ -38,7 +39,7 @@ export const CellAction: React.FC<{ data: SupabaseUser }> = ({ data }) => {
   const onDisable = async () => {
     try {
       setLoading(true);
-      // dispatch(disableAgency(data._id!.toString()) as any);
+      // dispatch(disableuser(data._id!.toString()) as any);
     } catch (error) {
       toast.error("Something went wrong!");
     } finally {
@@ -49,7 +50,7 @@ export const CellAction: React.FC<{ data: SupabaseUser }> = ({ data }) => {
   const onEnable = async () => {
     try {
       setLoading(true);
-      // dispatch(enableAgency(data._id!.toString()) as any);
+      // dispatch(enableuser(data._id!.toString()) as any);
     } catch (error) {
       toast.error("Something went wrong!");
     } finally {
@@ -57,18 +58,16 @@ export const CellAction: React.FC<{ data: SupabaseUser }> = ({ data }) => {
       setOpenEnable(false);
     }
   };
-  // const handleEditAgencies = (data: Agencies) => {
-  //   editFlightModal.onOpen({
-  //     id: data._id,
-  //     agencyName: data.agencyName,
-  //     agencyEmail: data.agencyEmail,
-  //     agencyPhone: data.agencyPhone,
-  //     agencyAddress: data.agencyAddress,
-  //     totalAgents: data.totalAgents,
-  //     description: data.description,
-  //     agencyStatus: data.agencyStatus,
-  //   });
-  // };
+  const handleEditUser = (data: NewUser) => {
+    console.log('object, ', data)
+    editUserModal.onOpen({
+      id: data.id,
+      first_name: data.first_name,
+      last_name: data.last_name,
+      email: data.email,
+      role: data.role,
+    });
+  };
 
   return (
     <>
@@ -99,7 +98,7 @@ export const CellAction: React.FC<{ data: SupabaseUser }> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => { }}>
+          <DropdownMenuItem onClick={() => handleEditUser(data)}>
             <Edit className="mr-2 h-4 w-4" />
             Edit
           </DropdownMenuItem>

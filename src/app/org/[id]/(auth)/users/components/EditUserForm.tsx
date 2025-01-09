@@ -1,6 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
+import { Button } from "@/app/components/ui/button";
 import {
   Form,
   FormControl,
@@ -8,24 +6,29 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
-} from "@/app/components/ui/form"
+} from "@/app/components/ui/form";
 import { Input } from "@/app/components/ui/input";
-import { Button } from "@/app/components/ui/button";
 import { Loader } from "@/app/components/ui/loader";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
+import { roles } from "@/data/data";
+import { NewUser } from "@/types";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
 
 const formSchema = z.object({
-  _id: z.string(),
-  email: z.string().min(1, { message: "Email is required" }),
-  name: z.string().min(1, { message: "Name is required" }),
-  age: z.number().min(1, { message: "Age is required" }),
-  nationality: z.string().min(1, { message: "Nationality is required" }),
+  _id: z.number(),
+  email: z.string().email().min(1, { message: "Email is required" }),
+  first_name: z.string().min(1, { message: "First name is required" }),
+  last_name: z.string().min(1, { message: "Last name is required" }),
+  role: z.string().min(1, { message: "Role is required" }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 interface UserFormProps {
   defaultValues: Partial<FormValues>;
-  onSubmit: (data: User) => void;
+  onSubmit: (data: NewUser) => void;
   loading: boolean;
   onClose: () => void;
   buttonTitle: string;
@@ -56,11 +59,24 @@ const UserForm: React.FC<UserFormProps> = ({
       >
         <div className="mb-5 flex flex-col gap-5">
           <FormField
-            name="name"
+            name="first_name"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Full Name:</FormLabel>
+                <FormLabel>First Name:</FormLabel>
+                <FormControl>
+                  <Input {...field} disabled={loading} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="last_name"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Last Name:</FormLabel>
                 <FormControl>
                   <Input {...field} disabled={loading} />
                 </FormControl>
@@ -83,27 +99,30 @@ const UserForm: React.FC<UserFormProps> = ({
           />
 
           <FormField
-            name="age"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem className="hideIncrementor">
-                <FormLabel>Phone:</FormLabel>
-                <FormControl>
-                  <Input type="number" {...field} disabled={loading} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="nationality"
+            name="role"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nationality:</FormLabel>
-                <FormControl>
-                  <Input {...field} disabled={loading} />
-                </FormControl>
+                <FormLabel>Role:</FormLabel>
+                <Select
+                  disabled={loading}
+                  onValueChange={field.onChange}
+                  value={field.value.toString()}
+                  defaultValue={field.value.toString()}
+                >
+                  <FormControl>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a role" />
+                    </SelectTrigger>
+                  </FormControl>
+                  <SelectContent>
+                    {roles.map((role) => (
+                      <SelectItem key={role.value} value={role.value}>
+                        {role.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
                 <FormMessage />
               </FormItem>
             )}
@@ -112,6 +131,7 @@ const UserForm: React.FC<UserFormProps> = ({
         <div className="pt-6 space-x-2 flex items-center justify-center w-full">
           <Button
             type="button"
+            variant={'ghost'}
             onClick={() => {
               form.reset();
               onClose();
@@ -121,11 +141,9 @@ const UserForm: React.FC<UserFormProps> = ({
           </Button>
           <Button
             type="submit"
-            onClick={()=>handleSubmit(form.getValues())}
             disabled={loading}
-            className={`bg-cyan-500 text-white hover:bg-cyan-500 ${
-              loading ? "cursor-not-allowed" : ""
-            }`}
+            className={`bg-blue-500 text-white hover:bg-blue-500 ${loading ? "cursor-not-allowed" : ""
+              }`}
           >
             {loading && <Loader color="#ffffff" size={15} />} {buttonTitle}
           </Button>

@@ -1,31 +1,31 @@
 // src/app/org/[id]/(auth)/users/components/SupabaseUsersTable.tsx
 'use client';
 
-import { Button } from '@components/ui/button';
-import { Download, Loader2, Trash, UserPlus } from 'lucide-react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/ui/table';
-import { formatUnixDate } from '@/utils/unixdate';
-import { dataFallback } from '@/utils/datafallback';
-import { addUser, deleteUser } from '@/utils/supabase/supabase-user-operations';
-import { useSupabaseUsers } from '../hooks/useSupabaseUsers';
 import { Card } from '@/app/components/ui/card';
 import { DataTable } from '@/app/components/ui/data-table';
-import ExportUsersDataToExcel from './ExportUsersDataToExcel';
-import { columns } from './columns';
-import { SupabaseUser } from '@/types';
 import { Heading } from '@/app/components/ui/heading';
 import { useAddUserModal } from '@/hooks/use-add-user-modal';
+import { NewUser } from '@/types';
+import { dataFallback } from '@/utils/datafallback';
+import { formatUnixDate } from '@/utils/unixdate';
+import { Button } from '@components/ui/button';
+import { Download, Loader2, Trash, UserPlus } from 'lucide-react';
+import { useSupabaseUsers } from '../hooks/useSupabaseUsers';
+import ExportUsersDataToExcel from './ExportUsersDataToExcel';
+import { columns } from './columns';
 
 export default function SupabaseUsersTable() {
   const { users, loading, error, fetchSupabaseUsers } = useSupabaseUsers();
 
   const deleteselectedUsers = () => { };
   const { onOpen } = useAddUserModal();
-// console.log(users)
-  const formattedUsers: SupabaseUser[] = users.map((user: any) => ({
+  // console.log(users)
+  const formattedUsers: NewUser[] = users.map((user: any) => ({
     id: user.id,
-    name: dataFallback(user.first_name) + dataFallback(user.last_name) || 'N/A',
+    first_name: dataFallback(user.first_name) || 'N/A',
+    last_name: dataFallback(user.last_name) || 'N/A',
     email: user.email,
+    role: 'user',
     created_at: dataFallback(formatUnixDate(new Date(user.created_at).getTime())) || 'N/A',
     last_login: dataFallback(user.last_login ? formatUnixDate(new Date(user.last_login).getTime()) : 'Never'),
   }));
@@ -97,7 +97,7 @@ export default function SupabaseUsersTable() {
         <div className='flex space-x-2'>
           <Button
             className="bg-blue-500 hover:bg-blue-500"
-          onClick={() => onOpen()}
+            onClick={() => onOpen()}
           >
             <UserPlus className="mr-2 h-4 w-4" />
             Add User

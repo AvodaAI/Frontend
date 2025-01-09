@@ -2,13 +2,14 @@ import { useState } from "react";
 import { Modal } from "../ui/modal";
 import EditUserForm from "@/app/org/[id]/(auth)/users/components/EditUserForm";
 import { useEditUserModal } from "@/hooks/use-edit-user-modal";
+import { NewUser } from "@/types";
 
 export const EditUserModal = () => {
   const { isOpen, onClose, defaultValues } = useEditUserModal();
   const [loading, setLoading] = useState(false);
 
 
-  const handleSubmit = (data: User) => {
+  const handleSubmit = (data: NewUser) => {
     try {
       setLoading(true);
       console.log("object: ", data);
@@ -30,16 +31,17 @@ export const EditUserModal = () => {
         description="Manage User information"
         isOpen={isOpen}
         onClose={onClose}
-        className="z-[101] w-full sm:w-[80%] h-[50%] sm:h-[600px] mt-5 overflow-y-scroll"
+        className="z-[101] w-full sm:w-[80%] h-[50%] sm:h-[600px] mt-5 overflow-y-hidden"
       >
         <EditUserForm
           defaultValues={
             defaultValues || {
-              _id: "",
-              name: "",
+              id: -1,
+              first_name: "",
+              last_name: "",
               email: "",
-              age: 0,
-              nationality: "",
+              password: "",
+              role: "user",
             }
           }
           onSubmit={handleSubmit}

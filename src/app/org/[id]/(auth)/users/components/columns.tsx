@@ -2,12 +2,12 @@
 
 import { Button } from "@/app/components/ui/button";
 import { Checkbox } from "@/app/components/ui/checkbox";
-import { SupabaseUser } from "@/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { CellAction } from "./cell-actions";
+import { NewUser } from "@/types";
 
-export const columns: ColumnDef<SupabaseUser>[] = [
+export const columns: ColumnDef<NewUser>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -46,14 +46,28 @@ export const columns: ColumnDef<SupabaseUser>[] = [
     },
   },
   {
-    accessorKey: "name",
+    accessorKey: "first_name",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Name
+          First Name
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "last_name",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          Last Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );

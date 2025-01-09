@@ -17,29 +17,9 @@ import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
 import { NoIconInput } from "@/app/components/ui/no-icon-input";
+import { roles } from "@/data/data";
 
-const roles = [
-  {
-    label: 'User',
-    value: 'user'
-  },
-  {
-    label: 'Processing',
-    value: 'processing'
-  },
-  {
-    label: 'Developer',
-    value: 'developer'
-  },
-  {
-    label: 'Projet Manager',
-    value: 'projet-manager'
-  },
-  {
-    label: 'Organization Admin',
-    value: 'organization-admin'
-  },
-]
+
 const formSchema = z.object({
   email: z.string().email().min(1, { message: "Email is required" }),
   first_name: z.string().min(1, { message: "First name is required" }),
