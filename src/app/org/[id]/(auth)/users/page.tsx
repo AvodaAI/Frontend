@@ -13,15 +13,9 @@ export default function ClerkUsersPage() {
   return (
     <Section>
       <Container>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-4 mb-8 mx-5">
-          <Button
-            className="bg-blue-600 hover:bg-blue-600"
-          // onClick={() => onOpen()}
-          >
-            <UserPlus className="mr-2 h-4 w-4" />
-            Add User
-          </Button>
-        </div>
+        {/* <div className="flex flex-col sm:flex-row sm:items-center justify-end gap-4 mb-8 mx-5">
+          
+        </div> */}
         <div>
           <ErrorBoundary fallback={<div>Error loading users. Please try refreshing the page.</div>}>
             <Suspense fallback={<div>Loading users...</div>}>

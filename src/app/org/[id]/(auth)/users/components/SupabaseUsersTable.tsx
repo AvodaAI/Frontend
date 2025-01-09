@@ -2,7 +2,7 @@
 'use client';
 
 import { Button } from '@components/ui/button';
-import { Download, Loader2, Trash } from 'lucide-react';
+import { Download, Loader2, Trash, UserPlus } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/ui/table';
 import { formatUnixDate } from '@/utils/unixdate';
 import { dataFallback } from '@/utils/datafallback';
@@ -92,9 +92,16 @@ export default function SupabaseUsersTable() {
           description="Manage Users"
         />
         <div></div>
-        <div>
+        <div className='flex space-x-2'>
           <Button
-            className={`bg-blue-600 hover:bg-blue-600`}
+            className="bg-blue-500 hover:bg-blue-500"
+          // onClick={() => onOpen()}
+          >
+            <UserPlus className="mr-2 h-4 w-4" />
+            Add User
+          </Button>
+          <Button
+            className={`bg-gray-400 hover:bg-gray-400`}
             onClick={() =>
               ExportUsersDataToExcel("notfiltered", formattedUsers)
             }
