@@ -28,7 +28,7 @@ export default function AuthPage() {
     const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); 
         setIsLoading(true); 
-        console.log(formData)
+        // Remove debug logging of form data
         const { firstName, lastName, email, password, confirmPassword } = formData; 
         
         // Check if passwords match (frontend validation only)
