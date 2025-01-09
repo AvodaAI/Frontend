@@ -28,12 +28,19 @@ export default function SupabaseUsersTable() {
     <div className="rounded-md border">
       <div className="flex justify-between p-4">
         <h2 className="text-lg font-bold">Users</h2>
-        <Button onClick={() => {
-          const email = prompt('Enter user email:');
-          if (email) addUser(email, fetchSupabaseUsers);
-        }} variant="default">
-          Add User
-        </Button>
+ {
+  const email = prompt('Enter user email:');
+  if (!email?.trim()) {
+    alert('Email cannot be empty');
+    return;
+  }
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    alert('Please enter a valid email address');
+    return;
+  }
+  addUser(email, fetchSupabaseUsers);
+}} variant="default">
+  Add User
       </div>
       <Table>
         <TableHeader>
