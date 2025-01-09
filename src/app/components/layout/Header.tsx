@@ -1,6 +1,5 @@
 // src/app/components/layout/Header.tsx
 'use client';
-
 import { Menu, ChevronDown } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
@@ -14,6 +13,7 @@ import { cn } from "@/lib/utils";
 import { useUserRole } from "@/hooks/useRole";
 import { useState, useEffect } from "react";
 import { fetchWrapper } from "@/utils/fetchWrapper";
+import { useSupabase } from "@/providers/SupabaseProvider";
 
 // Navigation links
 const navigation = [
@@ -32,12 +32,22 @@ export function Header() {
   const { isAdmin } = useUserRole();
   const [orgList, setOrgList] = useState<{ organization_id: number, organization_name: string }[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const { supabase } = useSupabase();
+  const [isSignedIn, setIsSignedIn] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      const { data: user } = await supabase.auth.getUser();
+      setIsSignedIn(!!user);
+    };
+    checkAuth();
+    fetchOrganizations();
+  }, [supabase]);
 
   // Filter navigation based on the user's role
   const filteredNavigation = navigation.filter(
     item => !item.adminOnly || (item.adminOnly && isAdmin)
   );
-
   // Handle user sign out
   const handleSignOut = async () => {
     try {
@@ -86,63 +96,84 @@ export function Header() {
     <header className="bg-white shadow-sm">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mr-4 flex justify-between h-16 md:flex">
-          <Link href="dashboard" className="mr-6 flex items-center space-x-2">
+          <Link href={isSignedIn ? "dashboard" : "/"} className="mr-6 flex items-center space-x-2">
             <span className="text-3xl font-bold sm:inline-block">
               Employee Manager
             </span>
           </Link>
           <div className="flex space-x-3">
-            <nav className="flex items-center space-x-6 text-sm font-medium">
-              {filteredNavigation.map((item) => (
-                <Link
-                  key={item.href}
-                  href={item.href}
-                  className={cn(
-                    "transition-colors hover:text-foreground/80",
-                    pathname === item.href ? "text-foreground" : "text-foreground/60"
-                  )}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </nav>
+            {isSignedIn && (
+              <nav className="flex items-center space-x-6 text-sm font-medium">
+                {filteredNavigation.map((item) => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    className={cn(
+                      "transition-colors hover:text-foreground/80",
+                      pathname === item.href ? "text-foreground" : "text-foreground/60"
+                    )}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
+              </nav>
+            )}
             <div className="flex items-center justify-between space-x-2 md:justify-end min-w-[100px] gap-4">
-              <div className="relative">
+              {isSignedIn && (
+                <div className="relative">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-auto"
+                    aria-label="Organizations"
+                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                  >
+                    <ChevronDown className="h-4 w-4" />
+                    <span className="ml-1 text-sm">Organizations</span>
+                  </Button>
+                  {dropdownOpen && (
+                    <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg">
+                      <ul className="text-sm">
+                        {orgList.map((org) => (
+                          <li key={org.organization_id} style={{ background: org.organization_id === Number(org_id) ? "#F5F5F5" : "transparent" }}>
+                            <Link
+                              href={`/org/${org.organization_id}/dashboard`}
+                              className="block px-4 py-2 hover:bg-gray-100"
+                            >
+                              {org.organization_name}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+              {isSignedIn ? (
                 <Button
                   variant="ghost"
-                  size="sm"
-                  className="h-8 w-auto"
-                  aria-label="Organizations"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  size="icon"
+                  onClick={handleSignOut}
+                  aria-label="Sign Out"
                 >
-                  <ChevronDown className="h-4 w-4" />
-                  <span className="ml-1 text-sm">Organizations</span>
+                  Sign Out
                 </Button>
-                {dropdownOpen && (
-                  <div className="absolute right-0 mt-2 w-48 bg-white shadow-lg rounded-lg">
-                    <ul className="text-sm">
-                      {orgList.map((org) => (
-                        <li key={org.organization_id} style={{ background: org.organization_id === Number(org_id) ? "#F5F5F5" : "transparent" }}>
-                          <Link
-                            href={`/org/${org.organization_id}/dashboard`}
-                            className="block px-4 py-2 hover:bg-gray-100"
-                          >
-                            {org.organization_name}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleSignOut}
-                aria-label="Sign Out"
-              >
-                Sign Out
-              </Button>
+              ) : (
+                <>
+                  <Link
+                    href="/auth/signin"
+                    className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  >
+                    Sign In
+                  </Link>
+                  <Link
+                    href="/auth/signup"
+                    className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 transition-colors"
+                  >
+                    Sign Up
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -158,12 +189,12 @@ export function Header() {
             </Button>
           </SheetTrigger>
           <SheetContent side="left" className="pr-0">
-            <Link href="dashboard" className="flex items-center space-x-2">
+            <Link href={isSignedIn ? "dashboard" : "/"} className="flex items-center space-x-2">
               <span className="font-bold">Employee Manager</span>
             </Link>
             <div className="my-4 h-[calc(100vh-8rem)] pb-10">
               <div className="flex flex-col space-y-3">
-                {filteredNavigation.map((item) => (
+                {isSignedIn && filteredNavigation.map((item) => (
                   <Link
                     key={item.href}
                     href={item.href}

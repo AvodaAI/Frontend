@@ -1,8 +1,8 @@
 // src/app/org/page.tsx
 "use client";
 
-import React, { useEffect, useState } from "react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/app/components/ui/card";
+import { useEffect, useState } from "react";
+import { Card, CardHeader, CardTitle, CardDescription } from "@/app/components/ui/card";
 import { fetchWrapper } from "@/utils/fetchWrapper";
 import { useRouter } from "next/navigation";
 
