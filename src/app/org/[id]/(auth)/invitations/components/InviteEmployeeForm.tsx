@@ -74,9 +74,14 @@ export function InviteEmployeeForm({ onClose }: AddEmployeeFormProps) {
 
   const fetchOrganizations = async () => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/organizations/by-user?organization_id=88&action=get-organization`, { credentials: 'include' })
-    if (response.ok) {
-      const data = await response.json()
-      setOrganizations(data)
+} else {
+  const errorData = await response.json().catch(() => ({}));
+  setError(`Failed to fetch organizations: ${errorData.message || 'Unknown error'}`);
+  toast({
+    title: 'Error',
+    description: 'Failed to load organizations. Please try again.',
+  });
+}
     } else {
       console.error('Error fetching organizations')
     }
