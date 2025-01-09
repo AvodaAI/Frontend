@@ -54,10 +54,14 @@ export default function InviteUser() {
         .select('*')
         .eq('email_address', userData?.email);
 
-      if (InvitationDetails?.[0].revoked) {
-        setError('Your invitation has been revoked by admin.');
-        return;
-      }
+if (!InvitationDetails?.length) {
+  setError('No valid invitation found.');
+  return;
+}
+if (InvitationDetails[0].revoked) {
+  setError('Your invitation has been revoked by admin.');
+  return;
+}
 
       if (userError) {
         throw new Error(userError?.message);
