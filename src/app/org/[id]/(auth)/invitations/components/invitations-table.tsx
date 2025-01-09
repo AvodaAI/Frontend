@@ -20,12 +20,8 @@ export default function InvitationsTable() {
   const { id: org_id } = useParams();
   const [invitations, setInvitations] = useState<Invitation[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  // Search functionality
-  const { searchTerm, setSearchTerm, filteredItems: filteredInvitations } = useSearch(invitations);
-
-  // Pagination
+  const [error, setError] = useState<string | null>(null);  // Search functionality
+  const { searchTerm, setSearchTerm, filteredItems: filteredInvitations } = useSearch(invitations);  // Pagination
   const { paginatedItems, paginationState, totalPages, goToNextPage, goToPreviousPage } = usePagination(filteredInvitations);
 
   useEffect(() => {
@@ -57,18 +53,14 @@ export default function InvitationsTable() {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleRevokeInvitation = async (invitationId: string) => {
+  };  const handleRevokeInvitation = async (invitationId: string) => {
     try {
       const updatedInvitation = {
         status: 'revoked',
         revoked: true,
         organization_id: org_id,
         action: "update-invitation"
-      }
-
-      const res = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/invitation/${invitationId}`, {
+      }      const res = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/invitation/${invitationId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

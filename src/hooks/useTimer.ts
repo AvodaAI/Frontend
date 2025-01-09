@@ -25,25 +25,19 @@ export const useTimer = () => {
         setTime(t => t + 1);
       }, 1000);
     }
-  }, [isRunning]);
-
-  const pause = useCallback(() => {
+  }, [isRunning]);  const pause = useCallback(() => {
     if (isRunning && intervalRef.current) {
       setIsRunning(false);
       clearInterval(intervalRef.current);
     }
-  }, [isRunning]);
-
-  const reset = useCallback(() => {
+  }, [isRunning]);  const reset = useCallback(() => {
     setIsRunning(false);
     setTime(0);
     startTimeRef.current = undefined;
     if (intervalRef.current) {
       clearInterval(intervalRef.current);
     }
-  }, []);
-
-  const formatTime = useCallback((seconds: number) => {
+  }, []);  const formatTime = useCallback((seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;

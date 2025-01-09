@@ -8,9 +8,7 @@ import { X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 
-const ToastProvider = ToastPrimitives.Provider
-
-const ToastViewport = React.forwardRef<
+const ToastProvider = ToastPrimitives.Providerconst ToastViewport = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Viewport>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Viewport>
 >(({ className, ...props }, ref) => (
@@ -40,9 +38,7 @@ const toastVariants = cva(
       variant: "default",
     },
   }
-)
-
-const Toast = React.forwardRef<
+)const Toast = React.forwardRef<
   React.ElementRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> &
     VariantProps<typeof toastVariants>

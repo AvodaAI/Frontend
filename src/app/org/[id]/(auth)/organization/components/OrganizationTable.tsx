@@ -31,9 +31,7 @@ export function OrganizationTable({ children, organizations, setOrganizations }:
     // Pagination
     const { paginatedItems, paginationState, totalPages, goToNextPage, goToPreviousPage } = usePagination(organizations, 5);
     const [editingOrganization, setEditingOrganization] = useState<Organization | null>(null);
-    const [error, setError] = useState<string | null>(null);
-
-    const handleDelete = async (id: number) => {
+    const [error, setError] = useState<string | null>(null);    const handleDelete = async (id: number) => {
         const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/${id}?organization_id=${org_id}&action=delete-organization`, {
             method: "DELETE",
             headers: { "Content-Type": "application/json" },
@@ -46,9 +44,7 @@ export function OrganizationTable({ children, organizations, setOrganizations }:
             const data = await response.json();
             setError(data.error || 'Error deleting organizations');
         }
-    };
-
-    const handleUpdateOrganization = (updatedOrganization: Organization) => {
+    };    const handleUpdateOrganization = (updatedOrganization: Organization) => {
         setOrganizations(organizations.map((emp) => (emp.id === updatedOrganization.id ? updatedOrganization : emp)));
         setEditingOrganization(null);
     };

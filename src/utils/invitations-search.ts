@@ -3,9 +3,7 @@ import { useState, useMemo } from 'react';
 import { Invitation } from '@/types/invitation';
 
 export const useSearch = (items: Invitation[]) => {
-  const [searchTerm, setSearchTerm] = useState('');
-
-  // Comprehensive search across multiple fields
+  const [searchTerm, setSearchTerm] = useState('');  // Comprehensive search across multiple fields
   const filteredItems = useMemo(() => {
     if (!searchTerm.trim()) return items;
 
@@ -17,9 +15,7 @@ export const useSearch = (items: Invitation[]) => {
       formattedDate(item.created_at)?.toLowerCase().includes(lowercasedSearchTerm) ||
       formattedDate(item.expires_at)?.toLowerCase().includes(lowercasedSearchTerm)
     );
-  }, [items, searchTerm]);
-
-  // Utility function to format date (match the one in the original component)
+  }, [items, searchTerm]);  // Utility function to format date (match the one in the original component)
   const formattedDate = (unixDate: number | null | undefined): string => {
     if (unixDate === null || unixDate === undefined) return 'N/A';
     return new Date(unixDate).toLocaleDateString('en-US', {

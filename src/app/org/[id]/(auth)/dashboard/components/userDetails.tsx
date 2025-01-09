@@ -1,8 +1,6 @@
 // src/app/org/[id]/(auth)/dashboard/components/userDetails.tsx
-
 'use client'
 
-import React from 'react'
 import { Button } from '@components/ui/button';
 import Link from 'next/link';
 import { useUserRole } from '@/hooks/useRole';

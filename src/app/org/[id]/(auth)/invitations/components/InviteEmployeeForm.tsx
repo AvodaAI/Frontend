@@ -70,9 +70,7 @@ export function InviteEmployeeForm({ onClose }: AddEmployeeFormProps) {
 
     setFieldErrors(errors)
     return Object.keys(errors).length === 0
-  }
-
-  const fetchOrganizations = async () => {
+  }  const fetchOrganizations = async () => {
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/organizations/by-user?organization_id=88&action=get-organization`, { credentials: 'include' })
     if (response.ok) {
       const data = await response.json()
@@ -80,9 +78,7 @@ export function InviteEmployeeForm({ onClose }: AddEmployeeFormProps) {
     } else {
       console.error('Error fetching organizations')
     }
-  }
-
-  const handleInviteEmployeeSubmit = async (e: React.FormEvent) => {
+  }  const handleInviteEmployeeSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setSuccess(false)

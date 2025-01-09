@@ -19,21 +19,15 @@ export function AddOrganizationForm({ onClose, addOrganization }: AddOrganizatio
     name: string, description?: string
   }>({
     name: '', description: '',
-  })
-
-  const [error, setError] = useState<string | null>(null)
+  })  const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState<boolean>(false)
-  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})
-
-  const validateFields = () => {
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})  const validateFields = () => {
     const errors: { [key: string]: string } = {}
     if (!organization.name?.trim()) errors.name = 'Organization name is required'
 
     setFieldErrors(errors)
     return Object.keys(errors).length === 0
-  }
-
-  const handleAddOrganizationSubmit = async (e: React.FormEvent) => {
+  }  const handleAddOrganizationSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setSuccess(false)
@@ -45,9 +39,7 @@ export function AddOrganizationForm({ onClose, addOrganization }: AddOrganizatio
       const organizationWithAction = {
         ...organization,
         action: 'create-organization'
-      }
-
-      const res = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations`, {
+      }      const res = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

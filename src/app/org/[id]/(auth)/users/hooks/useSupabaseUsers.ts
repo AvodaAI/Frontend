@@ -15,9 +15,7 @@ import { Database } from '@/types/supabase';
 export const useSupabaseUsers = () => {
   const [users, setUsers] = useState<SupabaseUser[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchSupabaseUsers = async () => {
+  const [error, setError] = useState<string | null>(null);  const fetchSupabaseUsers = async () => {
     setLoading(true);
     setError(null);
     try {

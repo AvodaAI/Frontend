@@ -12,37 +12,27 @@ export const usePagination = (items: any[], initialItemsPerPage = 10) => {
         currentPage: 1,
         itemsPerPage: initialItemsPerPage,
         totalItems: items.length
-    });
-
-    // Calculate paginated items
+    });    // Calculate paginated items
     const paginatedItems = useMemo(() => {
         const startIndex = (paginationState.currentPage - 1) * paginationState.itemsPerPage;
         const endIndex = startIndex + paginationState.itemsPerPage;
         return items.slice(startIndex, endIndex);
-    }, [items, paginationState]);
-
-    // Total number of pages
+    }, [items, paginationState]);    // Total number of pages
     const totalPages = useMemo(() =>
         Math.ceil(items.length / paginationState.itemsPerPage),
         [items.length, paginationState.itemsPerPage]
-    );
-
-    // Page change handlers
+    );    // Page change handlers
     const goToNextPage = () => {
         setPaginationState(prev => ({
             ...prev,
             currentPage: Math.min(prev.currentPage + 1, totalPages)
         }));
-    };
-
-    const goToPreviousPage = () => {
+    };    const goToPreviousPage = () => {
         setPaginationState(prev => ({
             ...prev,
             currentPage: Math.max(prev.currentPage - 1, 1)
         }));
-    };
-
-    const goToPage = (page: number) => {
+    };    const goToPage = (page: number) => {
         setPaginationState(prev => ({
             ...prev,
             currentPage: Math.max(1, Math.min(page, totalPages))

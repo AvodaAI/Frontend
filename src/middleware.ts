@@ -3,9 +3,7 @@ import { NextResponse } from "next/server";
 import { supabase } from "@/utils/supabase/supabaseClient";
 
 export async function middleware(request: Request) {
-  const res = NextResponse.next();
-
-  const token = request.headers.get("cookie")?.match(/supabase-auth-token=([^;]+)/)?.[1];
+  const res = NextResponse.next();  const token = request.headers.get("cookie")?.match(/supabase-auth-token=([^;]+)/)?.[1];
 
   if (!token) {
     const url = new URL("/", request.url);

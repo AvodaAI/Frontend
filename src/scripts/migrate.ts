@@ -85,9 +85,7 @@ async function migrateUsers() {
 async function verifyMigration() {
   console.log('Verifying migration...');
   
-  const jsonEmployees = await readJsonFile(path.join(process.cwd(), 'src/app/data/employees.json'));
-  
-  // Check if data exists in the database
+  const jsonEmployees = await readJsonFile(path.join(process.cwd(), 'src/app/data/employees.json'));  // Check if data exists in the database
   const dbEmployees = await db.query('SELECT * FROM users WHERE email IS NOT NULL');
   
   // Compare counts

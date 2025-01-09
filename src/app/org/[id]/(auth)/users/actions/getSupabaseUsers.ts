@@ -44,9 +44,7 @@ export async function getSupabaseUsers(
 ): Promise<GetSupabaseUsersResponse> {
   try {
     const { emailAddress, emailAddressQuery, userId, limit = 10, offset = 0 } =
-      params || {};
-
-    let query = supabase.from("users").select("*");
+      params || {};    let query = supabase.from("users").select("*");
 
     // Filter by emailAddress if provided
     if (emailAddress) {

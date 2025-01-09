@@ -37,9 +37,7 @@ export default function InviteUser() {
     } else {
       setError(null);
     }
-  };
-
-  const handleOnSubmit = async (e: React.FormEvent) => {
+  };  const handleOnSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
 
@@ -73,9 +71,7 @@ export default function InviteUser() {
         }
       }
 
-      const hashedPassword = await bcrypt.hash(password, 10);
-
-      const { error: insertError } = await supabase
+      const hashedPassword = await bcrypt.hash(password, 10);      const { error: insertError } = await supabase
         .from("users")
         .insert({
           first_name: InvitationDetails?.[0]?.public_metadata?.first_name ?? null,

@@ -1,9 +1,7 @@
 // src/utils/fetchWrapper.ts
 
 export const fetchWrapper = async (url: string, options: RequestInit = {}): Promise<Response> => {
-  const headers = new Headers(options.headers || {});
-
-  const fetchOptions: RequestInit = {
+  const headers = new Headers(options.headers || {});  const fetchOptions: RequestInit = {
     ...options,
     headers,
   };

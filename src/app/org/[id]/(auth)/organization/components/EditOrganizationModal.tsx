@@ -27,17 +27,13 @@ export function EditOrganizationModal({ org, onClose, onUpdate }: EditOrganizati
     ...org
   })
   const [error, setError] = useState<string | null>(null)
-  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})
-
-  const validateFields = () => {
+  const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({})  const validateFields = () => {
     const errors: { [key: string]: string } = {}
 
     if (!organization.name?.trim()) errors.name = 'Organization name is required'
     setFieldErrors(errors)
     return Object.keys(errors).length === 0
-  }
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  }  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setFieldErrors({})
@@ -52,9 +48,7 @@ export function EditOrganizationModal({ org, onClose, onUpdate }: EditOrganizati
         description: organization.description,
         organization_id: organization.id,
         action: "update-organization"
-      }
-
-      const res = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/${organization.id}`, {
+      }      const res = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/${organization.id}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',

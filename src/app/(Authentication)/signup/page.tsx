@@ -18,20 +18,14 @@ interface AuthState {
 
 export default function AuthPage() {
     const router = useRouter()
-    const supabase = createClientComponentClient()
-
-    const [isLoading, setIsLoading] = useState(false); 
+    const supabase = createClientComponentClient()    const [isLoading, setIsLoading] = useState(false); 
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null); // Added message state
     const [showPassword, setShowPassword] = useState(false); // State for password visibility
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Added state for confirm password visibility
-
-    const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Added state for confirm password visibility    const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); 
         setIsLoading(true); 
         console.log(formData)
-        const { firstName, lastName, email, password, confirmPassword } = formData; 
-        
-        // Check if passwords match (frontend validation only)
+        const { firstName, lastName, email, password, confirmPassword } = formData;         // Check if passwords match (frontend validation only)
         const passwordsMatch = password === confirmPassword; // Store match result
         if (!passwordsMatch) {
             setMessage({ type: 'error', text: 'Passwords do not match' }); // Set error message
@@ -61,24 +55,18 @@ export default function AuthPage() {
         } finally {
             setIsLoading(false);
         }
-    };
-
-    // Updated state variable for form data
+    };    // Updated state variable for form data
     const [formData, setFormData] = useState({
         firstName: '',
         lastName: '',
         email: '',
         password: '',
         confirmPassword: '', 
-    });
-
-    // Updated handle functions
+    });    // Updated handle functions
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData({ ...formData, [name]: value });
-    };
-
-    const action = async (currentState: AuthState, formData: FormData) => {
+    };    const action = async (currentState: AuthState, formData: FormData) => {
         const email = formData.get('email') as string;
         const password = formData.get('password') as string;
         try {
@@ -89,10 +77,7 @@ export default function AuthPage() {
             console.error('Error:', error)
             alert(error.message)
         }
-    }
-
-   
-    const handleSocialAuth = async (provider: 'google' | 'github') => {
+    }    const handleSocialAuth = async (provider: 'google' | 'github') => {
         try {
             const { error } = await supabase.auth.signInWithOAuth({ provider })
             if (error) throw error

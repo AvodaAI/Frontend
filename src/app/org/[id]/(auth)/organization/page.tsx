@@ -14,9 +14,7 @@ export default function OrganizationPage() {
   const { id: org_id } = useParams()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [organizations, setOrganizations] = useState<Organization[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
-  const addOrganization = (organization: Organization) => {
+  const [error, setError] = useState<string | null>(null);  const addOrganization = (organization: Organization) => {
     setOrganizations((prev) => ([organization, ...prev,]))
   }
 

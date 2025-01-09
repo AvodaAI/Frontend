@@ -21,9 +21,7 @@ export default function AuthPage() {
     const supabase = createClientComponentClient()
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
-
-    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); 
         setLoading(true); 
         setError(null); 
@@ -44,22 +42,14 @@ export default function AuthPage() {
         }, 3000);
         
         
-    };
-
-    // State variables for email and password
+    };    // State variables for email and password
     const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-    // Updated handle functions
+    const [password, setPassword] = useState('');    // Updated handle functions
     const handleEmailChange = (email: string) => {
         setEmail(email);
-    };
-
-    const handlePasswordChange = (password: string) => {
+    };    const handlePasswordChange = (password: string) => {
         setPassword(password);
-    };
-
-    const handleSocialAuth = async (provider: 'google' | 'github') => {
+    };    const handleSocialAuth = async (provider: 'google' | 'github') => {
         try {
             const { error } = await supabase.auth.signInWithOAuth({ provider })
             if (error) throw error
@@ -67,9 +57,7 @@ export default function AuthPage() {
             console.error('Error:', error)
             alert(error.message)
         }
-    }
-
-    // New function to handle sending the email
+    }    // New function to handle sending the email
     const handleSendEmail = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault(); // Prevent default form submission
         setLoading(true); // Set loading to true

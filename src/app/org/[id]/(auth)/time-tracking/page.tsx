@@ -58,9 +58,7 @@ const TimerPage = () => {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/status?organization_id=${org_id}&action=get-tracker-status`, {
         credentials: 'include',
-      });
-
-      const data = await res.json();
+      });      const data = await res.json();
       if (!res.ok) {
         throw new Error(data.error || data.message || 'Failed to start timer.');
       }
@@ -72,9 +70,7 @@ const TimerPage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleClockIn = async () => {
+  };  const handleClockIn = async () => {
     try {
       setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/start`, {
@@ -101,9 +97,7 @@ const TimerPage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handlePause = async () => {
+  };  const handlePause = async () => {
     try {
       setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/pause`, {
@@ -129,9 +123,7 @@ const TimerPage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleResume = async () => {
+  };  const handleResume = async () => {
     try {
       setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/resume`, {
@@ -155,9 +147,7 @@ const TimerPage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  const handleStop = async () => {
+  };  const handleStop = async () => {
     try {
       setLoading(true);
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/stop`, {
@@ -183,9 +173,7 @@ const TimerPage = () => {
     } finally {
       setLoading(false);
     }
-  };
-
-  // Format time in HH:MM:SS
+  };  // Format time in HH:MM:SS
   const formatTime = (seconds: number) => {
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);

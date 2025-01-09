@@ -7,9 +7,7 @@ import { useRouter } from 'next/navigation';
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   const supabase = useSupabase(); // Access Supabase client from context
-  const router = useRouter();
-
-  const handleSignOut = async () => {
+  const router = useRouter();  const handleSignOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (!error) {
       router.push('/');

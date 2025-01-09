@@ -4,14 +4,12 @@
 
 import React, { useState, useEffect } from 'react';
 import { supabase } from '@/utils/supabase/supabaseClient';
-import { Button } from '@components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@components/ui/select';
 import { Label } from '@components/ui/label';
 import { Clock, Loader2 } from 'lucide-react';
 import { Timer } from './Timer';
 import { useTimer } from '@/hooks/useTimer';
-import { cn } from '@/lib/utils';
 
 interface Project {
   id: string;
@@ -42,9 +40,7 @@ export const TimeTracker: React.FC = () => {
         return;
       }
       setUser( user );
-    };
-
-    const fetchProjects = async () => {
+    };    const fetchProjects = async () => {
       setIsProjectsLoading( true );
       const { data: projects, error } = await supabase
         .from( 'projects' ) // Assuming a "projects" table in your database
@@ -55,9 +51,7 @@ export const TimeTracker: React.FC = () => {
         setProjects( projects || [] );
       }
       setIsProjectsLoading( false );
-    };
-
-    const fetchTasks = async () => {
+    };    const fetchTasks = async () => {
       setIsTasksLoading( true );
       const { data: tasks, error } = await supabase
         .from( 'tasks' ) // Assuming a "tasks" table in your database

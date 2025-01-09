@@ -12,9 +12,7 @@ export function SignUp() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
-  const [loading, setLoading] = useState(false)
-
-  const handleSignUp = async (e: React.FormEvent) => {
+  const [loading, setLoading] = useState(false)  const handleSignUp = async (e: React.FormEvent) => {
     e.preventDefault()
     setError(null)
     setSuccess(false)

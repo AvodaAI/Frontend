@@ -16,15 +16,11 @@ export default function ResetPasswordPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
-    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-    
-    // State variables for new password and confirmation
+    const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);    // State variables for new password and confirmation
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [showNewPassword, setShowNewPassword] = useState(false); // State for showing new password
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State for showing confirm password
-
-    const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false); // State for showing confirm password    const handleResetPassword = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
