@@ -19,7 +19,7 @@ export default function SupabaseUsersTable() {
   const { users, loading, error, fetchSupabaseUsers } = useSupabaseUsers();
 
   const deleteselectedUsers = () => { };
-
+// console.log(users)
   const formattedUsers: SupabaseUser[] = users.map((user: any) => ({
     id: user.id,
     name: dataFallback(user.first_name) + dataFallback(user.last_name) || 'N/A',
@@ -88,8 +88,8 @@ export default function SupabaseUsersTable() {
       </div>*/}
       <div className="flex border-b pb-2 items-center justify-between">
         <Heading
-          title={`Clerk Users (${formattedUsers.length})`}
-          description="Manage Users"
+          title={`Users (${formattedUsers.length})`}
+          description="Here's a list of all users in your organization"
         />
         <div></div>
         <div className='flex space-x-2'>
