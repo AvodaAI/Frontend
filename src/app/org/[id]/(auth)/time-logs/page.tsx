@@ -5,8 +5,9 @@ import { useParams } from 'next/navigation';
 import { useState, useEffect } from 'react';
 
 const TimelogsPage = () => {
-  const { id: org_id }=useParams()
+  const { id: org_id } = useParams()
   const [timelogs, setTimelogs] = useState<any[]>([]);
+  //TODO: [AV-142] Define Types
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
