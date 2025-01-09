@@ -83,7 +83,7 @@ export default function AuthPage() {
             return;
         }
 
-        console.log('Sending email to:', email);
+        // Remove debug logging of email
         
         // Simulate loading for 3 seconds
         setTimeout(() => {
