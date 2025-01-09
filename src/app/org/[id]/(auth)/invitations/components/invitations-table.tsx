@@ -134,8 +134,14 @@ export default function InvitationsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedItems.map((invitation) => (
-              <TableRow key={invitation.id} className="hover:bg-muted/30">
+{paginatedItems.length === 0 ? (
+  
+    
+      No invitations found
+    
+  
+) : (
+  paginatedItems.map((invitation) => (
                 <TableCell className="font-medium">{invitation.email_address}</TableCell>
                 <TableCell>
                   <span
