@@ -20,17 +20,16 @@ export default function AuthPage() {
     const router = useRouter()
     const supabase = createClientComponentClient()
 
-    const [isLoading, setIsLoading] = useState(false); 
+    const [isLoading, setIsLoading] = useState(false);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null); // Added message state
     const [showPassword, setShowPassword] = useState(false); // State for password visibility
     const [showConfirmPassword, setShowConfirmPassword] = useState(false); // Added state for confirm password visibility
 
     const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault(); 
-        setIsLoading(true); 
-        // Remove debug logging of form data
-        const { firstName, lastName, email, password, confirmPassword } = formData; 
-        
+        e.preventDefault();
+        setIsLoading(true);
+        const { firstName, lastName, email, password, confirmPassword } = formData;
+
         // Check if passwords match (frontend validation only)
         const passwordsMatch = password === confirmPassword; // Store match result
         if (!passwordsMatch) {
@@ -69,7 +68,7 @@ export default function AuthPage() {
         lastName: '',
         email: '',
         password: '',
-        confirmPassword: '', 
+        confirmPassword: '',
     });
 
     // Updated handle functions
@@ -91,7 +90,7 @@ export default function AuthPage() {
         }
     }
 
-   
+
     const handleSocialAuth = async (provider: 'google' | 'github') => {
         try {
             const { error } = await supabase.auth.signInWithOAuth({ provider })
@@ -103,134 +102,134 @@ export default function AuthPage() {
     }
 
     return (
-            <motion.div
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                className="w-full max-w-md space-y-4 bg-white px-10 rounded-2xl shadow-sm py-20"
-            >
+        <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="w-full max-w-md space-y-4 bg-white px-10 rounded-2xl shadow-sm py-20"
+        >
+            <div>
                 <div>
-                    <div>
-                        <h1 className='text-2xl font-semibold'>Signup</h1>
-                    </div>
-                    <div className='flex justify-between mt-2'>
-                        <h3 className="text-center tracking-tight text-color-secondary">
-                            Already Have an Account?
-                        </h3>
-                        <h3 className='text-primary font-bold'>
-                            <Link href="login">Login</Link>
-                        </h3>
-                    </div>
-                    <div className='w-full border-2 border-[#D9D9D9] text-secondary flex justify-center items-center rounded-lg mt-6 p-1 cursor-pointer' onClick={() => handleSocialAuth('google')}>
-                        <div className='flex gap-2 items-center'>
-                            <Icon icon="flat-color-icons:google" width="30" height="30" />
-                            <span>Signup using Google</span>
-                        </div>
-                    </div>
-                    <div className="relative mt-6">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-muted-foreground"></div>
-                            </div>
-                            <div className="relative flex justify-center text-sm">
-                                <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-                            </div>
-                        </div>
+                    <h1 className='text-2xl font-semibold'>Signup</h1>
                 </div>
-                <div>
-                    {/* Message Section */}
+                <div className='flex justify-between mt-2'>
+                    <h3 className="text-center tracking-tight text-color-secondary">
+                        Already Have an Account?
+                    </h3>
+                    <h3 className='text-primary font-bold'>
+                        <Link href="login">Login</Link>
+                    </h3>
+                </div>
+                <div className='w-full border-2 border-[#D9D9D9] text-secondary flex justify-center items-center rounded-lg mt-6 p-1 cursor-pointer' onClick={() => handleSocialAuth('google')}>
+                    <div className='flex gap-2 items-center'>
+                        <Icon icon="flat-color-icons:google" width="30" height="30" />
+                        <span>Signup using Google</span>
+                    </div>
+                </div>
+                <div className="relative mt-6">
+                    <div className="absolute inset-0 flex items-center">
+                        <div className="w-full border-t border-muted-foreground"></div>
+                    </div>
+                    <div className="relative flex justify-center text-sm">
+                        <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                {/* Message Section */}
                 {message && (
                     <div className={`p-4 mb-4 text-sm ${message.type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'} rounded-lg`} role="alert">
                         {message.text}
                     </div>
                 )}
-                    <form className="space-y-4" onSubmit={handleSignUp}>
-                        <div className="flex space-x-2">
-                            <Input
-                                id="firstName"
-                                name="firstName"
-                                type="text"
-                                required
-                                placeholder="First Name"
-                                value={formData.firstName}
-                                onChange={handleInputChange}
-                                className="w-full"
-                            />
-                            <Input
-                                id="lastName"
-                                name="lastName"
-                                type="text"
-                                required
-                                placeholder="Last Name"
-                                value={formData.lastName}
-                                onChange={handleInputChange}
-                                className="w-full"
-                            />
-                        </div>
-                        <div>
-                            <Input
-                                id="email"
-                                name="email"
-                                type="email"
-                                required
-                                placeholder="Email address"
-                                value={formData.email}
-                                onChange={handleInputChange}
-                                className="w-full"
-                                icon={<Icon icon="material-symbols-light:mail-outline-sharp" className='text-secondary' width="24" height="24" />}
-                            />
-                        </div>
-                        <div className='relative'>
-                            <Input
-                                id="password"
-                                name="password"
-                                type={showPassword ? 'text' : 'password'}
-                                required
-                                placeholder="Password"
-                                value={formData.password}
-                                onChange={handleInputChange}
-                                className={`w-full ${formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword ? 'border-red-500' : ''}`}
-                                icon={<Icon icon="carbon:password" className='text-secondary' width="22" height="22" />}
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowPassword(!showPassword)}
-                                className="absolute right-4 top-[11px] z-10"
-                            >
-                                <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"} className='text-secondary' width="22" height="22" />
-                            </button>
-                        </div>
-                        <div className='relative'>
-                            <Input
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                type={showConfirmPassword ? 'text' : 'password'}
-                                required
-                                placeholder="Confirm Password"
-                                value={formData.confirmPassword}
-                                onChange={handleInputChange}
-                                className={`w-full ${formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword ? 'border-red-500' : ''}`}
-                                icon={<Icon icon="carbon:password" className='text-secondary' width="22" height="22" />}
-                            />
-                            <button
-                                type="button"
-                                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                className="absolute right-4 top-[11px] z-10"
-                            >
-                                <Icon icon={showConfirmPassword ? "mdi:eye-off" : "mdi:eye"} className='text-secondary' width="22" height="22" />
-                            </button>
-                        </div>
-                        <div>
-                            <Button
-                                type="submit"
-                                className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition duration-150 ease-in-out"
-                                disabled={isLoading} // Disable button while loading
-                            >
-                                {isLoading ? <Icon icon="eos-icons:three-dots-loading" width="35" height="35" /> : 'Sign up'}
-                            </Button>
-                        </div>
-                    </form>
-                </div>
-            </motion.div>
+                <form className="space-y-4" onSubmit={handleSignUp}>
+                    <div className="flex space-x-2">
+                        <Input
+                            id="firstName"
+                            name="firstName"
+                            type="text"
+                            required
+                            placeholder="First Name"
+                            value={formData.firstName}
+                            onChange={handleInputChange}
+                            className="w-full"
+                        />
+                        <Input
+                            id="lastName"
+                            name="lastName"
+                            type="text"
+                            required
+                            placeholder="Last Name"
+                            value={formData.lastName}
+                            onChange={handleInputChange}
+                            className="w-full"
+                        />
+                    </div>
+                    <div>
+                        <Input
+                            id="email"
+                            name="email"
+                            type="email"
+                            required
+                            placeholder="Email address"
+                            value={formData.email}
+                            onChange={handleInputChange}
+                            className="w-full"
+                            icon={<Icon icon="material-symbols-light:mail-outline-sharp" className='text-secondary' width="24" height="24" />}
+                        />
+                    </div>
+                    <div className='relative'>
+                        <Input
+                            id="password"
+                            name="password"
+                            type={showPassword ? 'text' : 'password'}
+                            required
+                            placeholder="Password"
+                            value={formData.password}
+                            onChange={handleInputChange}
+                            className={`w-full ${formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword ? 'border-red-500' : ''}`}
+                            icon={<Icon icon="carbon:password" className='text-secondary' width="22" height="22" />}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-4 top-[11px] z-10"
+                        >
+                            <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"} className='text-secondary' width="22" height="22" />
+                        </button>
+                    </div>
+                    <div className='relative'>
+                        <Input
+                            id="confirmPassword"
+                            name="confirmPassword"
+                            type={showConfirmPassword ? 'text' : 'password'}
+                            required
+                            placeholder="Confirm Password"
+                            value={formData.confirmPassword}
+                            onChange={handleInputChange}
+                            className={`w-full ${formData.password && formData.confirmPassword && formData.password !== formData.confirmPassword ? 'border-red-500' : ''}`}
+                            icon={<Icon icon="carbon:password" className='text-secondary' width="22" height="22" />}
+                        />
+                        <button
+                            type="button"
+                            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                            className="absolute right-4 top-[11px] z-10"
+                        >
+                            <Icon icon={showConfirmPassword ? "mdi:eye-off" : "mdi:eye"} className='text-secondary' width="22" height="22" />
+                        </button>
+                    </div>
+                    <div>
+                        <Button
+                            type="submit"
+                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition duration-150 ease-in-out"
+                            disabled={isLoading} // Disable button while loading
+                        >
+                            {isLoading ? <Icon icon="eos-icons:three-dots-loading" width="35" height="35" /> : 'Sign up'}
+                        </Button>
+                    </div>
+                </form>
+            </div>
+        </motion.div>
     )
 }
 
