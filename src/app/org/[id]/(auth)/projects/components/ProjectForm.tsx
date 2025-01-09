@@ -40,7 +40,7 @@ export function ProjectForm({ onClose, addProject, editProject, updateProject, s
       errors.end_date = "End date must be after start date";
     }
     if (!project.status) {
-      errors.end_date = "Status is required";
+      errors.status = "Status is required";
     }
 
     setFieldErrors(errors);
