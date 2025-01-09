@@ -2,7 +2,7 @@
 'use client';
 
 import { Button } from '@components/ui/button';
-import { Loader2, Trash } from 'lucide-react';
+import { Download, Loader2, Trash } from 'lucide-react';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/ui/table';
 import { formatUnixDate } from '@/utils/unixdate';
 import { dataFallback } from '@/utils/datafallback';
@@ -13,6 +13,7 @@ import { DataTable } from '@/app/components/ui/data-table';
 import ExportUsersDataToExcel from './ExportUsersDataToExcel';
 import { columns } from './columns';
 import { SupabaseUser } from '@/types';
+import { Heading } from '@/app/components/ui/heading';
 
 export default function SupabaseUsersTable() {
   const { users, loading, error, fetchSupabaseUsers } = useSupabaseUsers();
@@ -85,7 +86,25 @@ export default function SupabaseUsersTable() {
           </TableBody>
         </Table> 
       </div>*/}
-
+      <div className="flex border-b pb-2 items-center justify-between">
+        <Heading
+          title={`Clerk Users (${formattedUsers.length})`}
+          description="Manage Users"
+        />
+        <div></div>
+        <div>
+          <Button
+            className={`bg-cyan-600 hover:bg-cyan-600`}
+            onClick={() =>
+              ExportUsersDataToExcel("notfiltered", formattedUsers)
+            }
+            title="disabled"
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Export All
+          </Button>
+        </div>
+      </div>
       <DataTable
         searchKey="name"
         clickable={true}
