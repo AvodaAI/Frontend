@@ -66,7 +66,6 @@ const AddUserForm: React.FC<UserFormProps> = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(handleSubmit)}
-        // onSubmit={() => { }}
         className="space-y-8 w-full"
       >
         <div className="mb-5 flex flex-col gap-5">

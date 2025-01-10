@@ -3,16 +3,17 @@ import { Modal } from "../ui/modal";
 import AddUserForm from "@/app/org/[id]/(auth)/users/components/AddUserForm";
 import { useAddUserModal } from "@/hooks/use-add-user-modal";
 import { NewUser } from "@/types";
+import { addUserService } from "@/utils/services/userServices";
 
 export const AddUserModal = () => {
   const { isOpen, onClose, defaultValues } = useAddUserModal();
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = (data: NewUser) => {
+  const handleSubmit = async (data: NewUser) => {
     try {
       setLoading(true);
       console.log(data);
-      // dispatch(createUserData(data) as any);
+      await addUserService(data)
       setLoading(false);
     } catch (error: any) {
       console.log(error);

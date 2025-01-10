@@ -19,7 +19,7 @@ export default function SupabaseUsersTable() {
 
   const deleteselectedUsers = () => { };
   const { onOpen } = useAddUserModal();
-  // console.log(users)
+  
   const formattedUsers: NewUser[] = users.map((user: any) => ({
     id: user.id,
     first_name: dataFallback(user.first_name) || 'N/A',
@@ -45,50 +45,6 @@ export default function SupabaseUsersTable() {
 
   return (
     <Card className="p-5">
-      {/* <div className="rounded-md border">
-        <div className="flex justify-between p-4">
-          <h2 className="text-lg font-bold">Users</h2>
-          <Button onClick={() => {
-            const email = prompt('Enter user email:');
-            if (email) addUser(email, fetchSupabaseUsers);
-          }} variant="default">
-            Add User
-          </Button>
-        </div>
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Created At</TableHead>
-              <TableHead>Last Sign In</TableHead>
-              <TableHead>Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.id}</TableCell>
-                <TableCell>{`${dataFallback(user.first_name)} ${dataFallback(user.last_name)}` || 'N/A'}</TableCell>
-                <TableCell>{user.email || 'N/A'}</TableCell>
-                <TableCell>{dataFallback(formatUnixDate(new Date(user.created_at).getTime())) || 'N/A'}</TableCell>
-                <TableCell>{dataFallback(user.last_login ? formatUnixDate(new Date(user.last_login).getTime()) : 'Never')}</TableCell>
-                <TableCell>
-                  <div className="flex space-x-2">
-                    <Button onClick={() => alert(`View details for ${user.id}`)} variant="ghost" size="sm">
-                      View Details
-                    </Button>
-                    <Button onClick={() => deleteUser(user.id.toString(), fetchSupabaseUsers)} variant="destructive" size="sm">
-                      Delete
-                    </Button>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table> 
-      </div>*/}
       <div className="flex border-b pb-2 items-center justify-between">
         <Heading
           title={`Users (${formattedUsers.length})`}

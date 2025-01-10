@@ -26,8 +26,21 @@ export interface NewUser {
   city?: string;
   status?: string;
   country?: string;
+  isFromDashboard?: boolean;
+  organization_id?: string;
+  action?: string;
+  is_invite?: boolean;
   hire_date?: Date | string | null;
   auth_id?: string;
+}
+
+export interface SupabaseUser {
+  id: number;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  created_at: string;
+  last_login: string | null;
 }
 
 // Type for user authentication
@@ -50,5 +63,3 @@ export interface SessionUser {
   email: string;
   role: string;
 }
-
-
