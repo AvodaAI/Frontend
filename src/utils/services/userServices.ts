@@ -2,11 +2,14 @@ import { AddEditProject } from "@/types/project";
 import { fetchWrapper } from "../fetchWrapper";
 import { NewUser } from "@/types";
 
-// export const getUsers = async (organization_id: number) => {
-//   return await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/projects?organization_id=${organization_id}&action=get-project`, {
-//     credentials: "include",
-//   });
-// };
+export const getUsers = async (organization_id: number) => {
+  return await fetchWrapper(
+    `${process.env.NEXT_PUBLIC_API_URL}/users/list?organization_id=${organization_id}&action=get-user`,
+    {
+      credentials: "include",
+    }
+  );
+};
 
 export const updateUserService = async ({
   name,

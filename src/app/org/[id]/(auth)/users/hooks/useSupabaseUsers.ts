@@ -10,24 +10,24 @@ export const useSupabaseUsers = () => {
   const [error, setError] = useState<string | null>(null);
 
   const fetchSupabaseUsers = async () => {
-    setLoading(true);
-    setError(null);
-    try {
-      const { data, error } = await supabase
-        .from("users")
-        .select("id, first_name, last_name, email, created_at, last_login");
+    // setLoading(true);
+    // setError(null);
+    // try {
+    //   const { data, error } = await supabase
+    //     .from("users")
+    //     .select("id, first_name, last_name, email, created_at, last_login");
 
-      if (error) {
-        throw new Error(error.message);
-      }
-      setUsers(data || []);
-    } catch (err) {
-      const errorMessage =
-        err instanceof Error ? err.message : "Failed to fetch users";
-      setError(errorMessage);
-    } finally {
-      setLoading(false);
-    }
+    //   if (error) {
+    //     throw new Error(error.message);
+    //   }
+    //   setUsers(data || []);
+    // } catch (err) {
+    //   const errorMessage =
+    //     err instanceof Error ? err.message : "Failed to fetch users";
+    //   setError(errorMessage);
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   useEffect(() => {

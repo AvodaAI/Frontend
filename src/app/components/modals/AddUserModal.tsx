@@ -12,7 +12,6 @@ export const AddUserModal = () => {
   const handleSubmit = async (data: NewUser) => {
     try {
       setLoading(true);
-      console.log(data);
       await addUserService(data)
       setLoading(false);
     } catch (error: any) {
@@ -40,6 +39,9 @@ export const AddUserModal = () => {
               email: "",
               password: "",
               role: "user",
+              hire_date: "2024-12-16T10:06:26.129Z",
+              status: 'active',
+              organization_id: 1,
             }
           }
           onSubmit={handleSubmit}

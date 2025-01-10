@@ -24,6 +24,9 @@ const formSchema = z.object({
   email: z.string().email().min(1, { message: "Email is required" }),
   first_name: z.string().min(1, { message: "First name is required" }),
   last_name: z.string().min(1, { message: "Last name is required" }),
+  status: z.string().min(1, { message: "Status is required" }),
+  hire_date: z.string().min(1, { message: "hire date is required" }),
+  organization_id: z.number().min(1, { message: "Last name is required" }),
   password: z
     .string()
     .min(8, { message: 'Password must be at least 8 characters long' })
@@ -58,8 +61,10 @@ const AddUserForm: React.FC<UserFormProps> = ({
   });
 
   const handleSubmit = async (data: NewUser) => {
-    onSubmit(data);
-    form.reset();
+    // onSubmit(data);
+    // form.reset();
+    console.log(data)
+    console.log(defaultValues)
   };
 
   return (

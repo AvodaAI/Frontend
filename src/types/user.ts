@@ -27,10 +27,10 @@ export interface NewUser {
   status?: string;
   country?: string;
   isFromDashboard?: boolean;
-  organization_id?: string;
+  organization_id?: number;
   action?: string;
   is_invite?: boolean;
-  hire_date?: Date | string | null;
+  hire_date?: string;
   auth_id?: string;
 }
 

@@ -13,22 +13,36 @@ import { Download, Loader2, Trash, UserPlus } from 'lucide-react';
 import { useSupabaseUsers } from '../hooks/useSupabaseUsers';
 import ExportUsersDataToExcel from './ExportUsersDataToExcel';
 import { columns } from './columns';
+import { getUsers } from '@/utils/services/userServices';
+import { useEffect, useState } from 'react';
 
 export default function SupabaseUsersTable() {
-  const { users, loading, error, fetchSupabaseUsers } = useSupabaseUsers();
+  const [users, setUsers] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
 
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const res = await getUsers(1)
+      const users = await res.json()
+      setUsers(users.users??[])
+    }
+    fetchUsers();
+  }, [])
+  console.log("users", users)
   const deleteselectedUsers = () => { };
   const { onOpen } = useAddUserModal();
-  
+
   const formattedUsers: NewUser[] = users.map((user: any) => ({
-    id: user.id,
-    first_name: dataFallback(user.first_name) || 'N/A',
-    last_name: dataFallback(user.last_name) || 'N/A',
-    email: user.email,
+    id: user.user_id,
+    first_name: dataFallback(user.user_first_name) || 'N/A',
+    last_name: dataFallback(user.user_last_name) || 'N/A',
+    email: user.user_email,
     role: 'user',
+    hire_date: "2024-12-16T10:06:26.129Z",
     status: 'active',
-    created_at: dataFallback(formatUnixDate(new Date(user.created_at).getTime())) || 'N/A',
-    last_login: dataFallback(user.last_login ? formatUnixDate(new Date(user.last_login).getTime()) : 'Never'),
+    created_at: dataFallback(formatUnixDate(new Date(user.user_created_at).getTime())) || 'N/A',
+    last_login: dataFallback(user.user_last_login ? formatUnixDate(new Date(user.user_last_login).getTime()) : 'Never'),
   }));
 
   if (loading) {
