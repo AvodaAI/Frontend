@@ -26,6 +26,7 @@ export default function SupabaseUsersTable() {
     last_name: dataFallback(user.last_name) || 'N/A',
     email: user.email,
     role: 'user',
+    status: 'active',
     created_at: dataFallback(formatUnixDate(new Date(user.created_at).getTime())) || 'N/A',
     last_login: dataFallback(user.last_login ? formatUnixDate(new Date(user.last_login).getTime()) : 'Never'),
   }));
@@ -114,7 +115,7 @@ export default function SupabaseUsersTable() {
         </div>
       </div>
       <DataTable
-        searchKey="name"
+        searchKey="first_name"
         clickable={true}
         columns={columns}
         data={formattedUsers}

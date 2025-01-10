@@ -25,7 +25,6 @@ const OrganizationsPage = () => {
     try {
       const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/?action=get-organization`, { credentials: "include" });
       const data = await response.json();
-
       if (response.ok) {
         setOrganizations(data);
       } else {

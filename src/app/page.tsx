@@ -13,7 +13,7 @@ export default async function Home() {
   const cookieStore = await cookies();
   const token = cookieStore.get("supabase-auth-token");
   if (token) {
-    const { error } = await supabase.auth.getUser(token.value);
+    const { error, data } = await supabase.auth.getUser(token.value);
     if (!error) {
       redirect("/org");
     }

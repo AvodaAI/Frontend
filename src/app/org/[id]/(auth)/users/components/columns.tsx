@@ -6,6 +6,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown } from "lucide-react";
 import { CellAction } from "./cell-actions";
 import { NewUser } from "@/types";
+import { Badge } from "@/app/components/ui/badge";
 
 export const columns: ColumnDef<NewUser>[] = [
   {
@@ -86,6 +87,29 @@ export const columns: ColumnDef<NewUser>[] = [
         </Button>
       );
     },
+  },
+  {
+    accessorKey: 'status',
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === 'asc')}
+        >
+          Status
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+    cell: ({ row }) => (
+      <Badge
+        variant={null}
+        className={`${row.original.status === 'active' ? 'bg-green-500' : row.original.status === 'pending' ? 'bg-yellow-500' : 'bg-red-500'
+          } text-white uppercase`}
+      >
+        {row.original.status ?? ''}
+      </Badge>
+    ),
   },
   {
     accessorKey: "last_login",

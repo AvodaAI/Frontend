@@ -24,6 +24,7 @@ export interface NewUser {
   first_name: string;
   position?: string;
   city?: string;
+  status?: string;
   country?: string;
   hire_date?: Date | string | null;
   auth_id?: string;
