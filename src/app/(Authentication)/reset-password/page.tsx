@@ -17,7 +17,7 @@ export default function ResetPasswordPage() {
     const [error, setError] = useState<string | null>(null);
     const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
-    
+
     // State variables for new password and confirmation
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -41,9 +41,6 @@ export default function ResetPasswordPage() {
             return;
         }
 
-        // Simulate password reset
-        console.log('Resetting password to:', newPassword);
-        
         // Simulate loading for 3 seconds
         setTimeout(() => {
             setLoading(false);

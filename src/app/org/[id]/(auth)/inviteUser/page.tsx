@@ -27,6 +27,7 @@ export default function InviteUser() {
 
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
+    //TODO: [AV-141] Move password validation logic into a separate utility function
     setConfirmPassword(value);
     if (value !== password) {
       setError('Password and Confirm Password do not match');
@@ -54,7 +55,11 @@ export default function InviteUser() {
         .select('*')
         .eq('email_address', userData?.email);
 
-      if (InvitationDetails?.[0].revoked) {
+      if (!InvitationDetails?.length) {
+        setError('No valid invitation found.');
+        return;
+      }
+      if (InvitationDetails[0].revoked) {
         setError('Your invitation has been revoked by admin.');
         return;
       }
@@ -126,6 +131,7 @@ export default function InviteUser() {
       }
 
     } catch (error) {
+      //TODO: [AV-143] The error handling in the form submission is inconsistent and could lead to unhandled promise rejections. Implement proper error handling and avoid throwing errors in the catch block.
       if (error instanceof Error) {
         throw new Error(error.message);
       } else {
