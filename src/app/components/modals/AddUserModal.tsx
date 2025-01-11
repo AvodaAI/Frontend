@@ -18,6 +18,7 @@ export const AddUserModal = () => {
       toast.success('User Added Successfully!')
     } catch (error: any) {
       console.log(error);
+      toast.success("Something Went Wrong!");
     } finally {
       setLoading(false);
     }

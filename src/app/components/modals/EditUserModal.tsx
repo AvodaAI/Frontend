@@ -16,13 +16,14 @@ export const EditUserModal = () => {
       setLoading(true);
       await updateUserService(data)
       setLoading(false);
-      toast.success('User Updated Successfully!')
+      toast.success('User Updated Successfully!');
     } catch (error: any) {
       console.log(error);
+      toast.success("Something Went Wrong!");
     } finally {
       setLoading(false);
     }
-    // onClose();
+    onClose();
   };
 
   return (
