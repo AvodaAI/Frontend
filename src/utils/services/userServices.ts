@@ -1,6 +1,6 @@
 import { AddEditProject } from "@/types/project";
 import { fetchWrapper } from "../fetchWrapper";
-import { NewUser } from "@/types";
+import { NewUser, UpdateUser } from "@/types";
 
 export const getUsers = async (organization_id: number) => {
   return await fetchWrapper(
@@ -11,30 +11,20 @@ export const getUsers = async (organization_id: number) => {
   );
 };
 
-export const updateUserService = async ({
-  name,
-  projectId,
-  start_date,
-  end_date,
-  description,
-  status,
-  organizationId,
-}: AddEditProject) => {
+export const updateUserService = async (data: UpdateUser) => {
   return await fetchWrapper(
-    `${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}`,
+    `${process.env.NEXT_PUBLIC_API_URL}/users/${data.id}`,
     {
-      method: "PATCH",
+      method: "PuT",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        start_date,
-        end_date,
-        description,
-        status,
-        name,
-        action: "update-project",
-        organization_id: organizationId,
+        action: data.action,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        hire_date: data.hire_date,
+        role: data.role,
       }),
       credentials: "include",
     }

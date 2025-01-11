@@ -1,7 +1,7 @@
 export const roles = [
   {
-    label: "User",
-    value: "user",
+    label: "Employee",
+    value: "employee",
   },
   {
     label: "Processing",
@@ -12,12 +12,12 @@ export const roles = [
     value: "developer",
   },
   {
-    label: "Projet Manager",
-    value: "projet-manager",
+    label: "Manager",
+    value: "manager",
   },
   {
-    label: "Organization Admin",
-    value: "organization-admin",
+    label: "Admin",
+    value: "admin",
   },
 ];
 

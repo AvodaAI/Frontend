@@ -11,24 +11,26 @@ import { Input } from "@/app/components/ui/input";
 import { Loader } from "@/app/components/ui/loader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
 import { roles } from "@/data/data";
-import { NewUser } from "@/types";
+import { NewUser, UpdateUser } from "@/types";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const formSchema = z.object({
-  _id: z.number(),
-  email: z.string().email().min(1, { message: "Email is required" }),
+  id: z.number(),
   first_name: z.string().min(1, { message: "First name is required" }),
   last_name: z.string().min(1, { message: "Last name is required" }),
   role: z.string().min(1, { message: "Role is required" }),
+  action: z.string().optional(),
+  // status: z.string().min(1, { message: "Status is required" }),
+  hire_date: z.string().min(1, { message: "Hire date is required" }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 interface UserFormProps {
   defaultValues: Partial<FormValues>;
-  onSubmit: (data: NewUser) => void;
+  onSubmit: (data: UpdateUser) => void;
   loading: boolean;
   onClose: () => void;
   buttonTitle: string;
@@ -46,9 +48,11 @@ const UserForm: React.FC<UserFormProps> = ({
     defaultValues,
   });
 
-  const handleSubmit = async (data: any) => {
+  console.log(defaultValues)
+
+  const handleSubmit = async (data: FormValues) => {
     onSubmit(data);
-    form.reset();
+    // form.reset();
   };
 
   return (
@@ -84,7 +88,7 @@ const UserForm: React.FC<UserFormProps> = ({
               </FormItem>
             )}
           />
-          <FormField
+          {/* <FormField
             name="email"
             control={form.control}
             render={({ field }) => (
@@ -96,7 +100,7 @@ const UserForm: React.FC<UserFormProps> = ({
                 <FormMessage />
               </FormItem>
             )}
-          />
+          /> */}
 
           <FormField
             name="role"

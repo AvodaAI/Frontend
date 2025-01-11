@@ -4,6 +4,7 @@ import AddUserForm from "@/app/org/[id]/(auth)/users/components/AddUserForm";
 import { useAddUserModal } from "@/hooks/use-add-user-modal";
 import { NewUser } from "@/types";
 import { addUserService } from "@/utils/services/userServices";
+import toast from "react-hot-toast";
 
 export const AddUserModal = () => {
   const { isOpen, onClose, defaultValues } = useAddUserModal();
@@ -14,6 +15,7 @@ export const AddUserModal = () => {
       setLoading(true);
       await addUserService(data)
       setLoading(false);
+      toast.success('User Added Successfully!')
     } catch (error: any) {
       console.log(error);
     } finally {
@@ -38,10 +40,12 @@ export const AddUserModal = () => {
               last_name: "",
               email: "",
               password: "",
-              role: "user",
+              role: "employee",
               hire_date: "2024-12-16T10:06:26.129Z",
               status: 'active',
+              is_invite: true,
               organization_id: 1,
+              action: "create-user",
             }
           }
           onSubmit={handleSubmit}

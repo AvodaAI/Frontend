@@ -59,13 +59,13 @@ export const CellAction: React.FC<{ data: NewUser }> = ({ data }) => {
     }
   };
   const handleEditUser = (data: NewUser) => {
-    console.log('object, ', data)
     editUserModal.onOpen({
       id: data.id,
       first_name: data.first_name,
       last_name: data.last_name,
-      email: data.email,
       role: data.role,
+      hire_date: data.hire_date,
+      action: "update-user",
     });
   };
 
