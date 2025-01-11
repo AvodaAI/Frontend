@@ -14,7 +14,6 @@ export const EditUserModal = () => {
   const handleSubmit = async (data: UpdateUser) => {
     try {
       setLoading(true);
-      console.log("modal: ", data);
       await updateUserService(data)
       setLoading(false);
       toast.success('User Updated Successfully!')
