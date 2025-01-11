@@ -11,6 +11,7 @@ import {
 } from "@/app/components/ui/dropdown-menu";
 import { useEditUserModal } from "@/hooks/use-edit-user-modal";
 import { NewUser } from "@/types";
+import { deleteUserService } from "@/utils/services/userServices";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -21,16 +22,16 @@ export const CellAction: React.FC<{ data: NewUser }> = ({ data }) => {
   const [openDisable, setOpenDisable] = useState(false);
   const [openEnable, setOpenEnable] = useState(false);
 
-  // const dispatch = useAppDispatch();
-  // const user = useAppSelector(usersPageSelector);
   const editUserModal = useEditUserModal();
   const onDelete = async () => {
     try {
       setLoading(true);
-      // const id = data._id ? data._id : -1;
-      // dispatch(deleteUserData(id.toString()));
+      const userId = data.id ? data.id : -1;
+      const organizationId = data.organization_id ? data.organization_id : -1;
+      await deleteUserService({ userId, organizationId })
+      toast.success('User Deleted Successfully!')
     } catch (error) {
-      toast.error("Something went wrong!");
+      toast.error("Something Went Wrong!");
     } finally {
       setLoading(false);
       setOpenDelete(false);

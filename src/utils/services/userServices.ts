@@ -42,15 +42,15 @@ export const addUserService = async (data: NewUser) => {
   });
 };
 
-export const deleteProjectService = async ({
-  projectId,
+export const deleteUserService = async ({
+  userId,
   organizationId,
 }: {
-  projectId: string;
+  userId: number;
   organizationId: number;
 }) => {
   return await fetchWrapper(
-    `${process.env.NEXT_PUBLIC_API_URL}/projects/${projectId}?organization_id=${organizationId}&action=delete-project`,
+    `${process.env.NEXT_PUBLIC_API_URL}/users/delete/${userId}?organization_id=${organizationId}&action=delete-user`,
     {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
