@@ -55,7 +55,7 @@ export default function ProjectsPage() {
   return (
     <div className="container max-w-7xl mx-auto">
       <div className="flex flex-col gap-6">
-        <div className="flex items-center justify-between">
+        {/* <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
           <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
             <DialogTrigger asChild>
@@ -68,11 +68,11 @@ export default function ProjectsPage() {
               <ProjectForm addProject={addProject} onClose={() => setIsDialogOpen(false)} editProject={editProject} setEditProject={setEditProject} updateProject={handleUpdateProject} />
             </DialogContent>
           </Dialog>
-        </div>
+        </div> */}
 
         {!error && (
           <div className="rounded-lg">
-            <ProjectsTable projects={projects} setProjects={setProjects} handleEditProject={handleEditProject} />
+            {/* <ProjectsTable projects={projects} setProjects={setProjects} handleEditProject={handleEditProject} /> */}
             <Projects />
           </div>
         )}
