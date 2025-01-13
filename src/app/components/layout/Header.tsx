@@ -21,6 +21,7 @@ const navigation = [
   { name: 'Organization', href: 'organization', adminOnly: true },
   { name: 'Projects', href: 'projects', adminOnly: true },
   { name: 'Tasks', href: 'tasks', adminOnly: true },
+  { name: 'Assigned Tasks', href: 'assigned-task', adminOnly: true },
   { name: 'Time Tracking', href: 'time-tracking', adminOnly: false },
   { name: 'Time Logs', href: 'time-logs', adminOnly: true },
   { name: 'Invitations', href: 'invitations', adminOnly: true },
