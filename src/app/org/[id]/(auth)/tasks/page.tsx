@@ -5,21 +5,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useEffect, useState } from "react";
 import { TasksTable } from "./components/TaskTable";
 import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
-import { TaskForm } from "./components/TaskForm"; 
+import { TaskForm } from "./components/TaskForm";
 import { useParams } from "next/navigation";
-import { Task } from "@/types/task"; 
-import { getTasksService } from "@/utils/services/taskServices";
+import { Task, Users } from "@/types/task";
+import { getTasksService, getUsersService } from "@/utils/services/taskServices";
 
 export default function TasksPage() {
   const { id: org_id } = useParams();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [users, setUsers] = useState<Users[]>([]);
   const [editTask, setEditTask] = useState<Task | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchTasks = async () => {
-      const res = await getTasksService(Number(org_id)); 
+      const res = await getTasksService(Number(org_id));
       const data = await res.json();
       if (res.ok) {
         setTasks(data?.tasks);
@@ -28,7 +29,31 @@ export default function TasksPage() {
         throw new Error(data.error || "Error fetching tasks");
       }
     };
+
+    const fetchUsers = async () => {
+      try {
+        const response = await getUsersService(Number(org_id));
+        if (!response.ok) {
+          const errorData = await response.json();
+          const errorMessage = errorData.error || "Error fetching users";
+          setError(errorMessage);
+        }
+
+        const { users = [] } = await response.json();
+        if (users.length > 0) {
+          const formattedUsers = users.map((user: { user_email: string; user_id: number }) => ({
+            email: user.user_email,
+            id: user.user_id,
+          }));
+          setUsers(formattedUsers);
+        }
+      } catch (error) {
+        console.error("An error occurred while fetching users:", error);
+      }
+    };
+
     fetchTasks();
+    fetchUsers();
   }, [org_id]);
 
   const handleAddTask = () => {
@@ -37,7 +62,7 @@ export default function TasksPage() {
   };
 
   const handleEditTask = (task: Task) => {
-    setEditTask(task);
+    setEditTask({ ...task, assigned_to: task.assigned_user_id });
     setIsDialogOpen(true);
   };
 
@@ -69,6 +94,7 @@ export default function TasksPage() {
                 editTask={editTask}
                 setEditTask={setEditTask}
                 updateTask={handleUpdateTask}
+                users={users}
               />
             </DialogContent>
           </Dialog>

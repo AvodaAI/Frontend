@@ -6,28 +6,31 @@ import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
 import { Alert, AlertDescription, AlertTitle } from "@components/ui/alert";
 import { useParams } from "next/navigation";
-import { Task, TaskFormProps } from "@/types/task";
+import { EditTask, TaskFormProps } from "@/types/task";
 import { addTaskService, updateTaskService } from "@/utils/services/taskServices";
 
-export function TaskForm({ onClose, addTask, editTask, updateTask, setEditTask }: TaskFormProps) {
+export function TaskForm({ onClose, addTask, editTask, updateTask, setEditTask, users }: TaskFormProps) {
   const { id: org_id } = useParams();
-  const [task, setTask] = useState<Task>({
+  const [task, setTask] = useState<EditTask>({
     id: "",
     title: "",
     description: "",
     due_date: "",
     status: "",
     priority: "",
+    assigned_to: 0,
   });
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
+  const [selectedAssignee, setSelectedAssignee] = useState("");
 
   useEffect(() => {
     if (editTask) {
       setTask(editTask);
     }
+    setSelectedAssignee(users.find((user) => user.id === editTask?.assigned_to)?.email ?? "");
   }, [editTask]);
 
   const validateFields = () => {
@@ -62,10 +65,10 @@ export function TaskForm({ onClose, addTask, editTask, updateTask, setEditTask }
         organizationId: Number(org_id),
         status: task.status ?? "",
         priority: task.priority ?? "",
+        assigned_to: task.assigned_to,
       };
 
       if (editTask && updateTask) {
-
         res = await updateTaskService({
           ...taskData,
           taskId: task.id,
@@ -76,12 +79,10 @@ export function TaskForm({ onClose, addTask, editTask, updateTask, setEditTask }
           setError(data.error || data.message || "Failed to update Task");
         }
 
-        updateTask(task);
+        updateTask({ ...task, assigned_user_email: users.find((user) => user.id === taskData?.assigned_to)?.email ?? "" });
         setEditTask(null);
       } else {
-        res = await addTaskService(
-          taskData
-        );
+        res = await addTaskService(taskData);
 
         if (!res.ok) {
           const data = await res.json();
@@ -89,7 +90,7 @@ export function TaskForm({ onClose, addTask, editTask, updateTask, setEditTask }
         }
 
         const { newTask } = await res.json();
-        addTask(newTask);
+        addTask({ ...newTask, assigned_user_email: users.find((user) => user.id === taskData?.assigned_to)?.email ?? "" });
       }
 
       setSuccess(true);
@@ -100,6 +101,7 @@ export function TaskForm({ onClose, addTask, editTask, updateTask, setEditTask }
         due_date: "",
         status: "",
         priority: "",
+        assigned_to: 0,
       });
 
       if (onClose) {
@@ -161,10 +163,10 @@ export function TaskForm({ onClose, addTask, editTask, updateTask, setEditTask }
           <option value="" disabled>
             Select status
           </option>
-          <option value="Not Started">To Do</option>
+          <option value="To Do">To Do</option>
           <option value="In Progress">In Progress</option>
           <option value="Completed">Completed</option>
-          <option value="On Hold">Blocked</option>
+          <option value="Blocked">Blocked</option>
         </select>
         {fieldErrors.status && <p className="text-sm text-red-500 mt-1">{fieldErrors.status}</p>}
       </div>
@@ -183,9 +185,32 @@ export function TaskForm({ onClose, addTask, editTask, updateTask, setEditTask }
           <option value="Low">Low</option>
           <option value="Medium">Medium</option>
           <option value="High">High</option>
-          <option value="High">Critical</option>
+          <option value="Critical">Critical</option>
         </select>
         {fieldErrors.priority && <p className="text-sm text-red-500 mt-1">{fieldErrors.priority}</p>}
+      </div>
+      <div className="mt-4">
+        <Label htmlFor="assigned_to">Assigned To</Label>
+        <select
+          id="assigned_to"
+          value={selectedAssignee || ""}
+          onChange={(e) => {
+            setSelectedAssignee(e.target.value ?? "");
+            setTask({ ...task, assigned_to: users.find((user) => user.email === e.target.value)?.id });
+          }}
+          className={fieldErrors.assigned_to ? "border-red-500" : ""}
+        >
+          <option value="" disabled>
+            Select assignee
+          </option>
+          {users.length > 0 &&
+            users.map((user) => (
+              <option key={user.id} value={user.email}>
+                {user.email}
+              </option>
+            ))}
+        </select>
+        {fieldErrors.assigned_to && <p className="text-sm text-red-500 mt-1">{fieldErrors.assigned_to}</p>}
       </div>
 
       <Button type="submit" disabled={!task.title || !task.due_date || !task.status || !task.priority}>

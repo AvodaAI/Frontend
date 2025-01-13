@@ -75,7 +75,7 @@ export function TasksTable({
                   </TableCell>
                   <TableCell>{task.priority}</TableCell>
                   <TableCell>{task.status}</TableCell>
-                  <TableCell>{task.assign_to}</TableCell>
+                  <TableCell>{task.assigned_user_email ? task.assigned_user_email : "-"}</TableCell>
                   <TableCell>{formatTimeInHoursMinutes(task.time_tracked ?? 0)}</TableCell>
                   <TableCell className="text-right space-x-2">
                     <Button onClick={() => handleEditTask(task)} size="sm">
@@ -127,6 +127,55 @@ export function TasksTable({
             <AlertDescription>{error}</AlertDescription>
           </Alert>
         )}
+      </div>
+
+      {/* Mobile view */}
+      <div className="grid grid-cols-1 gap-4 md:hidden">
+        {paginatedItems.map((task: Task) => {
+          const { formattedDate, isPast } = formatDate(task.due_date ?? "");
+          return (
+            <div key={task.id} className="bg-white p-4 rounded-lg border shadow-sm space-y-4">
+              <div className="space-y-1">
+                <div className="font-medium text-lg">{task.title}</div>
+                <div className="text-sm text-muted-foreground">{task.description}</div>
+                <div className="text-sm text-muted-foreground">
+                  <span className={isPast ? "text-red-500" : ""}>{formattedDate}</span>
+                </div>
+                <div className="text-sm text-muted-foreground">{task.priority}</div>
+                <div className="text-sm text-muted-foreground">{task.status}</div>
+                <div className="text-sm text-muted-foreground">{task.assigned_user_email ? task.assigned_user_email : "-"}</div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <Button onClick={() => handleEditTask(task)} size="sm">
+                  Edit
+                </Button>
+                {children && children(task)}
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm">
+                      Delete
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete the task&apos;s record from the database.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction className={buttonVariants({ variant: "destructive", size: "sm" })} onClick={() => handleDelete(task.id)}>
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

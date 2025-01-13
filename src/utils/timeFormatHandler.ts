@@ -1,7 +1,13 @@
 export function formatDate(dateString: string) {
+  if (!dateString) {
+    return {
+      formattedDate: "-",
+      isPast: false,
+    };
+  }
   const date = new Date(dateString);
   const today = new Date();
-  today.setHours(0, 0, 0, 0); 
+  today.setHours(0, 0, 0, 0);
 
   const isPast = date < today;
   const formattedDate = new Intl.DateTimeFormat("en-GB", {
@@ -25,5 +31,5 @@ export function formatTimeInHoursMinutes(seconds: number) {
     result += `${minutes}m`;
   }
 
-  return result || "0m"; 
+  return result || "0m";
 }
