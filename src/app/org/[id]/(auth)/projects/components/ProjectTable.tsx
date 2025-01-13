@@ -15,12 +15,12 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@components/ui/alert-dialog";
-import { fetchWrapper } from "@/utils/fetchWrapper";
 import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
 import { usePagination } from "@/utils/invitations-pagination";
 import { useParams } from "next/navigation";
 import { deleteProjectService } from "@/utils/services/projectServices";
 import { Project } from "@/types/project";
+import { formatDate } from "@/utils/timeFormatHandler";
 
 export function ProjectsTable({
   children,
@@ -66,42 +66,50 @@ export function ProjectsTable({
           <TableBody>
             {paginatedItems &&
               paginatedItems.length > 0 &&
-              paginatedItems.map((project: Project) => (
-                <TableRow key={project?.id} className="hover:bg-muted/50">
-                  <TableCell>{project?.name}</TableCell>
-                  <TableCell>{project?.description}</TableCell>
-                  <TableCell>{project?.start_date}</TableCell>
-                  <TableCell>{project?.end_date}</TableCell>
-                  <TableCell>{project?.status}</TableCell>
-                  <TableCell className="text-right space-x-2">
-                    <Button onClick={() => handleEditProject(project)} size="sm">
-                      Edit
-                    </Button>
-                    {children && children(project)}
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button variant="destructive" size="sm">
-                          Delete
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete the project&apos;s record from the database.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction className={buttonVariants({ variant: "destructive", size: "sm" })} onClick={() => handleDelete(project.id)}>
+              paginatedItems.map((project: Project) => {
+                const { formattedDate: formattedStartDate, isPast: startDateInPast } = formatDate(project.start_date ?? "");
+                const { formattedDate: formattedEndDate, isPast: endDateInPast } = formatDate(project.end_date ?? "");
+                return (
+                  <TableRow key={project?.id} className="hover:bg-muted/50">
+                    <TableCell>{project?.name}</TableCell>
+                    <TableCell>{project?.description}</TableCell>
+                    <TableCell>
+                      <span className={startDateInPast ? "text-red-500" : ""}>{formattedStartDate}</span>
+                    </TableCell>
+                    <TableCell>
+                      <span className={endDateInPast ? "text-red-500" : ""}>{formattedEndDate}</span>
+                    </TableCell>
+                    <TableCell>{project?.status}</TableCell>
+                    <TableCell className="text-right space-x-2">
+                      <Button onClick={() => handleEditProject(project)} size="sm">
+                        Edit
+                      </Button>
+                      {children && children(project)}
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button variant="destructive" size="sm">
                             Delete
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
-                  </TableCell>
-                </TableRow>
-              ))}
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                              This action cannot be undone. This will permanently delete the project&apos;s record from the database.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction className={buttonVariants({ variant: "destructive", size: "sm" })} onClick={() => handleDelete(project.id)}>
+                              Delete
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
           </TableBody>
         </Table>
 
@@ -128,45 +136,53 @@ export function ProjectsTable({
 
       {/* Mobile view */}
       <div className="grid grid-cols-1 gap-4 md:hidden">
-        {paginatedItems.map((project: Project) => (
-          <div key={project?.id} className="bg-white p-4 rounded-lg border shadow-sm space-y-4">
-            <div className="space-y-1">
-              <div className="font-medium text-lg">{project?.name}</div>
-              <div className="text-sm text-muted-foreground">{project?.description}</div>
-              <div className="text-sm text-muted-foreground">{project?.start_date}</div>
-              <div className="text-sm text-muted-foreground">{project?.end_date}</div>
-              <div className="text-sm text-muted-foreground">{project?.status}</div>
-            </div>
+        {paginatedItems.map((project: Project) => {
+          const { formattedDate: formattedStartDate, isPast: startDateInPast } = formatDate(project.start_date ?? "");
+          const { formattedDate: formattedEndDate, isPast: endDateInPast } = formatDate(project.end_date ?? "");
+          return (
+            <div key={project?.id} className="bg-white p-4 rounded-lg border shadow-sm space-y-4">
+              <div className="space-y-1">
+                <div className="font-medium text-lg">{project?.name}</div>
+                <div className="text-sm text-muted-foreground">{project?.description}</div>
+                <div className="text-sm text-muted-foreground">
+                  <span className={startDateInPast ? "text-red-500" : ""}>{formattedStartDate}</span>
+                </div>
+                <div className="text-sm text-muted-foreground">
+                  <span className={endDateInPast ? "text-red-500" : ""}>{formattedEndDate}</span>
+                </div>
+                <div className="text-sm text-muted-foreground">{project?.status}</div>
+              </div>
 
-            <div className="grid grid-cols-2 gap-2 pt-2">
-              <Button onClick={() => handleEditProject(project)} size="sm">
-                Edit
-              </Button>
-              {children && children(project)}
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button variant="destructive" size="sm">
-                    Delete
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete the project&apos;s record from the database.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction className={buttonVariants({ variant: "destructive", size: "sm" })} onClick={() => handleDelete(project.id)}>
+              <div className="grid grid-cols-2 gap-2 pt-2">
+                <Button onClick={() => handleEditProject(project)} size="sm">
+                  Edit
+                </Button>
+                {children && children(project)}
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm">
                       Delete
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete the project&apos;s record from the database.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction className={buttonVariants({ variant: "destructive", size: "sm" })} onClick={() => handleDelete(project.id)}>
+                        Delete
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );
