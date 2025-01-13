@@ -39,18 +39,22 @@ const OrganizationsPage = () => {
     <div className="p-6 space-y-6">
       <h1 className="text-4xl font-bold mb-6">Organizations</h1>
       {error && <p className="text-red-500">{error}</p>}
-      {organizations &&
-        organizations.length > 0 &&
-        organizations.map((organization) => (
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6" key={organization.organization_id} onClick={() => router.push(`/org/${organization.organization_id}/dashboard`)}>
-            <Card >
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {organizations &&
+          organizations.length > 0 &&
+          organizations.map((organization) => (
+            <Card
+              key={organization.organization_id}
+              className="cursor-pointer hover:shadow-lg"
+              onClick={() => router.push(`/org/${organization.organization_id}/dashboard`)}
+            >
               <CardHeader>
                 <CardTitle>{organization.organization_name}</CardTitle>
                 <CardDescription>{organization.organization_description}</CardDescription>
               </CardHeader>
             </Card>
-          </div>
-        ))}
+          ))}
+      </div>
     </div>
   );
 };
