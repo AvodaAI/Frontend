@@ -1,14 +1,20 @@
-import { useState } from "react";
-import { Modal } from "../ui/modal";
+'use client'
 import AddUserForm from "@/app/org/[id]/(auth)/users/components/AddUserForm";
 import { useAddUserModal } from "@/hooks/use-add-user-modal";
 import { NewUser } from "@/types";
 import { addUserService } from "@/utils/services/userServices";
+import { useParams } from "next/navigation";
+import { useState } from "react";
 import toast from "react-hot-toast";
+import { Modal } from "../ui/modal";
 
 export const AddUserModal = () => {
   const { isOpen, onClose, defaultValues } = useAddUserModal();
   const [loading, setLoading] = useState(false);
+  const params = useParams();
+
+  // Ensure orgId is a string
+  const orgId = Array.isArray(params.id) ? params.id[0] : params.id;
 
   const handleSubmit = async (data: NewUser) => {
     try {
@@ -43,9 +49,8 @@ export const AddUserModal = () => {
               password: "",
               role: "employee",
               hire_date: "2024-12-16T10:06:26.129Z",
-              status: 'active',
               is_invite: true,
-              organization_id: 1,
+              organization_id: orgId ? parseInt(orgId, 10) : -1,
               action: "create-user",
             }
           }

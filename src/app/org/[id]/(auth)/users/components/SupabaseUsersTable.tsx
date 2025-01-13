@@ -7,23 +7,28 @@ import { Heading } from '@/app/components/ui/heading';
 import { useAddUserModal } from '@/hooks/use-add-user-modal';
 import { NewUser } from '@/types';
 import { dataFallback } from '@/utils/datafallback';
+import { getUsers } from '@/utils/services/userServices';
 import { formatUnixDate } from '@/utils/unixdate';
 import { Button } from '@components/ui/button';
 import { Download, Loader2, Trash, UserPlus } from 'lucide-react';
-import { useSupabaseUsers } from '../hooks/useSupabaseUsers';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import ExportUsersDataToExcel from './ExportUsersDataToExcel';
 import { columns } from './columns';
-import { getUsers } from '@/utils/services/userServices';
-import { useEffect, useState } from 'react';
 
 export default function SupabaseUsersTable() {
   const [users, setUsers] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(false)
+  const params = useParams();
+
+  // Ensure orgId is a string
+  const orgId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const id = orgId ? parseInt(orgId, 10) : -1
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const res = await getUsers(1)
+      const res = await getUsers(id)
       const users = await res.json()
       setUsers(users.users ?? [])
     }

@@ -12,7 +12,7 @@ export const fetchWrapper = async (url: string, options: RequestInit = {}): Prom
     const response = await fetch(url, fetchOptions);
 
     if (response.status === 401) {
-      window.location.href = "/";
+      // window.location.href = "/";
       return response;
     }
 

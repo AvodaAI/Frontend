@@ -18,6 +18,7 @@ import { useState } from "react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
 import { NoIconInput } from "@/app/components/ui/no-icon-input";
 import { roles } from "@/data/data";
+import { passwordRegex } from "@/lib/utils";
 
 
 const formSchema = z.object({
@@ -32,9 +33,8 @@ const formSchema = z.object({
   password: z
     .string()
     .min(8, { message: 'Password must be at least 8 characters long' })
-    .regex(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+{}|:"<>?~])/, {
-      message:
-        'Password must contain one lowercase letter, one uppercase letter, one number, and one special character',
+    .regex(passwordRegex.value, {
+      message: passwordRegex.message
     }),
   role: z.string().min(1, { message: "Role is required" }),
 });
