@@ -30,6 +30,7 @@ import {
   TableRow,
 } from './table';
 import { AlertModal } from '../modals/alert-modal';
+import { FilterableColumns } from '@/types';
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -41,6 +42,7 @@ interface DataTableProps<TData, TValue> {
   buttonTitle?: string;
   ButtonIcon?: LucideIcon;
   onExport: (filtered: string, data: Row<TData>[]) => void;
+  filterableColumns?: FilterableColumns[]
 }
 
 export function DataTable<TData, TValue>({
@@ -53,6 +55,7 @@ export function DataTable<TData, TValue>({
   buttonTitle,
   ButtonIcon,
   onExport,
+  filterableColumns
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -122,25 +125,23 @@ export function DataTable<TData, TValue>({
         />
         <div className="flex w-full items-center justify-between">
           <div className="ml-2">
-            <DataTableToolbar table={table} />
+            <DataTableToolbar table={table} filterableColumns={filterableColumns} />
           </div>
           {table.getFilteredSelectedRowModel().rows.length > 0 && (
             <div className="flex space-x-2">
               <div className="flex items-center justify-center">
                 {ButtonIcon && (
                   <div
-                    className={`${
-                      !(
-                        userAuthorities?.includes('DELETE_ACCOUNT') ||
-                        !userAuthorities?.includes('DELETE_VISITORS')
-                      ) && 'cursor-not-allowed'
-                    }`}
-                    title={`${
-                      !(
-                        userAuthorities?.includes('DELETE_ACCOUNT') ||
-                        !userAuthorities?.includes('DELETE_VISITORS')
-                      ) && 'Not Authorized'
-                    }`}
+                    className={`${!(
+                      userAuthorities?.includes('DELETE_ACCOUNT') ||
+                      !userAuthorities?.includes('DELETE_VISITORS')
+                    ) && 'cursor-not-allowed'
+                      }`}
+                    title={`${!(
+                      userAuthorities?.includes('DELETE_ACCOUNT') ||
+                      !userAuthorities?.includes('DELETE_VISITORS')
+                    ) && 'Not Authorized'
+                      }`}
                   >
                     <Button
                       className="ml-2 border"
@@ -178,16 +179,16 @@ export function DataTable<TData, TValue>({
       <Table>
         <TableHeader style={{ textAlign: 'center' }}>
           {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id} style={{ textAlign: 'center' }}>
+            <TableRow key={headerGroup.id}>
               {headerGroup.headers.map((header) => {
                 return (
                   <TableHead key={header.id} style={{ textAlign: 'center' }}>
                     {header.isPlaceholder
                       ? null
                       : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
                   </TableHead>
                 );
               })}
@@ -198,14 +199,13 @@ export function DataTable<TData, TValue>({
           {table.getRowModel().rows?.length ? (
             table.getRowModel().rows.map((row) => (
               <TableRow
-                style={{ textAlign: 'center' }}
                 key={row.id}
                 className={`${clickable && 'cursor-pointer'}`}
                 onClick={() => clickable && getSelectedRow?.(row.original)}
                 data-state={row.getIsSelected() && 'selected'}
               >
                 {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id} style={{ textAlign: 'center' }}>
+                  <TableCell key={cell.id}>
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
                   </TableCell>
                 ))}

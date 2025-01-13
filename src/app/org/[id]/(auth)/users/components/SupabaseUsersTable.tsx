@@ -15,6 +15,7 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import ExportUsersDataToExcel from './ExportUsersDataToExcel';
 import { columns } from './columns';
+import { userStatuses } from '@/data/data';
 
 export default function SupabaseUsersTable() {
   const [users, setUsers] = useState([])
@@ -97,6 +98,11 @@ export default function SupabaseUsersTable() {
         clickable={true}
         columns={columns}
         data={formattedUsers}
+        filterableColumns={[{
+          id: 'status',
+          title: 'Status',
+          options: userStatuses
+        }]}
         onConfirmFunction={deleteselectedUsers}
         onExport={ExportUsersDataToExcel}
         buttonTitle="Delete Selection"

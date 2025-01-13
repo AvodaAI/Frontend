@@ -9,6 +9,7 @@ import { ProjectForm } from "./components/ProjectForm";
 import { useParams } from "next/navigation";
 import { getProjects } from "@/utils/services/projectServices";
 import { Project } from "@/types/project";
+import Projects from "./components/Projects";
 
 
 export default function ProjectsPage() {
@@ -72,6 +73,7 @@ export default function ProjectsPage() {
         {!error && (
           <div className="rounded-lg">
             <ProjectsTable projects={projects} setProjects={setProjects} handleEditProject={handleEditProject} />
+            <Projects />
           </div>
         )}
 
