@@ -7,6 +7,12 @@ export const getTasksService = async (organization_id: number) => {
   });
 };
 
+export const getAssignedTasksService = async (organization_id: number) => {
+  return await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/tasks/assignedTask?organization_id=${organization_id}&action=get-task`, {
+    credentials: "include",
+  });
+};
+
 export const getUsersService = async (organization_id: number) => {
   return await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/users/list?organization_id=${organization_id}&action=get-user`, {
     credentials: "include",
