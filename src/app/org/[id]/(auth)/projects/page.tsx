@@ -10,6 +10,7 @@ import { useParams } from "next/navigation";
 import { getProjects } from "@/utils/services/projectServices";
 import { Project } from "@/types/project";
 import Projects from "./components/Projects";
+import { AddProjectModal } from "@/app/components/modals/AddProjectModal";
 
 
 export default function ProjectsPage() {
@@ -54,6 +55,7 @@ export default function ProjectsPage() {
 
   return (
     <div className="container max-w-7xl mx-auto">
+      <AddProjectModal />
       <div className="flex flex-col gap-6">
         {/* <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold tracking-tight">Projects</h1>

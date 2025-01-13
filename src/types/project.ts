@@ -25,4 +25,5 @@ export interface AddEditProject {
   description: string;
   status: string;
   organizationId: number;
+  action?: string;
 }

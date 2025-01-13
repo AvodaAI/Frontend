@@ -1,20 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import { Button } from '@/app/components/ui/button';
+import { Card } from '@/app/components/ui/card';
+import { DataTable } from '@/app/components/ui/data-table';
+import { Heading } from '@/app/components/ui/heading';
+import { projectStatuses } from '@/data/data';
+import { useAddProjectModal } from '@/hooks/use-add-project-modal';
+import { Project } from '@/types/project';
+import { dataFallback } from '@/utils/datafallback';
+import { getProjects } from '@/utils/services/projectServices';
+import { formatDate } from '@/utils/timeFormatHandler';
 import { Download, Loader2, Trash, UserPlus } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useAddUserModal } from '@/hooks/use-add-user-modal';
-import { dataFallback } from '@/utils/datafallback';
-import { Project } from '@/types/project';
-import { formatUnixDate } from '@/utils/unixdate';
-import { Card } from '@/app/components/ui/card';
-import { Heading } from '@/app/components/ui/heading';
-import { Button } from '@/app/components/ui/button';
-import ExportProjectsDataToExcel from './ExportProjectsDataToExcel';
-import { DataTable } from '@/app/components/ui/data-table';
-import { columns } from './columns';
-import { getProjects } from '@/utils/services/projectServices';
+import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
-import { projectStatuses } from '@/data/data';
-import { formatDate } from '@/utils/timeFormatHandler';
+import { columns } from './columns';
+import ExportProjectsDataToExcel from './ExportProjectsDataToExcel';
 
 const Projects = () => {
     const [projects, setProjects] = useState([])
@@ -27,7 +26,7 @@ const Projects = () => {
     const id = orgId ? parseInt(orgId, 10) : -1
 
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchProjects = async () => {
             const res = await getProjects(id)
             const projects = await res.json()
             if (res.ok) {
@@ -37,11 +36,11 @@ const Projects = () => {
                 throw new Error(projects.error || "Error fetching projects");
             }
         }
-        fetchUsers();
+        fetchProjects();
     }, [])
 
     const deleteSelectedProjects = () => { };
-    const { onOpen } = useAddUserModal();
+    const { onOpen } = useAddProjectModal();
 
     const formattedProjects: Project[] = projects.map((project: any) => ({
         id: project.id,
@@ -52,7 +51,6 @@ const Projects = () => {
         created_by: dataFallback(project.created_by) || 'N/A',
         projectStatus: project.status,
     }));
-    console.log("object: ", formattedProjects)
 
     if (loading) {
         return (
