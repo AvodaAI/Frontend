@@ -26,7 +26,9 @@ const db = {
       log('Executed query', { text, duration, rows: res.rowCount });
       return res;
     } catch (error) {
-      console.error('Database query error:', error);
+      } catch (error) {
+        log('Database query error:', error);
+        throw error;
       throw error;
     }
   },
