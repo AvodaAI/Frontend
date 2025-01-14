@@ -1,6 +1,7 @@
 // @ts-nocheck
 // src/lib/db.ts
 import { Pool } from 'pg';
+import { log } from '@/utils/logger';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -22,7 +23,7 @@ const db = {
     try {
       const res = await pool.query(text, params);
       const duration = Date.now() - start;
-      console.log('Executed query', { text, duration, rows: res.rowCount });
+      log('Executed query', { text, duration, rows: res.rowCount });
       return res;
     } catch (error) {
       console.error('Database query error:', error);

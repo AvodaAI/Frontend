@@ -2,7 +2,17 @@
 //FIXME: Types and Arguments
 import { useState, useCallback, useRef, useEffect } from 'react';
 
-export const useTimer = () => {
+interface TimerHook {
+  isRunning: boolean;
+  time: number;
+  startTime: Date | undefined;
+  formattedTime: string;
+  start: () => void;
+  pause: () => void;
+  reset: () => void;
+}
+
+export const useTimer = (): TimerHook => {
   const [isRunning, setIsRunning] = useState(false);
   const [time, setTime] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout>();
