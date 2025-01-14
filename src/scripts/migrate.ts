@@ -92,8 +92,14 @@ async function verifyMigration() {
   const dbEmployees = await db.query('SELECT * FROM users WHERE email IS NOT NULL');
   
   // Compare counts
-  log(`JSON employees: ${jsonEmployees.length}, DB users: ${dbEmployees.rows.length}`);
-  
+  // Compare counts
+  const jsonCount = jsonEmployees.length;
+  const dbCount = dbEmployees.rows.length;
+  log(`JSON employees: ${jsonCount}, DB users: ${dbCount}`);
+
+  if (jsonCount !== dbCount) {
+    throw new Error(`Migration verification failed: Count mismatch (JSON: ${jsonCount}, DB: ${dbCount})`);
+  }
   return true;
 }
 
