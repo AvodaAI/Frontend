@@ -35,7 +35,7 @@ export const EditProjectModal = () => {
     } finally {
       setLoading(false);
     }
-    // onClose();
+    onClose();
   };
 
   return (

@@ -49,10 +49,9 @@ export function EditProjectForm({
     defaultValues,
   });
 
-  console.log(defaultValues)
   const handleSubmit = async (data: FormValues) => {
     onSubmit(data);
-    // form.reset();
+    form.reset();
   };
 
   return (

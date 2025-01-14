@@ -47,7 +47,6 @@ export function AddProjectForm({
     resolver: zodResolver(projectSchema),
     defaultValues,
   });
-  console.log(defaultValues)
 
   const handleSubmit = async (data: AddEditProject) => {
     onSubmit(data);
