@@ -79,6 +79,7 @@ async function migrateUsers() {
       log(`Migrated user: ${user.email}`);
     } catch (error) {
       log(`Error migrating user ${user.email}:`, error);
+      throw error;
     }
   }
 }
