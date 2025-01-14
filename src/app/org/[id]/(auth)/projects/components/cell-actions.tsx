@@ -9,9 +9,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/app/components/ui/dropdown-menu";
-import { useEditUserModal } from "@/hooks/use-edit-user-modal";
+import { useEditProjectModal } from "@/hooks/use-edit-project-modal";
 import { Project } from "@/types/project";
-import { deleteUserService } from "@/utils/services/userServices";
+import { deleteProjectService } from "@/utils/services/projectServices";
+import { formatStringToDate } from "@/utils/timeFormatHandler";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -19,17 +20,15 @@ import { toast } from "react-hot-toast";
 export const CellAction: React.FC<{ data: Project }> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [openDisable, setOpenDisable] = useState(false);
-  const [openEnable, setOpenEnable] = useState(false);
 
-  const editUserModal = useEditUserModal();
+  const editProjectModal = useEditProjectModal();
+
   const onDelete = async () => {
     try {
       setLoading(true);
-      // const userId = data.id ? data.id : -1;
-      // const organizationId = data.organization_id ? data.organization_id : -1;
-      // await deleteUserService({ userId, organizationId })
-      toast.success('User Deleted Successfully!')
+      const projectId = data.id ? data.id : "-1";
+      const organizationId = data.organizationId ? data.organizationId : -1;
+      await deleteProjectService({ organizationId, projectId })
     } catch (error) {
       toast.error("Something Went Wrong!");
     } finally {
@@ -37,36 +36,17 @@ export const CellAction: React.FC<{ data: Project }> = ({ data }) => {
       setOpenDelete(false);
     }
   };
-  const onDisable = async () => {
-    try {
-      setLoading(true);
-      // dispatch(disableuser(data._id!.toString()) as any);
-    } catch (error) {
-      toast.error("Something went wrong!");
-    } finally {
-      setLoading(false);
-      setOpenDisable(false);
-    }
-  };
-  const onEnable = async () => {
-    try {
-      setLoading(true);
-      // dispatch(enableuser(data._id!.toString()) as any);
-    } catch (error) {
-      toast.error("Something went wrong!");
-    } finally {
-      setLoading(false);
-      setOpenEnable(false);
-    }
-  };
-  const handleEditUser = (data: Project) => {
-    editUserModal.onOpen({
-      // id: data.id,
-      // first_name: data.first_name,
-      // last_name: data.last_name,
-      // role: data.role,
-      // hire_date: data.hire_date,
-      // action: "update-user",
+
+
+  const handleEditProject = (data: Project) => {
+    editProjectModal.onOpen({
+      name: data.name,
+      description: data.description ?? "",
+      end_date: formatStringToDate(data.end_date ?? ""),
+      organizationId: data.organizationId,
+      projectId: data.id,
+      start_date: formatStringToDate(data.start_date ?? ""),
+      status: data.projectStatus ?? "",
     });
   };
 
@@ -87,7 +67,7 @@ export const CellAction: React.FC<{ data: Project }> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => handleEditUser(data)}>
+          <DropdownMenuItem onClick={() => handleEditProject(data)}>
             <Edit className="mr-2 h-4 w-4" />
             Edit
           </DropdownMenuItem>

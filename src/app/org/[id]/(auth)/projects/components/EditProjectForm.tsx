@@ -17,6 +17,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const projectSchema = z.object({
+  projectId: z.string().min(1, { message: "Id is required" }),
   name: z.string().min(1, { message: "Project name is required" }),
   description: z.string().min(1, { message: "Description is required" }),
   start_date: z.string().min(1, { message: "Start date is required" }),
@@ -36,7 +37,7 @@ export interface AddProjectProps {
   buttonTitle: string;
 }
 
-export function AddProjectForm({
+export function EditProjectForm({
   defaultValues,
   onSubmit,
   loading,
@@ -47,11 +48,11 @@ export function AddProjectForm({
     resolver: zodResolver(projectSchema),
     defaultValues,
   });
-  console.log(defaultValues)
 
-  const handleSubmit = async (data: AddEditProject) => {
+  console.log(defaultValues)
+  const handleSubmit = async (data: FormValues) => {
     onSubmit(data);
-    form.reset();
+    // form.reset();
   };
 
   return (

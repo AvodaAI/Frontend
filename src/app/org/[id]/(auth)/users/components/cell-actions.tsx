@@ -19,8 +19,6 @@ import { toast } from "react-hot-toast";
 export const CellAction: React.FC<{ data: NewUser }> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
-  const [openDisable, setOpenDisable] = useState(false);
-  const [openEnable, setOpenEnable] = useState(false);
 
   const editUserModal = useEditUserModal();
   const onDelete = async () => {
@@ -37,28 +35,7 @@ export const CellAction: React.FC<{ data: NewUser }> = ({ data }) => {
       setOpenDelete(false);
     }
   };
-  const onDisable = async () => {
-    try {
-      setLoading(true);
-      // dispatch(disableuser(data._id!.toString()) as any);
-    } catch (error) {
-      toast.error("Something went wrong!");
-    } finally {
-      setLoading(false);
-      setOpenDisable(false);
-    }
-  };
-  const onEnable = async () => {
-    try {
-      setLoading(true);
-      // dispatch(enableuser(data._id!.toString()) as any);
-    } catch (error) {
-      toast.error("Something went wrong!");
-    } finally {
-      setLoading(false);
-      setOpenEnable(false);
-    }
-  };
+  
   const handleEditUser = (data: NewUser) => {
     editUserModal.onOpen({
       id: data.id,
@@ -76,18 +53,6 @@ export const CellAction: React.FC<{ data: NewUser }> = ({ data }) => {
         isOpen={openDelete}
         onClose={() => setOpenDelete(false)}
         onConfirm={onDelete}
-        loading={loading}
-      />
-      <AlertModal
-        isOpen={openDisable}
-        onClose={() => setOpenDisable(false)}
-        onConfirm={onDisable}
-        loading={loading}
-      />
-      <AlertModal
-        isOpen={openEnable}
-        onClose={() => setOpenEnable(false)}
-        onConfirm={onEnable}
         loading={loading}
       />
       <DropdownMenu>

@@ -50,6 +50,7 @@ const Projects = () => {
         end_date: formatDate(dataFallback(project.end_date ?? "")).formattedDate,
         created_by: dataFallback(project.created_by) || 'N/A',
         projectStatus: project.status,
+        organizationId: id,
     }));
 
     if (loading) {
