@@ -19,9 +19,17 @@ export default function AssignedTasksPage() {
         setError("Invalid organization ID");
         return;
       }
-      const res = await getAssignedTasksService(Number(org_id));
-      const data = await res.json();
-      if (res.ok) {
+      try {
+        const res = await getAssignedTasksService(Number(org_id));
+        const data = await res.json();
+        if (res.ok) {
+          setTasks(data);
+        } else {
+          setError(data.message || 'Failed to fetch tasks');
+        }
+      } catch (err) {
+        setError('Failed to fetch tasks');
+      }
         setTasks(data?.tasks);
       } else {
         if (data.message === "No tasks found for the given ID") {
