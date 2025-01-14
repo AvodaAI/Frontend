@@ -16,7 +16,7 @@
 ### API Integration Rules
 1. **Security**
    - Store ALL secrets in `.env` (never in code)
-   - Use environment variables through `PROCESS.ENV`
+   - Use environment variables through `process.env`
    - Add request validation using Zod schemas
 
 ## Technical Stack Specifications
