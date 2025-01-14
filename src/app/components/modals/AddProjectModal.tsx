@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Modal } from "../ui/modal";
+import { addProjectService } from "@/utils/services/projectServices";
 
 export const AddProjectModal = () => {
   const { isOpen, onClose, defaultValues } = useAddProjectModal();
@@ -18,9 +19,15 @@ export const AddProjectModal = () => {
   const handleSubmit = async (data: AddEditProject) => {
     try {
       setLoading(true);
-      // await addUserService(data)
+      const res = await addProjectService({
+        name: data.name,
+        description: data.description ?? "",
+        end_date: data.end_date ?? "",
+        organizationId: data.organizationId,
+        start_date: data.start_date ?? "",
+        status: data.status ?? "",
+      });
       setLoading(false);
-      toast.success('User Added Successfully!')
     } catch (error: any) {
       toast.success("Something Went Wrong!");
     } finally {
@@ -47,7 +54,6 @@ export const AddProjectModal = () => {
               end_date: "",
               status: "Not Started",
               organizationId: orgId ? parseInt(orgId, 10) : -1,
-              action: "create-project"
             }
           }
           onSubmit={handleSubmit}

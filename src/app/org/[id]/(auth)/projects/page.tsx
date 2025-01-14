@@ -54,7 +54,7 @@ export default function ProjectsPage() {
   };
 
   return (
-    <div className="container max-w-7xl mx-auto">
+    <div className="container max-w-7xl px-5">
       <AddProjectModal />
       <div className="flex flex-col gap-6">
         {/* <div className="flex items-center justify-between">

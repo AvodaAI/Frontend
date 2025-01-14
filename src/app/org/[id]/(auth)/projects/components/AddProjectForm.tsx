@@ -8,14 +8,13 @@ import {
   FormMessage,
 } from "@/app/components/ui/form";
 import { Input } from "@/app/components/ui/input";
+import { Loader } from "@/app/components/ui/loader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
+import { Textarea } from "@/app/components/ui/textarea";
 import { AddEditProject } from "@/types/project";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { Loader } from "@/app/components/ui/loader";
-import { Textarea } from "@/app/components/ui/textarea";
 
 const projectSchema = z.object({
   name: z.string().min(1, { message: "Project name is required" }),
@@ -25,7 +24,6 @@ const projectSchema = z.object({
     .string().min(1, { message: "End date is required" }),
   status: z.string().min(1, { message: "Status is required" }),
   organizationId: z.number().min(1, { message: "Last name is required" }),
-  action: z.string().optional(),
 });
 
 type FormValues = z.infer<typeof projectSchema>;
@@ -45,7 +43,6 @@ export function AddProjectForm({
   onClose,
   buttonTitle,
 }: AddProjectProps) {
-  const { id: org_id } = useParams();
   const form = useForm<FormValues>({
     resolver: zodResolver(projectSchema),
     defaultValues,
