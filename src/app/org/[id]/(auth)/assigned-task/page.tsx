@@ -11,9 +11,14 @@ export default function AssignedTasksPage() {
   const { id: org_id } = useParams();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [error, setError] = useState<string | null>(null);
+  //TODO: [AV-149] add loading
 
   useEffect(() => {
     const fetchTasks = async () => {
+      if (!org_id || isNaN(Number(org_id))) {
+        setError("Invalid organization ID");
+        return;
+      }
       const res = await getAssignedTasksService(Number(org_id));
       const data = await res.json();
       if (res.ok) {

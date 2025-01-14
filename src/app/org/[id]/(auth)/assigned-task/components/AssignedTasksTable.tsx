@@ -26,7 +26,7 @@ export function AssignedTasksTable({ children, tasks }: { children?: (task: Task
           <TableBody>
             {paginatedItems.length > 0 ? (
               paginatedItems.map((task: Task) => {
-                const { formattedDate, isPast } = formatDate(task.due_date ?? "");
+                const { formattedDate, isPast } = formatDate(task.due_date ?? "") || { formattedDate: "Invalid Date", isPast: false };
 
                 return (
                   <TableRow key={task.id} className="hover:bg-muted/50">
