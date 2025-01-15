@@ -14,7 +14,7 @@ const db = {
       client.release();
       return { isConnected: true, lastChecked: new Date().toISOString() };
     } catch (error) {
-      log('Database connection error:', error);
+      log('Database connection error:', error instanceof Error ? error.message : 'Unknown error', { error });
       return { isConnected: false, lastChecked: new Date().toISOString() };
     }
   },
