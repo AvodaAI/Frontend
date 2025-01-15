@@ -1,76 +1,84 @@
 // src/app/org/[id]/(auth)/time-logs/page.tsx
 "use client"
 
-import { useParams } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { Button } from '@/app/components/ui/button';
+import { Card } from '@/app/components/ui/card';
+import { Heading } from '@/app/components/ui/heading';
+import { Input } from '@/app/components/ui/input';
+import { TimeLog } from '@/types/timeLog';
+import { Clock, Play, Plus } from 'lucide-react';
+import { useState } from 'react';
+
+interface TimeEntry {
+  id: string
+  title: string
+  person: string
+  startTime: string
+  endtime: string
+  duration: string
+}
+
+interface timeLogGroup {
+  date: string;
+  entries: TimeEntry[];
+}
 
 const TimelogsPage = () => {
-  const { id: org_id } = useParams()
-  const [timelogs, setTimelogs] = useState<any[]>([]);
-  //TODO: [AV-142] Define Types
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    fetchTimelogs();
-  }, []);
-
-  const fetchTimelogs = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/timelogs?organization_id=${org_id}&action=get-timelog`, { credentials: "include" });
-      const data = await response.json();
-      if (response.ok) {
-        setTimelogs(data.data);
-      } else {
-        setError(data.error || 'Failed to fetch timelogs.');
-      }
-    } catch (error) {
-      setLoading(false);
-      throw new Error('Failed to fetch timelogs.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const [searchTask, setSearchTask] = useState('')
+  const data: timeLogGroup[] = [
+    {
+      date: "Today, 1 Jan 2025",
+      entries: [
+        {
+          id: '1', title: 'Create Design System', person: "Samrun Run", startTime: "13:26", endtime: "14:39", duration: '1:26:17'
+        },
+        {
+          id: '2', title: 'finishing About Page', person: "Behar musa", startTime: "15:26", endtime: "17:39", duration: '1:26:17'
+        }
+      ]
+    },
+    {
+      date: "Yesterday, 31 Dec 2024",
+      entries: [
+        {
+          id: '3', title: 'Create Design System', person: "Samrun Run", startTime: "13:26", endtime: "14:39", duration: '1:26:17'
+        },
+      ]
+    },
+  ]
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '20px' }}>
-      <h1 style={{ fontSize: '24px' }}>Timelogs</h1>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <>
-          {timelogs && timelogs.length > 0 ? (
-            <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
-              <thead>
-                <tr>
-                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Start Time</th>
-                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>End Time</th>
-                  <th style={{ border: '1px solid #ddd', padding: '8px' }}>Total Active Time (seconds)</th>
-                </tr>
-              </thead>
-              <tbody>
-                {timelogs.map((timelog) => (
-                  <tr key={timelog.start_time}>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                      {new Date(timelog.start_time).toLocaleString()}
-                    </td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                      {new Date(timelog.end_time).toLocaleString()}
-                    </td>
-                    <td style={{ border: '1px solid #ddd', padding: '8px' }}>
-                      {timelog.total_active_time}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          ) : (
-            <p>No timelogs found.</p>
-          )}
-        </>
-      )}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+    <div className='p-6 bg-gray-50 min-h-screen'>
+      <Heading
+        title={`Time Logs (6)`}
+        description="Here's a list of all logged times"
+      />
+      <Card className='flex flex-col space-y-2 sm:flex-row p-3 justify-between my-5'>
+        <div className='flex-1 sm:grid sm:grid-cols-2 lg:grid-cols-3'>
+          <Input
+            placeholder="What are you working on"
+            value={searchTask}
+            onChange={(event) => setSearchTask(event.target.value)
+            }
+            className="w-full border-transparent bg-muted shadow-none text-xs"
+          />
+        </div>
+        <div className='flex space-x-3 sm:px-3'>
+          <Button variant={'outline'} className='border-dashed text-blue-500 hover:text-blue-500' size={'sm'}>
+            <Plus size={18} />
+            <span>Task</span>
+          </Button>
+          <Button variant={'outline'} className='border-dashed px-2' size={'sm'}>
+            <Clock size={18} />
+            <span>00:00:00</span>
+          </Button>
+
+          <Button className='border-dashed' size={'sm'}>
+            <Play size={18} />
+            <span>Start</span>
+          </Button>
+        </div>
+      </Card>
     </div>
   );
 };
