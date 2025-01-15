@@ -14,6 +14,7 @@ const db = {
       client.release();
       return { isConnected: true, lastChecked: new Date().toISOString() };
     } catch (error) {
+      log('Database connection error:', error);
       return { isConnected: false, lastChecked: new Date().toISOString() };
     }
   },
@@ -26,10 +27,8 @@ const db = {
       log('Executed query', { text, duration, rows: res.rowCount });
       return res;
     } catch (error) {
-      } catch (error) {
         log('Database query error:', error);
         throw error;
-      throw error;
     }
   },
 
