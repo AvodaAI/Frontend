@@ -64,7 +64,7 @@ export default function InvitationsTable() {
       const updatedInvitation = {
         status: 'revoked',
         revoked: true,
-        organization_id: org_id,
+        organization_id: Number(org_id),
         action: "update-invitation"
       }
 
@@ -134,14 +134,8 @@ export default function InvitationsTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-{paginatedItems.length === 0 ? (
-  
-    
-      No invitations found
-    
-  
-) : (
-  paginatedItems.map((invitation) => (
+            {paginatedItems.map((invitation) => (
+              <TableRow key={invitation.id} className="hover:bg-muted/30">
                 <TableCell className="font-medium">{invitation.email_address}</TableCell>
                 <TableCell>
                   <span
