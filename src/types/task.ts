@@ -4,10 +4,12 @@ export interface Task {
   description?: string;
   due_date?: string;
   priority?: string;
-  status?: string;
+  taskStatus?: string;
   time_tracked?: number;
   assigned_user_email?: string;
   assigned_user_id?: number;
+  organizationId?: number;
+  assigned_user_name?: string;
   assigned_to?: number;
 }
 

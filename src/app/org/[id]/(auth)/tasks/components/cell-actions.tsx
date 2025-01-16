@@ -11,13 +11,14 @@ import {
 } from "@/app/components/ui/dropdown-menu";
 import { useEditProjectModal } from "@/hooks/use-edit-project-modal";
 import { Project } from "@/types/project";
+import { Task } from "@/types/task";
 import { deleteProjectService } from "@/utils/services/projectServices";
 import { formatTime } from "@/utils/timeFormatHandler";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 
-export const CellAction: React.FC<{ data: Project }> = ({ data }) => {
+export const CellAction: React.FC<{ data: Task }> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
@@ -38,15 +39,15 @@ export const CellAction: React.FC<{ data: Project }> = ({ data }) => {
   };
 
 
-  const handleEditProject = (data: Project) => {
+  const handleEditProject = (data: Task) => {
     editProjectModal.onOpen({
-      name: data.name,
-      description: data.description ?? "",
-      end_date: formatTime(parseInt(data.end_date ?? "")),
-      organizationId: data.organizationId,
-      projectId: data.id,
-      start_date: formatTime(parseInt(data.start_date ?? "")),
-      status: data.projectStatus ?? "",
+      // name: data.name,
+      // description: data.description ?? "",
+      // end_date: formatTime(parseInt(data.end_date ?? "")),
+      // organizationId: data.organizationId,
+      // projectId: data.id,
+      // start_date: formatTime(parseInt(data.start_date ?? "")),
+      // status: data.projectStatus ?? "",
     });
   };
 

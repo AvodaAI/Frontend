@@ -17,7 +17,11 @@ const TimeLogs = () => {
     const [timelogs, setTimelogs] = useState<any[]>([]);
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState(false)
-    const { id: org_id } = useParams()
+    const params = useParams();
+
+    // Ensure orgId is a string
+    const orgId = Array.isArray(params.id) ? params.id[0] : params.id;
+    const id = orgId ? parseInt(orgId, 10) : -1
 
 
     useEffect(() => {
@@ -27,7 +31,7 @@ const TimeLogs = () => {
     const fetchTimelogs = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/timelogs?organization_id=${org_id}&action=get-timelog`, { credentials: "include" });
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/timelogs?organization_id=${id}&action=get-timelog`, { credentials: "include" });
             const data = await response.json();
             if (response.ok) {
                 setTimelogs(data.data);
@@ -54,7 +58,7 @@ const TimeLogs = () => {
         start_time: project.start_time,
         end_time: project.end_time,
         TimeLogStatus: project.TimeLogStatus,
-        organizationId: org_id,
+        organizationId: id,
         created_at: moment(project.created_at).format('MMMM do, yyyy'),
     }));
 
