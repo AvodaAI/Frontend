@@ -34,6 +34,7 @@ export function formatTimeInHoursMinutes(seconds: number) {
   return result || "0m";
 }
 
+<<<<<<< HEAD
 export function formatStringToDate(dateString: string) {
   const date = new Date(dateString); // Parse the input string
   const year = date.getFullYear();
@@ -41,3 +42,12 @@ export function formatStringToDate(dateString: string) {
   const day = String(date.getDate()).padStart(2, "0");
   return `${year}-${month}-${day}`;
 }
+=======
+// Format time in HH:MM:SS
+export const formatTime = (seconds: number) => {
+  const hours = Math.floor(seconds / 3600);
+  const minutes = Math.floor((seconds % 3600) / 60);
+  const remainingSeconds = seconds % 60;
+  return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}:${String(remainingSeconds).padStart(2, "0")}`;
+};
+>>>>>>> bd43cc9b46115baad164421c3db22ab3850ad165

@@ -2,6 +2,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const db = require('@/lib/db');
+import { log } from "@/utils/logger";
 
 interface Employee {
   id?: number;
@@ -56,9 +57,9 @@ async function migrateEmployees() {
           employee.hire_date
         ]
       );
-      console.log(`Migrated employee: ${employee.email}`);
+      log(`Migrated employee: ${employee.email}`);
     } catch (error) {
-      console.error(`Error migrating employee ${employee.email}:`, error);
+      log(`Error migrating employee ${employee.email}:`, error);
     }
   }
 }
@@ -75,15 +76,16 @@ async function migrateUsers() {
          password = EXCLUDED.password`,
         [user.email, user.password]
       );
-      console.log(`Migrated user: ${user.email}`);
+      log(`Migrated user: ${user.email}`);
     } catch (error) {
-      console.error(`Error migrating user ${user.email}:`, error);
+      log(`Error migrating user ${user.email}:`, error);
+      throw error;
     }
   }
 }
 
 async function verifyMigration() {
-  console.log('Verifying migration...');
+  log('Verifying migration...');
   
   const jsonEmployees = await readJsonFile(path.join(process.cwd(), 'src/app/data/employees.json'));
   
@@ -91,26 +93,32 @@ async function verifyMigration() {
   const dbEmployees = await db.query('SELECT * FROM users WHERE email IS NOT NULL');
   
   // Compare counts
-  console.log(`JSON employees: ${jsonEmployees.length}, DB users: ${dbEmployees.rows.length}`);
-  
+  // Compare counts
+  const jsonCount = jsonEmployees.length;
+  const dbCount = dbEmployees.rows.length;
+  log(`JSON employees: ${jsonCount}, DB users: ${dbCount}`);
+
+  if (jsonCount !== dbCount) {
+    throw new Error(`Migration verification failed: Count mismatch (JSON: ${jsonCount}, DB: ${dbCount})`);
+  }
   return true;
 }
 
 async function main() {
   try {
-    console.log('Initializing database tables...');
+    log('Starting migration...');
     await db.initializeTables();
     
-    console.log('Migrating employees...');
+    log('Migrating employees...');
     await migrateEmployees();
     
-    console.log('Migrating users...');
+    log('Migrating users...');
     await migrateUsers();
     
-    console.log('Verifying migration...');
+    log('Verifying migration...');
     await verifyMigration();
     
-    console.log('Migration completed successfully!');
+    log('Migration completed.');
   } catch (error) {
     console.error('Migration failed:', error);
   } finally {

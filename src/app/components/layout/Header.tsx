@@ -1,86 +1,89 @@
-// src/app/components/layout/Header.tsx
 'use client';
 
-import { Menu, ChevronDown } from "lucide-react";
-import Link from "next/link";
-import { useParams, usePathname } from "next/navigation";
-import { Button } from "@components/ui/button";
-import {
-  Sheet,
-  SheetContent,
-  SheetTrigger,
-} from "@components/ui/sheet";
-import { cn } from "@/lib/utils";
-import { useUserRole } from "@/hooks/useRole";
-import { useState, useEffect } from "react";
-import { fetchWrapper } from "@/utils/fetchWrapper";
+import { Menu, ChevronDown } from 'lucide-react';
+import Link from 'next/link';
+import { useParams, usePathname } from 'next/navigation';
+import { Button } from '@components/ui/button';
+import { Sheet, SheetContent, SheetTrigger } from '@components/ui/sheet';
+import { cn } from '@/lib/utils';
+import { useUserRole } from '@/hooks/useRole';
+import { useState, useEffect, useCallback } from 'react';
+import { fetchWrapper } from '@/utils/fetchWrapper';
 
-// Navigation links
 const navigation = [
-  { name: 'Dashboard', href: 'dashboard', adminOnly: false },
-  { name: 'Organization', href: 'organization', adminOnly: true },
-  { name: 'Projects', href: 'projects', adminOnly: true },
-  { name: 'Tasks', href: 'tasks', adminOnly: true },
+  { name: 'Dashboard', href: 'dashboard' },
+  { name: 'Organization', href: 'organization', permission: 'create-organization', adminOnly: true },
+  { name: 'Projects', href: 'projects', permission: 'create-project', adminOnly: true },
+  { name: 'Tasks', href: 'tasks', permission: 'create-task', adminOnly: true },
+  { name: 'Assigned Tasks', href: 'assigned-task', adminOnly: false },
   { name: 'Time Tracking', href: 'time-tracking', adminOnly: false },
-  { name: 'Time Logs', href: 'time-logs', adminOnly: true },
-  { name: 'Invitations', href: 'invitations', adminOnly: true },
+  { name: 'Time Logs', href: 'time-logs', permission: 'get-timelog', adminOnly: true },
+  { name: 'Invitations', href: 'invitations', permission: 'invite-user', adminOnly: true },
   { name: 'Settings', href: 'settings', adminOnly: false },
   { name: 'Status', href: '/status', adminOnly: false },
 ];
 
 export function Header() {
   const pathname = usePathname();
-  const { id: org_id } = useParams()
+  const { id: org_id } = useParams();
   const { isAdmin } = useUserRole();
   const [orgList, setOrgList] = useState<{ organization_id: number, organization_name: string }[]>([]);
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [permissions, setPermissions] = useState<any>({});
 
-  // Filter navigation based on the user's role
-  const filteredNavigation = navigation.filter(
-    item => !item.adminOnly || (item.adminOnly && isAdmin)
-  );
+  const fetchPermission = useCallback(async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/permissions/?organization_id=${org_id}&action=get-organization`, { credentials: 'include' });
+      if (response.ok) {
+        const data = await response.json();
+        setPermissions(data.data);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error fetching permissions');
+      }
+    } catch (error) {
+      console.error('Permission fetch error:', error);
+      setPermissions({});
+    }
+  }, [org_id]);
 
-  // Handle user sign out
+  const fetchOrganizations = useCallback(async () => {
+    try {
+      const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/organizations/?action=get-organization`, { credentials: 'include' });
+      const data = await response.json();
+      setOrgList(data || []);
+    } catch (err) {
+      console.error('Error fetching organizations:', err);
+    }
+  }, []);
+
+  useEffect(() => {
+    fetchPermission();
+    fetchOrganizations();
+  }, [fetchPermission, fetchOrganizations]);
+
+  const filteredNavigation = navigation.filter((item) => {
+    if (!item.permission) return item;
+    const hasPermission = permissions[item.permission];
+    return (!item.adminOnly || (item.adminOnly && isAdmin)) && hasPermission;
+  });
+
   const handleSignOut = async () => {
     try {
       const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signout`, {
         method: 'POST',
         credentials: 'include',
-        headers: { 'Content-Type': 'application/json' }
+        headers: { 'Content-Type': 'application/json' },
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        const data = await response.json();
+        if (data.success) window.location.href = '/';
+      } else {
         throw new Error(`Signout failed: ${response.status}`);
       }
-
-      const data = await response.json();
-      if (data.success) {
-        window.location.href = '/';
-      }
     } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    fetchOrganizations();
-  }, []);
-
-  const fetchOrganizations = async () => {
-    try {
-      const response = await fetchWrapper(
-        `${process.env.NEXT_PUBLIC_API_URL}/organizations/?action=get-organization`,
-        { credentials: "include" }
-      );
-      const data = await response.json();
-
-      if (data) {
-        setOrgList(data);
-      } else {
-        console.error(data.error || "Error fetching organizations");
-      }
-    } catch (err) {
-      console.error("Error fetching organizations:", err);
+      console.error('Signout error:', error);
     }
   };
 
@@ -89,9 +92,7 @@ export function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mr-4 flex justify-between h-16 md:flex">
           <Link href="dashboard" className="mr-6 flex items-center space-x-2">
-            <span className="text-3xl font-bold sm:inline-block">
-              Employee Manager
-            </span>
+            <span className="text-3xl font-bold sm:inline-block">Employee Manager</span>
           </Link>
           <div className="flex space-x-3">
             <nav className="flex items-center space-x-6 text-sm font-medium">
@@ -115,7 +116,7 @@ export function Header() {
                   size="sm"
                   className="h-8 w-auto"
                   aria-label="Organizations"
-                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  onClick={() => setDropdownOpen(prev => !prev)}
                 >
                   <ChevronDown className="h-4 w-4" />
                   <span className="ml-1 text-sm">Organizations</span>
@@ -137,12 +138,7 @@ export function Header() {
                   </div>
                 )}
               </div>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={handleSignOut}
-                aria-label="Sign Out"
-              >
+              <Button variant="ghost" size="icon" onClick={handleSignOut} aria-label="Sign Out">
                 Sign Out
               </Button>
             </div>

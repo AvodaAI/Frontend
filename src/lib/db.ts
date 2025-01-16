@@ -1,6 +1,7 @@
 // @ts-nocheck
 // src/lib/db.ts
 import { Pool } from 'pg';
+import { log } from '@/utils/logger';
 
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
@@ -13,6 +14,7 @@ const db = {
       client.release();
       return { isConnected: true, lastChecked: new Date().toISOString() };
     } catch (error) {
+      log('Database connection error:', error instanceof Error ? error.message : 'Unknown error', { error });
       return { isConnected: false, lastChecked: new Date().toISOString() };
     }
   },
@@ -22,11 +24,11 @@ const db = {
     try {
       const res = await pool.query(text, params);
       const duration = Date.now() - start;
-      console.log('Executed query', { text, duration, rows: res.rowCount });
+      log('Executed query', { text, duration, rows: res.rowCount });
       return res;
     } catch (error) {
-      console.error('Database query error:', error);
-      throw error;
+        log('Database query error:', error);
+        throw error;
     }
   },
 

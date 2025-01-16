@@ -51,7 +51,8 @@ export interface Database {
           last_name?: string | null;
           email?: string;
           created_at?: string;
-          last_sign_in_at?: string | null;  email_verified: Date;
+          last_sign_in_at?: string | null;
+          email_verified: Date;
           role: string;
           status: string;
           position: string;
@@ -95,12 +96,41 @@ export interface Database {
           status?: string;
           revoked?: boolean;
           created_at?: string;
-          hire_date: string;
-          public_metadata: PublicMetadata;
-          url: string;
+          hire_date?: string;
+          public_metadata?: PublicMetadata;
+          url?: string;
           expires_at?: string | null;
+          organization_id?: number;
+          created_by?: number;
+        };
+      };
+      permissions: {
+        Row: {
+          id: string;
+          permissions: Record<string, boolean>;
           organization_id: number;
-          created_by: number;
+          user_id: number;
+          granted_by: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          permissions: Record<string, boolean>;
+          organization_id: number;
+          user_id: number;
+          granted_by: number;
+          created_at: string;
+          updated_at: string;
+        };
+        Update: {
+          id?: string;
+          permissions?: Record<string, boolean>;
+          organization_id: number;
+          user_id: number;
+          granted_by: number;
+          created_at: string;
+          updated_at: string;
         };
       };
     };

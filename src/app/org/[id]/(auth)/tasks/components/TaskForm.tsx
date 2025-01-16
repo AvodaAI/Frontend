@@ -35,7 +35,7 @@ export function TaskForm({ onClose, addTask, editTask, updateTask, setEditTask, 
 
   const validateFields = () => {
     const errors: { [key: string]: string } = {};
-
+    //HighTODO [AV-160]: Edit/Create Task Modal: Due date of task CAN be in the past and CAN also be empty. The Status and Priority fields are required and Assigned to fields to select have a horrendous UI.
     if (!task.title?.trim()) errors.title = "Task title is required";
     if (!task.due_date) errors.due_date = "Due date is required";
     if (task.due_date && new Date(task.due_date) < new Date()) {

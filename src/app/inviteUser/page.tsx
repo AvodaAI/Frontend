@@ -1,4 +1,4 @@
-// src/app/org/[id]/(auth)/inviteUser/page.tsx
+// src/app/inviteUser/page.tsx
 'use client';
 
 import { useEffect, useState } from 'react';
@@ -10,6 +10,8 @@ import { redirect } from 'next/navigation';
 import { User } from '@supabase/supabase-js';
 import bcrypt from 'bcryptjs';
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
+import { user_permission } from '@/utils/user-permission';
+import { validatePassword } from '@/utils/passwordValidation';
 
 export default function InviteUser() {
   const [userData, setUserData] = useState<User | null>(null);
@@ -19,6 +21,10 @@ export default function InviteUser() {
 
   useEffect(() => {
     supabase.auth.getUser().then((res) => {
+      if (!res.data.user) {
+        setError("Invitation Link Expired.")
+        redirect("/")
+      }
       setUserData(res.data.user);
     }).catch((err) => {
       redirect("/")
@@ -27,17 +33,9 @@ export default function InviteUser() {
 
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    //TODO: [AV-141] Move password validation logic into a separate utility function
     setConfirmPassword(value);
-    if (value !== password) {
-      setError('Password and Confirm Password do not match');
-    } else if (value.length < 8) {
-      setError('Password must be at least 8 characters long');
-    } else if (!/(?=.*[0-9])(?=.*[!@#$%^&*])/.test(value)) {
-      setError('Password must contain at least one number and one special character');
-    } else {
-      setError(null);
-    }
+    const errorMessage = validatePassword(password, value);
+    setError(errorMessage);
   };
 
   const handleOnSubmit = async (e: React.FormEvent) => {
@@ -53,7 +51,7 @@ export default function InviteUser() {
       const { data: InvitationDetails, error: userError } = await supabase
         .from('invitations')
         .select('*')
-        .eq('email_address', userData?.email);
+        .eq('email_address', userData?.email ?? "");
 
       if (!InvitationDetails?.length) {
         setError('No valid invitation found.');
@@ -64,8 +62,8 @@ export default function InviteUser() {
         return;
       }
 
-      if (userError) {
-        throw new Error(userError?.message);
+      if (userError && typeof userError === "object" && "message" in userError) {
+        setError((userError as { message: string }).message);
       }
 
       if (userData?.id) {
@@ -74,17 +72,16 @@ export default function InviteUser() {
           { password }
         )
         if (supaBaseError) {
-          throw new Error(supaBaseError?.message);
+          setError(supaBaseError?.message);
         }
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-
-      const { error: insertError } = await supabase
+       const { data, error: insertError } = await supabase
         .from("users")
         .insert({
-          first_name: InvitationDetails?.[0]?.public_metadata?.first_name ?? null,
-          last_name: InvitationDetails?.[0]?.public_metadata?.last_name ?? null,
+          first_name: InvitationDetails?.[0]?.public_metadata?.first_name ?? "",
+          last_name: InvitationDetails?.[0]?.public_metadata?.last_name ?? "",
           email: userData?.email,
           password: hashedPassword,
           role: InvitationDetails?.[0]?.public_metadata?.role ?? 'employee',
@@ -98,7 +95,7 @@ export default function InviteUser() {
         .single();
 
       if (insertError) {
-        throw new Error(insertError.message);
+        setError(insertError.message);
       }
 
       const { error } = await supabase
@@ -107,35 +104,27 @@ export default function InviteUser() {
         .eq('id', InvitationDetails?.[0].id);
 
       if (error) {
-        throw new Error(error.message);
+        setError(error.message);
       }
 
       const { error: permissionError } = await supabase.from("permissions").insert({
-        permissions: {
-          "get-organization": true,
-          "get-task": true,
-          "get-project": true,
-          "get-timelog": true,
-          "get-tracker-status": true,
-          "timer-start": true,
-          "timer-stop": true,
-          "timer-pause": true,
-          "timer-resume": true,
-        },
-        "organization_id": Number(InvitationDetails?.[0]?.organization_id),
-        "user_id": userData?.id,
-        "granted_by": InvitationDetails?.[0]?.created_by
+        permissions: user_permission,
+        organization_id: Number(InvitationDetails?.[0]?.organization_id),
+        user_id: Number(data?.id),
+        granted_by: InvitationDetails?.[0]?.created_by,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
       })
       if (permissionError) {
-        throw new Error(permissionError?.message || 'Failed to add permission');
+        setError(permissionError?.message || 'Failed to add permission');
       }
 
     } catch (error) {
       //TODO: [AV-143] The error handling in the form submission is inconsistent and could lead to unhandled promise rejections. Implement proper error handling and avoid throwing errors in the catch block.
       if (error instanceof Error) {
-        throw new Error(error.message);
+        setError(error.message);
       } else {
-        throw new Error('An unexpected error occurred');
+        setError('An unexpected error occurred');
       }
     } finally {
       setTimeout(() => {
