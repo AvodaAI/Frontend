@@ -10,10 +10,13 @@ export const updatePermissionService = async ({
   permissionId,
   organizationId,
 }: {
-  permissionsObject: Record<string, boolean>;
+  permissionsObject: Record;
   permissionId: string;
   organizationId: number;
 }) => {
+  if (!permissionId) {
+    throw new Error("Permission ID is required");
+  }
   return await fetch(`${process.env.NEXT_PUBLIC_API_URL}/permissions/${permissionId}`, {
     method: "PATCH",
     headers: {
