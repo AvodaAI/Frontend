@@ -16,7 +16,12 @@ export default function ManagePermissionPage() {
   useEffect(() => {
     async function fetchUsers() {
       try {
-        const response = await getUsersService(Number(org_id));
+        const orgId = Number(org_id);
+        if (isNaN(orgId)) {
+          setError("Invalid organization ID");
+          return;
+        }
+        const response = await getUsersService(orgId);
         const data = await response.json();
         setUsers(data.users);
       } catch (error) {
