@@ -32,12 +32,18 @@ export function Header() {
   const [permissions, setPermissions] = useState<any>({});
 
   const fetchPermission = useCallback(async () => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/permissions/?organization_id=${org_id}&action=get-organization`, { credentials: 'include' });
-    if (response.ok) {
-      const data = await response.json();
-      setPermissions(data.data);
-    } else {
-      console.error('Error fetching permissions');
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/permissions/?organization_id=${org_id}&action=get-organization`, { credentials: 'include' });
+      if (response.ok) {
+        const data = await response.json();
+        setPermissions(data.data);
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Error fetching permissions');
+      }
+    } catch (error) {
+      console.error('Permission fetch error:', error);
+      setPermissions({});
     }
   }, [org_id]);
 
