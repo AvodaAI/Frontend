@@ -41,8 +41,8 @@ export const EditProjectModal = () => {
   return (
     <div>
       <Modal
-        title="Create Project"
-        description="Manage Project information"
+        title="Update Project"
+        description="Manage Project Information"
         isOpen={isOpen}
         onClose={onClose}
         className="z-[101] w-full sm:w-[80%] h-[90%] sm:h-[700px] mt-5 overflow-y-hidden"

@@ -2,7 +2,7 @@ import { Button } from '@/app/components/ui/button';
 import { Card } from '@/app/components/ui/card';
 import { DataTable } from '@/app/components/ui/data-table';
 import { Heading } from '@/app/components/ui/heading';
-import { useAddProjectModal } from '@/hooks/use-add-project-modal';
+import { useAddTaskModal } from '@/hooks/use-add-task-modal';
 import { Task, Users } from '@/types/task';
 import { dataFallback } from '@/utils/datafallback';
 import { getTasksService, getUsersService } from '@/utils/services/taskServices';
@@ -66,7 +66,7 @@ const Tasks = () => {
     }, []);
 
     const deleteSelectedProjects = () => { };
-    const { onOpen } = useAddProjectModal();
+    const { onOpen } = useAddTaskModal();
 
     const formattedTasks: Task[] = tasks.map((task: any) => ({
         id: task.id,

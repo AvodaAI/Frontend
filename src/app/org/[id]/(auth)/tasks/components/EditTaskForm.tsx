@@ -37,7 +37,7 @@ export interface EditTaskProps {
   buttonTitle: string;
 }
 
-export function EditProjectForm({
+export function EditTaskForm({
   defaultValues,
   onSubmit,
   loading,

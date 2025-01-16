@@ -7,9 +7,10 @@ import toast from "react-hot-toast";
 import { Modal } from "../ui/modal";
 import { updateProjectService } from "@/utils/services/projectServices";
 import { useEditProjectModal } from "@/hooks/use-edit-project-modal";
-import { EditProjectForm } from "@/app/org/[id]/(auth)/projects/components/EditProjectForm";
+import { EditTaskForm } from "@/app/org/[id]/(auth)/tasks/components/EditTaskForm";
+import { AddEditTaskPayload } from "@/types/task";
 
-export const EditProjectModal = () => {
+export const EditTaskModal = () => {
   const { isOpen, onClose, defaultValues } = useEditProjectModal();
   const [loading, setLoading] = useState(false);
   const params = useParams();
@@ -17,18 +18,18 @@ export const EditProjectModal = () => {
   // Ensure orgId is a string
   const orgId = Array.isArray(params.id) ? params.id[0] : params.id;
 
-  const handleSubmit = async (data: AddEditProject) => {
+  const handleSubmit = async (data: AddEditTaskPayload) => {
     try {
       setLoading(true);
-      const res = await updateProjectService({
-        name: data.name,
-        description: data.description ?? "",
-        end_date: data.end_date ?? "",
-        organizationId: data.organizationId,
-        projectId: data.projectId,
-        start_date: data.start_date ?? "",
-        status: data.status ?? "",
-      });
+      // const res = await updateProjectService({
+      //   name: data.name,
+      //   description: data.description ?? "",
+      //   end_date: data.end_date ?? "",
+      //   organizationId: data.organizationId,
+      //   projectId: data.projectId,
+      //   start_date: data.start_date ?? "",
+      //   status: data.status ?? "",
+      // });
       setLoading(false);
     } catch (error: any) {
       toast.success("Something Went Wrong!");
@@ -41,13 +42,13 @@ export const EditProjectModal = () => {
   return (
     <div>
       <Modal
-        title="Create Project"
-        description="Manage Project information"
+        title="Update Task"
+        description="Manage Task Information"
         isOpen={isOpen}
         onClose={onClose}
         className="z-[101] w-full sm:w-[80%] h-[90%] sm:h-[700px] mt-5 overflow-y-hidden"
       >
-        <EditProjectForm
+        <EditTaskForm
           defaultValues={
             defaultValues || {
               name: "",

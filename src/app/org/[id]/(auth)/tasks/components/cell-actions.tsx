@@ -9,11 +9,8 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/app/components/ui/dropdown-menu";
-import { useEditProjectModal } from "@/hooks/use-edit-project-modal";
-import { Project } from "@/types/project";
+import { useEditTaskModal } from "@/hooks/use-edit-task-modal";
 import { Task } from "@/types/task";
-import { deleteProjectService } from "@/utils/services/projectServices";
-import { formatTime } from "@/utils/timeFormatHandler";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -22,14 +19,14 @@ export const CellAction: React.FC<{ data: Task }> = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
 
-  const editProjectModal = useEditProjectModal();
+  const editTaskModal = useEditTaskModal();
 
   const onDelete = async () => {
     try {
       setLoading(true);
       const projectId = data.id ? data.id : "-1";
       const organizationId = data.organizationId ? data.organizationId : -1;
-      await deleteProjectService({ organizationId, projectId })
+      // await deleteProjectService({ organizationId, projectId })
     } catch (error) {
       toast.error("Something Went Wrong!");
     } finally {
@@ -40,7 +37,7 @@ export const CellAction: React.FC<{ data: Task }> = ({ data }) => {
 
 
   const handleEditProject = (data: Task) => {
-    editProjectModal.onOpen({
+    editTaskModal.onOpen({
       // name: data.name,
       // description: data.description ?? "",
       // end_date: formatTime(parseInt(data.end_date ?? "")),
