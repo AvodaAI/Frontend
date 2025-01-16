@@ -47,7 +47,7 @@ const CellComponent = ({ data }: { data: any }) => (
       <span>{'-'}</span>
       <div className="flex space-x-2">
         <Clock size={18} />
-        <span>{data.endtime}</span>
+        <span>{data.endTime}</span>
       </div>
     </div>
     <div className="flex space-x-2">
@@ -88,10 +88,14 @@ export const columns: ColumnDef<TimeEntry[]>[] = [
   },
   {
     id: 'info',
-    header: ({ column, table }) => {
+    header: ({ table }) => {
       const { headerProps } = table.options.meta as CustomTableMeta<TimeEntry>;
       return (
-        <HeaderComponent day={headerProps.day} date={headerProps.date} selectedItems={table.getSelectedRowModel().rows.length} total="06:25:00" />
+        <HeaderComponent
+          day={headerProps.day}
+          date={headerProps.date}
+          selectedItems={table.getSelectedRowModel().rows.length}
+          total={headerProps.total} />
       )
     },
     cell: ({ row }) => (

@@ -3,52 +3,42 @@
 
 import { Heading } from '@/app/components/ui/heading';
 import { TimeLogsTable } from '@/app/components/ui/tiem-logs-table';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { columns } from './components/columns';
 import Header from './components/Header';
 import { TimeEntry, TimeLogGroup } from '@/types/timeLog';
+import toast from 'react-hot-toast';
+import { useParams } from 'next/navigation';
+import { formatTimeLogs } from '@/lib/utils';
 
 const TimelogsPage = () => {
   const [searchTask, setSearchTask] = useState('')
-  const todayData: TimeLogGroup = {
-    header: {
-      day: "Today",
-      date: "1 Jan 2025",
-      total: '06:24:45',
-    },
-    entries: [
-      {
-        id: '1', task: 'Create Design System', title: 'Developer', person: "Samrun Run", startTime: "13:26", endtime: "14:39", duration: '1:26:17'
-      },
-      {
-        id: '2', task: 'Finishing About Page', title: 'Designer', person: "Behar musa", startTime: "15:26", endtime: "17:39", duration: '1:26:17'
-      },
-      {
-        id: '3', task: 'Create Design System', title: 'Developer', person: "Samrun Run", startTime: "13:26", endtime: "14:39", duration: '1:26:17'
-      },
-      {
-        id: '4', task: 'Finishing About Page', title: 'Designer', person: "Behar musa", startTime: "15:26", endtime: "17:39", duration: '1:26:17'
+  const [loading, setLoading] = useState(false);
+  const [timelogs, setTimelogs] = useState<any[]>([]);
+  const { id: org_id } = useParams()
+
+  useEffect(() => {
+    fetchTimelogs();
+  }, []);
+
+  const fetchTimelogs = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/timer/timelogs?organization_id=${org_id}&action=get-timelog`, { credentials: "include" });
+      const data = await response.json();
+      if (response.ok) {
+        setTimelogs(data.data);
+      } else {
+        toast.error(data.error || 'Failed to fetch timelogs.');
       }
-    ]
-  }
-
-
-  const yesterdayData: TimeLogGroup = {
-    header: {
-      day: "Yesterday",
-      date: "31 Dec 2024",
-      total: '06:24:45',
-    },
-    entries: [
-      {
-        id: '5', task: 'Create Design System', title: 'Developer', person: "Samrun Run", startTime: "13:26", endtime: "14:39", duration: '1:26:17'
-      },
-      {
-        id: '6', task: 'Create Design System', title: 'Developer', person: "Samrun Run", startTime: "13:26", endtime: "14:39", duration: '1:26:17'
-      },
-    ]
-  }
-
+    } catch (error) {
+      setLoading(false);
+      throw new Error('Failed to fetch timelogs.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  const { todayData, yesterdayData, othersData } = formatTimeLogs(timelogs);
 
   const onSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTask(event.target.value);
@@ -63,21 +53,30 @@ const TimelogsPage = () => {
       />
       <Header searchTask={searchTask} onChange={onSearchChange} />
       <div className='flex flex-col space-y-5'>
-        <TimeLogsTable
+        {todayData.entries.length > 0 && <TimeLogsTable
           searchKey="name"
           clickable={true}
           columns={columns}
           data={todayData.entries}
           header={todayData.header}
         />
+        }
 
-        <TimeLogsTable
+        {yesterdayData.entries.length > 0 && <TimeLogsTable
           searchKey="name"
           clickable={true}
           columns={columns}
           data={yesterdayData.entries}
           header={yesterdayData.header}
-        />
+        />}
+
+        {othersData.entries.length > 0 && <TimeLogsTable
+          searchKey="name"
+          clickable={true}
+          columns={columns}
+          data={othersData.entries}
+          header={othersData.header}
+        />}
       </div>
     </div>
   );

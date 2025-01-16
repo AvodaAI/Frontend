@@ -14,7 +14,7 @@ const TimelogsPage = () => {
   useEffect(() => {
     fetchTimelogs();
   }, []);
-console.log(org_id)
+  
   const fetchTimelogs = async () => {
     setLoading(true);
     try {
