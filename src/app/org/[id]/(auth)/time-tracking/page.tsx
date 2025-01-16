@@ -86,7 +86,7 @@ const TimerPage = () => {
         throw new Error(data.error || data.message || "Failed to start timer.");
       }
 
-      setSelectedTask(data.data.task_id);
+      setSelectedTask(data?.data?.task_id);
       if (data.data) setIsActive(true);
       else if (data && data.data && data.data.status === "Paused") setIsPaused(true);
     } catch (err) {
