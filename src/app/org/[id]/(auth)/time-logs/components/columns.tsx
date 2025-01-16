@@ -2,12 +2,11 @@
 
 import { Checkbox } from "@/app/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { TimeEntry } from "../page";
 import { CellAction } from "./cell-actions";
 import { Button } from "@/app/components/ui/button";
 import { Clock, Play } from "lucide-react";
 import { Badge } from "@/app/components/ui/badge";
-import { CustomTableMeta } from "@/types/timeLog";
+import { CustomTableMeta, TimeEntry } from "@/types/timeLog";
 
 
 const HeaderComponent = ({ date, day, selectedItems, total }: { date: string; day: string; selectedItems: number; total: string }) => (
@@ -29,7 +28,7 @@ const HeaderComponent = ({ date, day, selectedItems, total }: { date: string; da
   </div>
 );
 
-const CellComponent = ({ data }: { data: TimeEntry }) => (
+const CellComponent = ({ data }: { data: any }) => (
   <div className="flex items-center justify-between text-gray-600">
     <div className="flex items-center justify-between">
       <div className="flex flex-col justify-center w-68">

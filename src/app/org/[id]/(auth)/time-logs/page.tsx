@@ -6,7 +6,7 @@ import { TimeLogsTable } from '@/app/components/ui/tiem-logs-table';
 import { useState } from 'react';
 import { columns } from './components/columns';
 import Header from './components/Header';
-import { TimeLogGroup } from '@/types/timeLog';
+import { TimeEntry, TimeLogGroup } from '@/types/timeLog';
 
 const TimelogsPage = () => {
   const [searchTask, setSearchTask] = useState('')

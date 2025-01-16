@@ -1,7 +1,6 @@
 import {
   ColumnDef,
   ColumnFiltersState,
-  RowData,
   SortingState,
   VisibilityState,
   flexRender,
@@ -15,6 +14,7 @@ import {
 } from '@tanstack/react-table';
 import { useState } from 'react';
 
+import { CustomTableMeta, Header, TimeEntry } from '@/types/timeLog';
 import toast from 'react-hot-toast';
 import { AlertModal } from '../modals/alert-modal';
 import { Card } from './card';
@@ -27,10 +27,10 @@ import {
   TableHeader,
   TableRow,
 } from './table';
-import { CustomTableMeta, Header, TimeEntry } from '@/types/timeLog';
-interface DataTableProps<TData, TValue> {
+
+interface TimeLogTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
-  data: TData[];
+  data: any;
   header: Header;
   searchKey: string;
   clickable?: boolean;
@@ -44,7 +44,7 @@ export function TimeLogsTable<TData, TValue>({
   header,
   clickable,
   getSelectedRow,
-}: DataTableProps<TData, TValue>) {
+}: TimeLogTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [loading, setLoading] = useState(false);

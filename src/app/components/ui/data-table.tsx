@@ -57,6 +57,7 @@ export function DataTable<TData, TValue>({
   onExport,
   filterableColumns
 }: DataTableProps<TData, TValue>) {
+  
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [loading, setLoading] = useState(false);

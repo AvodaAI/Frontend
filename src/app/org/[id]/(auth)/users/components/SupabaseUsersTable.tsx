@@ -53,7 +53,6 @@ export default function SupabaseUsersTable() {
     organization_id: user.organization_id,
     organization_name: user.organization_name
   }));
-
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">
