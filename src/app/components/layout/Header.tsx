@@ -13,12 +13,13 @@ import { fetchWrapper } from '@/utils/fetchWrapper';
 const navigation = [
   { name: 'Dashboard', href: 'dashboard' },
   { name: 'Organization', href: 'organization', permission: 'create-organization', adminOnly: true },
-  { name: 'Projects', href: 'projects', permission: 'create-project', adminOnly: true },
-  { name: 'Tasks', href: 'tasks', permission: 'create-task', adminOnly: true },
+  { name: 'Invitations', href: 'invitations', permission: 'invite-user', adminOnly: true },
+  { name: 'Projects', href: 'projects', permission: 'create-project', adminOnly: false },
+  { name: 'Tasks', href: 'tasks', permission: 'create-task', adminOnly: false },
   { name: 'Assigned Tasks', href: 'assigned-task', adminOnly: false },
   { name: 'Time Tracking', href: 'time-tracking', adminOnly: false },
   { name: 'Time Logs', href: 'time-logs', permission: 'get-timelog', adminOnly: true },
-  { name: 'Invitations', href: 'invitations', permission: 'invite-user', adminOnly: true },
+  { name: 'Manage User Permission', href: 'manage-permission', permission: 'update-permission', adminOnly: true },
   { name: 'Settings', href: 'settings', adminOnly: false },
   { name: 'Status', href: '/status', adminOnly: false },
 ];
