@@ -16,12 +16,16 @@ export default function UpdatePermissionForm({ orgId, userId }: UpdatePermission
     async function fetchPermissions() {
       try {
         const response = await fetchPermissionService({ organizationId: orgId, userId });
+        const response = await fetchPermissionService({ organizationId: orgId, userId });
         if (!response.ok) {
           throw new Error("Failed to fetch permissions");
         }
 
-        const data = await response.json();
-        setPermission(data.data);
+        try {
+          const data = await response.json();
+        } catch (parseError) {
+          throw new Error("Invalid response format from server");
+        }
         const userPermissions = Object.keys(data.data.permissions).filter((permission) => data.data.permissions[permission]);
         setUpdatedPermissions(userPermissions);
       } catch (error) {
