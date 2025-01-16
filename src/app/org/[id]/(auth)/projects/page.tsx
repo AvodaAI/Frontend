@@ -1,17 +1,13 @@
 // src/app/org/[id]/(auth)/projects/page.tsx
 "use client";
-import { Button } from "@components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@components/ui/dialog";
-import { useEffect, useState } from "react";
-import { ProjectsTable } from "./components/ProjectTable";
-import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
-import { ProjectForm } from "./components/ProjectForm";
-import { useParams } from "next/navigation";
-import { getProjects } from "@/utils/services/projectServices";
-import { Project } from "@/types/project";
-import Projects from "./components/Projects";
 import { AddProjectModal } from "@/app/components/modals/AddProjectModal";
 import { EditProjectModal } from "@/app/components/modals/EditProjectModal";
+import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
+import { Project } from "@/types/project";
+import { getProjects } from "@/utils/services/projectServices";
+import { useParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import Projects from "./components/Projects";
 
 
 export default function ProjectsPage() {
@@ -59,25 +55,8 @@ export default function ProjectsPage() {
       <AddProjectModal />
       <EditProjectModal />
       <div className="flex flex-col gap-6">
-        {/* <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold tracking-tight">Projects</h1>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button onClick={handleAddProject}>Add New Project</Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{editProject ? "Edit Project" : "Add New Project"}</DialogTitle>
-              </DialogHeader>
-              <ProjectForm addProject={addProject} onClose={() => setIsDialogOpen(false)} editProject={editProject} setEditProject={setEditProject} updateProject={handleUpdateProject} />
-            </DialogContent>
-          </Dialog>
-        </div> */}
-
         {!error && (
-          <div className="rounded-lg">
-            {/* <ProjectsTable projects={projects} setProjects={setProjects} handleEditProject={handleEditProject} /> */}
-            <Projects />
+          <div className="rounded-lg"><Projects />
           </div>
         )}
 

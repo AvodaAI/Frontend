@@ -58,7 +58,7 @@ export function TimeLogsTable<TData, TValue>({
     data,
     columns,
     meta: {
-      headerProps: header
+      headerProps: header,
     } as CustomTableMeta<TimeEntry>,
     state: {
       sorting,

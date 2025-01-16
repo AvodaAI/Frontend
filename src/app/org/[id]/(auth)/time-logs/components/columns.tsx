@@ -1,72 +1,13 @@
 "use client";
 
+import { Button } from "@/app/components/ui/button";
 import { Checkbox } from "@/app/components/ui/checkbox";
 import { ColumnDef } from "@tanstack/react-table";
-import { CellAction } from "./cell-actions";
-import { Button } from "@/app/components/ui/button";
-import { Clock, Play } from "lucide-react";
+import { ArrowUpDown } from "lucide-react";
 import { Badge } from "@/app/components/ui/badge";
-import { CustomTableMeta, TimeEntry } from "@/types/timeLog";
+import { CellAction } from "./cell-actions";
 
-
-const HeaderComponent = ({ date, day, selectedItems, total }: { date: string; day: string; selectedItems: number; total: string }) => (
-  <div className="flex items-center justify-between">
-    <div className="flex items-center space-x-10">
-      <div className="flex items-center space-x-2">
-        <h2 className="text-sm font-bold text-black">{day},</h2>
-        <span className="text-muted-foreground text-xs">{date}</span>
-      </div>
-      <p className="text-muted-foreground text-xs">{selectedItems} item(s) selected</p>
-    </div>
-    <div className="flex items-center space-x-2 px-3 py-2">
-      <p className="text-muted-foreground text-xs">Total:</p>
-      <Button variant={"outline"} size={"sm"} className="rounded-xl bg-transparent ring-1 ring-gray-400 px-2">
-        <Clock size={18} />
-        <span>{total}</span>
-      </Button>
-    </div>
-  </div>
-);
-
-const CellComponent = ({ data }: { data: any }) => (
-  <div className="flex items-center justify-between text-gray-600">
-    <div className="flex items-center justify-between">
-      <div className="flex flex-col justify-center w-68">
-        <h2 className="text-sm font-medium text-black">{data.task}</h2>
-        <span className="text-muted-foreground text-xs">{data.title}</span>
-      </div>
-      <div className=" flex justify-end">
-        <Badge className="bg-blue-200 rounded-lg text-black font-light">{data.person}</Badge>
-      </div>
-    </div>
-    <div className="flex space-x-4 items-center">
-      <div className="flex space-x-2">
-        <Clock size={18} />
-        <span>{data.startTime}</span>
-      </div>
-      <span>{'-'}</span>
-      <div className="flex space-x-2">
-        <Clock size={18} />
-        <span>{data.endTime}</span>
-      </div>
-    </div>
-    <div className="flex space-x-2">
-      <Clock size={18} />
-      <span>{data.duration}</span>
-    </div>
-    <div className="flex space-x-2">
-      <Button variant={'outline'} size={"sm"} className="rounded-xl bg-transparent px-2" >
-        <Play size={18} />
-        <span>Continue</span>
-      </Button>
-      <CellAction data={data} />
-    </div>
-  </div>
-)
-
-
-// Define the columns for the table
-export const columns: ColumnDef<TimeEntry[]>[] = [
+export const columns: ColumnDef<any>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -87,19 +28,106 @@ export const columns: ColumnDef<TimeEntry[]>[] = [
     enableHiding: false,
   },
   {
-    id: 'info',
-    header: ({ table }) => {
-      const { headerProps } = table.options.meta as CustomTableMeta<TimeEntry>;
-      return (
-        <HeaderComponent
-          day={headerProps.day}
-          date={headerProps.date}
-          selectedItems={table.getSelectedRowModel().rows.length}
-          total={headerProps.total} />
-      )
-    },
+    accessorKey: "name",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Name
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+  },
+  {
+    accessorKey: "start_time",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Start Time
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
     cell: ({ row }) => (
-      <CellComponent data={row.original} />
-    )
+      <span>{new Date(row.original.start_time).toLocaleString()}</span>
+    ),
+  },
+  {
+    accessorKey: "end_time",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        End Time
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <span>{new Date(row.original.end_time).toLocaleString()}</span>
+    ),
+  },
+  {
+    accessorKey: "pauses",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Pauses
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <>
+        {row.original.pauses.length > 0 ? (
+          row.original.pauses.map((pause: any, index: number) => (
+            <Badge key={index} variant={null} className="bg-gray-500 text-white">
+              {`${new Date(pause.start).toLocaleTimeString()} - ${new Date(
+                pause.end
+              ).toLocaleTimeString()}`}
+            </Badge>
+          ))
+        ) : (
+          <Badge variant={null} className="bg-gray-500 text-white">
+            No Pauses
+          </Badge>
+        )}
+      </>
+    ),
+  },
+  {
+    accessorKey: "total_active_time",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Total Active Time (s)
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => <span>{row.original.total_active_time}</span>,
+  },
+  {
+    accessorKey: "created_at",
+    header: ({ column }) => (
+      <Button
+        variant="ghost"
+        onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+      >
+        Created At
+        <ArrowUpDown className="ml-2 h-4 w-4" />
+      </Button>
+    ),
+    cell: ({ row }) => (
+      <span>{new Date(row.original.created_at).toLocaleString()}</span>
+    ),
+  },
+  {
+    id: "actions",
+    cell: ({ row }) => <CellAction data={row.original} />,
   },
 ];
