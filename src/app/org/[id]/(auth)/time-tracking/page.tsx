@@ -82,6 +82,7 @@ const TimerPage = () => {
     return () => {
       if (intervalId) {
         clearInterval(intervalId);
+        setIntervalId(null);
       }
     };
   }, [isActive, isPaused, intervalId]);
