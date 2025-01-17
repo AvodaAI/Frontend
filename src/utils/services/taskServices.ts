@@ -28,29 +28,9 @@ export const getUsersService = async (organization_id: number) => {
   );
 };
 
-export const updateTaskService = async ({
-  taskId,
-  title,
-  due_date,
-  priority,
-  time_tracked,
-  description,
-  status,
-  assigned_to,
-  organization_id,
-}: AddEditTaskPayload) => {
-  const body = {
-    ...(title && { title }),
-    ...(due_date && { due_date }),
-    ...(priority && { priority }),
-    ...(time_tracked && { time_tracked }),
-    ...(description && { description }),
-    ...(status && { status }),
-    ...(assigned_to && { assigned_to }),
-    ...(organization_id && { organization_id: organization_id }),
-    action: "update-task",
-  };
-
+export const updateTaskService = async (data: AddEditTaskPayload) => {
+  const { taskId, ...rest } = data;
+  const body = { rest, action: "update-task" };
   return await fetchWrapper(
     `${process.env.NEXT_PUBLIC_API_URL}/tasks/${taskId}`,
     {
@@ -65,12 +45,13 @@ export const updateTaskService = async ({
 };
 
 export const addTaskService = async (data: AddEditTaskPayload) => {
+  const body = { data, action: "create-task" };
   return await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify(data),
+    body: JSON.stringify(body),
     credentials: "include",
   });
 };

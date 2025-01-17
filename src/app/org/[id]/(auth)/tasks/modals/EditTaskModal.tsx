@@ -1,18 +1,15 @@
 'use client'
-import { AddProjectForm } from "@/app/org/[id]/(auth)/projects/components/AddProjectForm";
-import { AddEditProject } from "@/types/project";
+import { useEditTaskModal } from "@/app/org/[id]/(auth)/tasks/hooks/use-edit-task-modal";
+import { EditTaskForm } from "@/app/org/[id]/(auth)/tasks/components/EditTaskForm";
+import { AddEditTaskPayload } from "@/types/task";
+import { updateTaskService } from "@/utils/services/taskServices";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Modal } from "../../../../../components/ui/modal";
-import { updateProjectService } from "@/utils/services/projectServices";
-import { useEditProjectModal } from "@/app/org/[id]/(auth)/projects/hooks/use-edit-project-modal";
-import { EditTaskForm } from "@/app/org/[id]/(auth)/tasks/components/EditTaskForm";
-import { AddEditTaskPayload } from "@/types/task";
-import { updateTaskService } from "@/utils/services/taskServices";
 
 export const EditTaskModal = () => {
-  const { isOpen, onClose, defaultValues } = useEditProjectModal();
+  const { isOpen, onClose, defaultValues } = useEditTaskModal();
   const [loading, setLoading] = useState(false);
   const params = useParams();
 
@@ -29,7 +26,7 @@ export const EditTaskModal = () => {
     } finally {
       setLoading(false);
     }
-    // onClose();
+    onClose();
   };
 
   return (

@@ -36,20 +36,6 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          ID
-          <ArrowUpDown className="ml-2 h-4 w-4" />
-        </Button>
-      );
-    },
-  },
-  {
     accessorKey: "title",
     header: ({ column }) => {
       return (
@@ -72,6 +58,20 @@ export const columns: ColumnDef<Task>[] = [
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
           Description
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      );
+    },
+  },
+  {
+    accessorKey: "assigned_user_name",
+    header: ({ column }) => {
+      return (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          User Name
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
@@ -106,19 +106,20 @@ export const columns: ColumnDef<Task>[] = [
     },
   },
   {
-    accessorKey: "assigned_user_name",
+    accessorKey: "due_date",
     header: ({ column }) => {
       return (
         <Button
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          User Name
+          Due Date
           <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       );
     },
   },
+
   {
     accessorKey: 'taskStatus',
     header: ({ column }) => {

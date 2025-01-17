@@ -9,7 +9,7 @@ export interface Task {
   time_tracked?: number;
   assigned_user_email?: string;
   assigned_user_id?: number;
-  organizationId?: number;
+  organization_id?: number;
   assigned_user_name?: string;
   assigned_to?: number;
 }

@@ -47,12 +47,13 @@ export const formatTasks = (tasks: Task[], id: number) =>
     id: task.id,
     title: dataFallback(task.title) || "N/A",
     assigned_user_name: task.assigned_user_name || "Beharudin Musa",
+    assigned_to: task.assigned_to || -1,
     description: dataFallback(task.description) || "N/A",
     due_date: formatDate(dataFallback(task.due_date ?? "")).formattedDate,
     priority: dataFallback(task.priority) || "N/A",
     time_tracked: task.time_tracked || 0,
     taskStatus: task.status,
-    organizationId: id,
+    organization_id: id,
   }));
 
 export const formatTimeLogs = (timeLogs: TimeLog[], id: number) =>

@@ -11,6 +11,7 @@ import {
 } from "@/app/components/ui/dropdown-menu";
 import { useEditTaskModal } from "@/app/org/[id]/(auth)/tasks/hooks/use-edit-task-modal";
 import { Task } from "@/types/task";
+import { formatToISO } from "@/utils/timeFormatHandler";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -24,9 +25,9 @@ export const CellAction: React.FC<{ data: Task }> = ({ data }) => {
   const onDelete = async () => {
     try {
       setLoading(true);
-      const projectId = data.id ? data.id : "-1";
-      const organizationId = data.organizationId ? data.organizationId : -1;
-      // await deleteProjectService({ organizationId, projectId })
+      const taskId = data.id ? data.id : "-1";
+      const organizationId = data.organization_id ? data.organization_id : -1;
+      // await deleteProjectService({ organizationId, taskId })
     } catch (error) {
       toast.error("Something Went Wrong!");
     } finally {
@@ -36,15 +37,16 @@ export const CellAction: React.FC<{ data: Task }> = ({ data }) => {
   };
 
 
-  const handleEditProject = (data: Task) => {
+  const handleEditTask = (data: Task) => {
     editTaskModal.onOpen({
-      // name: data.name,
-      // description: data.description ?? "",
-      // end_date: formatTime(parseInt(data.end_date ?? "")),
-      // organizationId: data.organizationId,
-      // projectId: data.id,
-      // start_date: formatTime(parseInt(data.start_date ?? "")),
-      // status: data.projectStatus ?? "",
+      taskId: data.id,
+      title: data.title,
+      description: data.description ?? "",
+      due_date: data.due_date ? formatToISO(data.due_date) : new Date(Date.now() + 86400000).toISOString().slice(0, 10),
+      organization_id: data.organization_id,
+      assigned_to: data.assigned_to,
+      status: data.taskStatus ?? "To Do",
+      priority: data.priority ?? "Medium",
     });
   };
 
@@ -65,7 +67,7 @@ export const CellAction: React.FC<{ data: Task }> = ({ data }) => {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuLabel>Actions</DropdownMenuLabel>
-          <DropdownMenuItem onClick={() => handleEditProject(data)}>
+          <DropdownMenuItem onClick={() => handleEditTask(data)}>
             <Edit className="mr-2 h-4 w-4" />
             Edit
           </DropdownMenuItem>

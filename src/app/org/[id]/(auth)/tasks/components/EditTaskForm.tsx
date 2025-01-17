@@ -54,7 +54,7 @@ export function EditTaskForm({
 
   const handleSubmit = async (data: AddEditTaskPayload) => {
     onSubmit(data);
-    // form.reset();
+    form.reset();
   };
 
   return (
