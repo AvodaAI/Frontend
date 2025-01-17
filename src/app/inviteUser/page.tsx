@@ -22,8 +22,10 @@ export default function InviteUser() {
   useEffect(() => {
     supabase.auth.getUser().then((res) => {
       if (!res.data.user) {
+      if (!res.data.user) {
         setError("Invitation Link Expired.")
-        redirect("/")
+        router.push("/")
+        return
       }
       else {
         setUserData(res.data.user);
