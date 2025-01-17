@@ -12,8 +12,10 @@ import bcrypt from 'bcryptjs';
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import { user_permission } from '@/utils/user-permission';
 import { validatePassword } from '@/utils/passwordValidation';
+import { useRouter } from 'next/navigation'
 
 export default function InviteUser() {
+  const router = useRouter()
   const [userData, setUserData] = useState<User | null>(null);
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -22,7 +24,6 @@ export default function InviteUser() {
   useEffect(() => {
     supabase.auth.getUser().then((res) => {
       if (!res.data.user) {
-      if (!res.data.user) {
         setError("Invitation Link Expired.")
         router.push("/")
         return
@@ -30,9 +31,10 @@ export default function InviteUser() {
       else {
         setUserData(res.data.user);
       }
-    }).catch((err) => {
-      redirect("/")
     })
+      .catch((err) => {
+        router.push("/")
+      })
   }, [])
 
   const handleConfirmPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,7 +83,7 @@ export default function InviteUser() {
       }
 
       const hashedPassword = await bcrypt.hash(password, 10);
-       const { data, error: insertError } = await supabase
+      const { data, error: insertError } = await supabase
         .from("users")
         .insert({
           first_name: InvitationDetails?.[0]?.public_metadata?.first_name ?? "",
