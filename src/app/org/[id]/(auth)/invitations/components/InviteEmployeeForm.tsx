@@ -9,7 +9,7 @@ import { Alert, AlertDescription, AlertTitle } from "@components/ui/alert";
 import { Calendar } from "@components/ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "@components/ui/popover";
 import { format } from "date-fns";
-import { Calendar as CalendarIcon } from "lucide-react";
+import { Calendar as CalendarIcon, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
 import { useParams } from "next/navigation";
@@ -37,6 +37,7 @@ export function InviteEmployeeForm({ onClose }: AddEmployeeFormProps) {
     hire_date: "",
   });
   const [date, setDate] = useState<Date>();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<boolean>(false);
   const [fieldErrors, setFieldErrors] = useState<{ [key: string]: string }>({});
@@ -67,6 +68,7 @@ export function InviteEmployeeForm({ onClose }: AddEmployeeFormProps) {
   };
 
   const fetchOrganizations = async () => {
+    setIsLoading(true)
     const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/organizations/by-user?organization_id=${org_id}&action=get-organization`, {
       credentials: "include",
     });
@@ -76,9 +78,11 @@ export function InviteEmployeeForm({ onClose }: AddEmployeeFormProps) {
     } else {
       setError("Error fetching organizations");
     }
+    setIsLoading(false)
   };
 
   const handleInviteEmployeeSubmit = async (e: React.FormEvent) => {
+    setIsLoading(true)
     e.preventDefault();
     setError(null);
     setSuccess(false);
@@ -139,7 +143,7 @@ export function InviteEmployeeForm({ onClose }: AddEmployeeFormProps) {
 
         if (!newPermissions.ok) {
           const data = await newPermissions.json();
-          throw new Error(data.error || "Failed to add an permission");
+          setError(data.error || "Failed to add an permission");
         }
 
         setSuccess(true);
@@ -186,15 +190,44 @@ export function InviteEmployeeForm({ onClose }: AddEmployeeFormProps) {
       });
       if (!newInvitation.ok) {
         const data = await newInvitation.json();
-        throw new Error(data.error || "Failed to add an invitation");
+        if (Array.isArray(data.error)) {
+          const errorMessages = data.error
+            .map((error: any) => {
+              const property = error.property;
+              const constraints = Object.values(error.constraints).join(", ");
+              return `${property}: ${constraints}`;
+            })
+            .join("\n");
+
+          throw new Error(errorMessages || "Failed to add an invitation")
+        } else {
+          const errorMessage = data.error?.message || "An unexpected error occurred";
+          throw new Error(errorMessage || "Failed to add an invitation")
+        }
       }
 
       setSuccess(true);
       if (onClose) {
         setTimeout(onClose, 2000);
       }
-    } catch (err) {
+    } catch (err: any) {
+      if (Array.isArray(err?.response?.data)) {
+        const errorMessages = err.response.data
+          .map((error: any) => {
+            const property = error.property;
+            const constraints = Object.values(error.constraints).join(", ");
+            return `${property}: ${constraints}`;
+          })
+          .join("\n");
+
+        setError(errorMessages);
+      } else {
+        const errorMessage = err?.message || "An unexpected error occurred";
+        setError(errorMessage);
+      }
       setError(err instanceof Error ? err.message : "Failed to invite an employee");
+    } finally {
+      setIsLoading(false)
     }
   };
 
@@ -276,10 +309,13 @@ export function InviteEmployeeForm({ onClose }: AddEmployeeFormProps) {
         {fieldErrors.organization && <p className="text-sm text-red-500">{fieldErrors.organization}</p>}
       </div>
 
-      <Button type="submit" disabled={!user.first_name || !user.last_name || !user.email || !organizationId}>
-        Invite Employee
+      <Button type="submit" disabled={isLoading || !user.first_name || !user.last_name || !user.email || !organizationId}>
+        {isLoading ? <Loader2 /> : "Invite Employee"}
       </Button>
-      {error && <p className="text-red-500">{error}</p>}
+      {error && <Alert variant="destructive">
+        <AlertTitle>Error</AlertTitle>
+        <AlertDescription>{error}</AlertDescription>
+      </Alert>}
       {success && (
         <Alert variant="success">
           <AlertTitle>Success</AlertTitle>
