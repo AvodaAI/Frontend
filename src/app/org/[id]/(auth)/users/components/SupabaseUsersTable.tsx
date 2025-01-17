@@ -1,16 +1,53 @@
 // src/app/org/[id]/(auth)/users/components/SupabaseUsersTable.tsx
 'use client';
 
+import { Card } from '@/app/components/ui/card';
+import { DataTable } from '@/app/components/ui/data-table';
+import { Heading } from '@/app/components/ui/heading';
+import { useAddUserModal } from '@/app/org/[id]/(auth)/users/hooks/use-add-user-modal';
+import { roles, userStatuses } from '@/data/data';
+import { formatUsers } from '@/lib/formatter';
+import { getUsers } from '@/utils/services/userServices';
 import { Button } from '@components/ui/button';
-import { Loader2 } from 'lucide-react';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/ui/table';
-import { formatUnixDate } from '@/utils/unixdate';
-import { dataFallback } from '@/utils/datafallback';
-import { useSupabaseUsers } from '@/app/(auth)/users/hooks/useSupabaseUsers';
-import { addUser, deleteUser } from '@/utils/supabase/supabase-user-operations';
+import { Download, Loader2, Trash, UserPlus } from 'lucide-react';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import ExportUsersDataToExcel from './ExportUsersDataToExcel';
+import { columns } from './columns';
 
 export default function SupabaseUsersTable() {
-  const { users, loading, error, fetchSupabaseUsers } = useSupabaseUsers();
+  const [users, setUsers] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(false)
+  const params = useParams();
+
+  // Ensure orgId is a string
+  const orgId = Array.isArray(params.id) ? params.id[0] : params.id;
+  const id = orgId ? parseInt(orgId, 10) : -1
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        setLoading(true)
+        const res = await getUsers(id)
+        const users = await res.json()
+        setUsers(users.users ?? [])
+      } catch (error) {
+        setError(true)
+        toast.error('Failed To Fetch Users')
+      } finally {
+        setLoading(false)
+      }
+
+    }
+    fetchUsers();
+  }, [])
+
+  const deleteselectedUsers = () => { };
+  const { onOpen } = useAddUserModal();
+
+  const formattedUsers = formatUsers(users)
 
   if (loading) {
     return (
@@ -25,56 +62,54 @@ export default function SupabaseUsersTable() {
   }
 
   return (
-    <div className="rounded-md border">
-      <div className="flex justify-between p-4">
-        <h2 className="text-lg font-bold">Users</h2>
- {
-  const email = prompt('Enter user email:');
-  if (!email?.trim()) {
-    alert('Email cannot be empty');
-    return;
-  }
-  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-    alert('Please enter a valid email address');
-    return;
-  }
-  addUser(email, fetchSupabaseUsers);
-}} variant="default">
-  Add User
+    <Card className="p-5">
+      <div className="flex border-b pb-2 items-center justify-between">
+        <Heading
+          title={`Users (${formattedUsers.length})`}
+          description="Here's a list of all users in your organization"
+        />
+        <div></div>
+        <div className='flex space-x-2'>
+          <Button
+            className="bg-blue-500 hover:bg-blue-500"
+            onClick={() => onOpen()}
+          >
+            <UserPlus className="mr-2 h-4 w-4" />
+            Add User
+          </Button>
+          <Button
+            className={`bg-gray-400 hover:bg-gray-400`}
+            onClick={() =>
+              ExportUsersDataToExcel("notfiltered", formattedUsers)
+            }
+          >
+            <Download className="mr-2 h-4 w-4" />
+            Export All
+          </Button>
+        </div>
       </div>
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>ID</TableHead>
-            <TableHead>Name</TableHead>
-            <TableHead>Email</TableHead>
-            <TableHead>Created At</TableHead>
-            <TableHead>Last Sign In</TableHead>
-            <TableHead>Actions</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {users.map((user) => (
-            <TableRow key={user.id}>
-              <TableCell>{user.id}</TableCell>
-              <TableCell>{`${dataFallback(user.first_name)} ${dataFallback(user.last_name)}` || 'N/A'}</TableCell>
-              <TableCell>{user.email || 'N/A'}</TableCell>
-              <TableCell>{dataFallback(formatUnixDate(new Date(user.created_at).getTime())) || 'N/A'}</TableCell>
-              <TableCell>{dataFallback(user.last_login ? formatUnixDate(new Date(user.last_login).getTime()) : 'Never')}</TableCell>
-              <TableCell>
-                <div className="flex space-x-2">
-                  <Button onClick={() => alert(`View details for ${user.id}`)} variant="ghost" size="sm">
-                    View Details
-                  </Button>
-                  <Button onClick={() => deleteUser(user.id, fetchSupabaseUsers)} variant="destructive" size="sm">
-                    Delete
-                  </Button>
-                </div>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </div>
+      <DataTable
+        searchKey="first_name"
+        clickable={true}
+        columns={columns}
+        data={formattedUsers}
+        filterableColumns={[
+          {
+            id: 'status',
+            title: 'Status',
+            options: userStatuses
+          },
+          {
+            id: 'role',
+            title: 'Role',
+            options: roles
+          },
+        ]}
+        onConfirmFunction={deleteselectedUsers}
+        onExport={ExportUsersDataToExcel}
+        buttonTitle="Delete Selection"
+        ButtonIcon={Trash}
+      />
+    </Card>
   );
 }

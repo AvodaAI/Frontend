@@ -1,18 +1,31 @@
 'use client'
-import { useRouter } from 'next/navigation'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { Checkbox } from '@/app/components/ui/checkbox'
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/app/components/ui/form'
+import { Loader } from '@/app/components/ui/loader'
+import { NoIconInput } from '@/app/components/ui/no-icon-input'
+import { Login } from '@/types/auth'
 import { Button } from '@components/ui/button'
 import { Input } from '@components/ui/input'
-import { motion } from 'framer-motion'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { Icon } from '@iconify-icon/react'
+import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import { motion } from 'framer-motion'
+import { Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import toast from 'react-hot-toast'
+import { z } from 'zod'
+import { loginEmailPassword } from '../actions/auth-services'
 
-interface AuthState {
-    email: string
-    password: string
-    error: string
-}
+
+const formSchema = z.object({
+    email: z.string().min(1, "Email is required"),
+    password: z.string().min(1, "Password is required"),
+});
+
+type LevelFormValues = z.infer<typeof formSchema>;
 
 export default function AuthPage() {
     const router = useRouter()
@@ -20,75 +33,38 @@ export default function AuthPage() {
 
 
     const [loading, setLoading] = useState(false);
-
-
-    const [error, setError] = useState<string | null>(null);
-
     const [showPassword, setShowPassword] = useState(false);
 
-    const [step, setStep] = useState(1);
 
-    const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault();
-        setLoading(true);
-        setError(null);
 
-        // Validate email first
-        if (!email) {
-            return;
-        }
+    const form = useForm<LevelFormValues>({
+        resolver: zodResolver(formSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    });
 
-        // If step is 1, just set the step to 2
-        if (step === 1) {
-            setStep(2);
-            setLoading(false);
-            return;
-        }
-
-        // Validate password only if step is 2
-        if (step === 2 && !password) {
-            setError('Password is required.');
-            setLoading(false);
-            return;
-        }
-
+    const onSubmit = async (data: Login) => {
         try {
-            if (!process.env.NEXT_PUBLIC_API_URL) {
-                throw new Error('API URL is not configured');
-            }
-
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/signin`, {
-                method: 'POST',
-                credentials: 'include',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password }),
-            });
-
+            setLoading(true);
+            const response = await loginEmailPassword(data);
             if (response.ok) {
                 // Add a small delay before navigation
-                setTimeout(() => {
-                    router.replace('/dashboard');
-                }, 1000);
+                router.replace('/org');
             } else {
                 const data = await response.json();
-                setError(data.error || 'Invalid email or password');
+                toast.error(data.error || 'Invalid email or password');
             }
-        } catch (error) {
-            setError('An error occurred during sign in');
+        } catch (errors: any) {
+            if (errors.message === "Please check your username and password.") {
+                toast.error("Invalid username or password");
+            } else {
+                toast.error("Something went wrong!");
+            }
         } finally {
             setLoading(false);
         }
-    };
-
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-
-    const handleEmailChange = (email: string) => {
-        setEmail(email);
-    };
-
-    const handlePasswordChange = (password: string) => {
-        setPassword(password);
     };
 
     const handleSocialAuth = async (provider: 'google' | 'github') => {
@@ -109,18 +85,12 @@ export default function AuthPage() {
             className="w-full max-w-md space-y-4 bg-white px-10 rounded-2xl shadow-sm py-20"
         >
             <div>
-                <div>
+                <div className='flex flex-col items-center'>
                     <h1 className='text-2xl font-semibold'>Login</h1>
+                    <span className='text-muted-foreground'>Enter your credentials to access your account</span>
                 </div>
-                <div className='flex justify-between mt-2'>
-                    <h3 className="text-center tracking-tight text-color-secondary">
-                        Don't Have an Account?
-                    </h3>
-                    <h3 className='text-primary font-bold'>
-                        <Link href="signup">Signup</Link>
-                    </h3>
-                </div>
-                <div className='w-full border-2 border-[#D9D9D9] text-secondary flex justify-center items-center rounded-lg mt-6 p-1 cursor-pointer' onClick={() => handleSocialAuth('google')}>
+
+                <div className='w-full border-2 border-[#D9D9D9] text-secondary flex justify-center items-center rounded-lg mt-8 p-1 cursor-pointer' onClick={() => handleSocialAuth('google')}>
                     <div className='flex gap-2 items-center'>
                         <Icon icon="flat-color-icons:google" width="30" height="30" />
                         <span>Login with Google</span>
@@ -131,79 +101,109 @@ export default function AuthPage() {
                         <div className="w-full border-t border-muted-foreground"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                        <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                        <span className="bg-background px-2 text-muted-foreground uppercase">Or continue with</span>
                     </div>
                 </div>
             </div>
             <div>
-                {error && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.3 }}
-                        className="bg-red-100 text-red-800 p-2 rounded-md mb-4 flex justify-center items-center text-sm"
+                <Form {...form}>
+                    <form
+                        onSubmit={form.handleSubmit(onSubmit)}
+                        className="space-y-8 w-full"
                     >
-                        {error}
-                    </motion.div>
-                )} {/* Error message */}
-                <form className="space-y-6" onSubmit={handleLogin}>
-                    <div className="space-y-4">
-                        <div>
-                            <Input
-                                id="email"
+                        <div className="space-y-4 md:space-y-6">
+                            <FormField
+                                control={form.control}
                                 name="email"
-                                type="email"
-                                autoComplete="email"
-                                required
-                                placeholder="Email address"
-                                value={email}
-                                onChange={(e) => handleEmailChange(e.target.value)}
-                                className={`w-full px-4 py-2 rounded-md border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 transition duration-150 ease-in-out ${error ? 'border-red-500' : ''}`} // Error border
-                                icon={<Icon icon="material-symbols-light:mail-outline-sharp" className='text-secondary' width="24" height="24" />}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email:</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                type="text"
+                                                // placeholder="johndoe@example.com"
+                                                disabled={loading}
+                                                {...field}
+                                            />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
                             />
-                        </div>
-                        {step === 2 && (
-                            <div className='relative'>
-                                <Input
-                                    id="password"
-                                    name="password"
-                                    type={showPassword ? 'text' : 'password'}
-                                    autoComplete="current-password"
-                                    required
-                                    placeholder="Password"
-                                    value={password}
-                                    onChange={(e) => handlePasswordChange(e.target.value)}
-                                    className={`w-full px-4 py-2 rounded-md border-gray-300 focus:border-primary focus:ring focus:ring-primary focus:ring-opacity-50 transition duration-150 ease-in-out ${error ? 'border-red-500' : ''}`} // Error border
-                                    icon={<Icon icon="carbon:password" className='text-secondary' width="22" height="22" />}
-                                />
-                                <button
-                                    type="button"
-                                    onClick={() => setShowPassword(!showPassword)}
-                                    className="absolute right-4 top-[11px] z-10"
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Password:</FormLabel>
+                                        <FormControl>
+                                            <div className="flex items-center space-x-2 relative">
+                                                <NoIconInput
+                                                    type={showPassword ? "text" : "password"}
+                                                    {...field}
+                                                    disabled={loading}
+                                                />
+                                                <span
+                                                    className="absolute right-4"
+                                                    onClick={() =>
+                                                        setShowPassword(!showPassword)
+                                                    }
+                                                >
+                                                    {showPassword ? (
+                                                        <EyeOff height={20} />
+                                                    ) : (
+                                                        <Eye height={20} />
+                                                    )}
+                                                </span>
+                                            </div>
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <div className="flex items-center justify-between">
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox id="terms" />
+                                    <label
+                                        htmlFor="terms"
+                                        className="text-sm font-light leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                                    >
+                                        Remember me
+                                    </label>
+                                </div>
+                                <Link
+                                    href={"/forgot-password"}
+                                    className="text-sm font-medium text-blue-500 hover:underline dark:text-blue-500"
                                 >
-                                    <Icon icon={showPassword ? "mdi:eye-off" : "mdi:eye"} className='text-secondary' width="22" height="22" />
-                                </button>
+                                    Forgot password?
+                                </Link>
                             </div>
-                        )}
-                    </div>
-
-                    <div>
-                        <Button
-                            type="submit"
-                            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition duration-150 ease-in-out"
-                            disabled={loading} // Disable button while loading
-                        >
-                            {loading ? <Icon icon="eos-icons:three-dots-loading" width="35" height="35" /> : (step === 1 ? 'Next' : 'Login')} {/* Show loading text */}
-                        </Button>
-                    </div>
-                </form>
-
-                <div className='mt-3'>
-                    <Link href="/forgot-password" className="text-primary hover:underline">
-                        Forgot Password?
-                    </Link>
-                </div>
+                            <Button
+                                disabled={loading}
+                                type="submit"
+                                className={`w-full text-white bg-blue-500 hover:bg-blue-600 ${loading ? "cursor-not-allowed" : ""
+                                    }`}
+                            >
+                                {loading && (
+                                    <span className="mr-2">
+                                        {" "}
+                                        <Loader color="#ffffff" size={15} />
+                                    </span>
+                                )}
+                                Login
+                            </Button>
+                            <p className="text-sm font-light">
+                                Don't you have an account?
+                                <Link
+                                    href={"/signup"}
+                                    className="font-medium ml-2 text-blue-500 hover:underline dark:text-blue-500"
+                                >
+                                    Sign up
+                                </Link>
+                            </p>
+                        </div>
+                    </form>
+                </Form>
             </div>
         </motion.div>
     )

@@ -24,9 +24,38 @@ export interface NewUser {
   first_name: string;
   position?: string;
   city?: string;
+  status?: string;
   country?: string;
-  hire_date?: Date | string | null;
+  isFromDashboard?: boolean;
+  organization_id?: number;
+  action?: string;
+  is_invite?: boolean;
+  hire_date?: string;
   auth_id?: string;
+}
+
+export interface UpdateUser {
+  id?: number;
+  role: string;
+  last_name: string;
+  first_name: string;
+  position?: string;
+  city?: string;
+  status?: string;
+  country?: string;
+  isFromDashboard?: boolean;
+  action?: string;
+  hire_date?: string;
+  auth_id?: string;
+}
+
+export interface SupabaseUser {
+  id: number;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  created_at: string;
+  last_login: string | null;
 }
 
 // Type for user authentication

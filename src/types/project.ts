@@ -5,7 +5,9 @@ export interface Project {
   start_date?: string;
   end_date?: string;
   status?: string;
+  projectStatus?: string;
   created_by?: string;
+  organizationId?: number;
 }
 
 export interface ProjectFormProps {
@@ -24,4 +26,5 @@ export interface AddEditProject {
   description: string;
   status: string;
   organizationId: number;
+  id?: string;
 }
