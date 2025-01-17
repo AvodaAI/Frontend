@@ -76,8 +76,12 @@ export function InviteEmployeeForm({ onClose }: AddEmployeeFormProps) {
       const data = await response.json();
       setOrganizations(data);
     } else {
-      const errorData = await response.json().catch(() => ({}));
-      setError(errorData.message || 'Error fetching organizations')
+      try {
+        const errorData = await response.json();
+        setError(errorData.message || 'Error fetching organizations');
+      } catch {
+        setError('Error fetching organizations');
+      }
     }
     setIsLoading(false)
   };
