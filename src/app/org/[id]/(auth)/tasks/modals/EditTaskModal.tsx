@@ -9,6 +9,7 @@ import { updateProjectService } from "@/utils/services/projectServices";
 import { useEditProjectModal } from "@/app/org/[id]/(auth)/projects/hooks/use-edit-project-modal";
 import { EditTaskForm } from "@/app/org/[id]/(auth)/tasks/components/EditTaskForm";
 import { AddEditTaskPayload } from "@/types/task";
+import { updateTaskService } from "@/utils/services/taskServices";
 
 export const EditTaskModal = () => {
   const { isOpen, onClose, defaultValues } = useEditProjectModal();
@@ -21,22 +22,14 @@ export const EditTaskModal = () => {
   const handleSubmit = async (data: AddEditTaskPayload) => {
     try {
       setLoading(true);
-      // const res = await updateProjectService({
-      //   name: data.name,
-      //   description: data.description ?? "",
-      //   end_date: data.end_date ?? "",
-      //   organizationId: data.organizationId,
-      //   projectId: data.projectId,
-      //   start_date: data.start_date ?? "",
-      //   status: data.status ?? "",
-      // });
+      await updateTaskService(data);
       setLoading(false);
     } catch (error: any) {
-      toast.success("Something Went Wrong!");
+      toast.error("Something Went Wrong!");
     } finally {
       setLoading(false);
     }
-    onClose();
+    // onClose();
   };
 
   return (
@@ -46,18 +39,19 @@ export const EditTaskModal = () => {
         description="Manage Task Information"
         isOpen={isOpen}
         onClose={onClose}
-        className="z-[101] w-full sm:w-[80%] h-[90%] sm:h-[700px] mt-5 overflow-y-hidden"
+        className="z-[101] w-full sm:w-[80%] h-[90%] sm:h-[750px] mt-5 overflow-y-hidden"
       >
         <EditTaskForm
           defaultValues={
             defaultValues || {
-              name: "",
+              taskId: '',
+              title: "",
               description: "",
-              start_date: new Date().toISOString().slice(0, 10),
-              end_date: "",
-              status: "Not Started",
-              organizationId: orgId ? parseInt(orgId, 10) : -1,
-              projectId: ''
+              due_date: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
+              status: "To Do",
+              priority: "Medium",
+              assigned_to: -1,
+              organization_id: orgId ? parseInt(orgId, 10) : -1,
             }
           }
           onSubmit={handleSubmit}

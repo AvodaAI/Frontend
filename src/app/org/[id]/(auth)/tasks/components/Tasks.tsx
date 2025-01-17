@@ -60,8 +60,9 @@ const Tasks = () => {
 
             const { users = [] } = await response.json();
             if (users.length > 0) {
-                const formattedUsers = users.map((user: { user_email: string; user_id: number }) => ({
-                    email: user.user_email,
+                const formattedUsers = users.map((user: { user_first_name: string; user_last_name: string; user_id: number }) => ({
+                    first_name: user.user_first_name,
+                    last_name: user.user_last_name,
                     id: user.user_id,
                 }));
                 setUsers(formattedUsers);
@@ -82,6 +83,7 @@ const Tasks = () => {
     const deleteSelectedProjects = () => { };
     const { onOpen } = useAddTaskModal();
 
+    localStorage.setItem('users', JSON.stringify(users))
     const formattedTasks = formatTasks(tasks, id);
 
     if (loading) {
@@ -124,7 +126,7 @@ const Tasks = () => {
                 </div>
             </div>
             <DataTable
-                searchKey="name"
+                searchKey="title"
                 clickable={true}
                 columns={columns}
                 data={formattedTasks}

@@ -24,7 +24,7 @@ const projectSchema = z.object({
   end_date: z
     .string().min(1, { message: "End date is required" }),
   status: z.string().min(1, { message: "Status is required" }),
-  organizationId: z.number().min(1, { message: "Last name is required" }),
+  organizationId: z.number().min(1, { message: "Organization id is required" }),
 });
 
 type FormValues = z.infer<typeof projectSchema>;

@@ -15,7 +15,8 @@ export interface Task {
 }
 
 export interface Users {
-  email: string;
+  first_name: string;
+  last_name: string;
   id: number;
 }
 
@@ -50,6 +51,6 @@ export interface AddEditTaskPayload {
   priority?: string;
   status?: string;
   time_tracked?: string;
-  organizationId: number;
+  organization_id: number;
   assigned_to?: number;
 }

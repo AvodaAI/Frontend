@@ -2,21 +2,30 @@ import { AddEditTaskPayload } from "@/types/task";
 import { fetchWrapper } from "../fetchWrapper";
 
 export const getTasksService = async (organization_id: number) => {
-  return await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/tasks?organization_id=${organization_id}&action=get-task`, {
-    credentials: "include",
-  });
+  return await fetchWrapper(
+    `${process.env.NEXT_PUBLIC_API_URL}/tasks?organization_id=${organization_id}&action=get-task`,
+    {
+      credentials: "include",
+    }
+  );
 };
 
 export const getAssignedTasksService = async (organization_id: number) => {
-  return await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/tasks/assignedTask?organization_id=${organization_id}&action=get-task`, {
-    credentials: "include",
-  });
+  return await fetchWrapper(
+    `${process.env.NEXT_PUBLIC_API_URL}/tasks/assignedTask?organization_id=${organization_id}&action=get-task`,
+    {
+      credentials: "include",
+    }
+  );
 };
 
 export const getUsersService = async (organization_id: number) => {
-  return await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/users/list?organization_id=${organization_id}&action=get-user`, {
-    credentials: "include",
-  });
+  return await fetchWrapper(
+    `${process.env.NEXT_PUBLIC_API_URL}/users/list?organization_id=${organization_id}&action=get-user`,
+    {
+      credentials: "include",
+    }
+  );
 };
 
 export const updateTaskService = async ({
@@ -28,7 +37,7 @@ export const updateTaskService = async ({
   description,
   status,
   assigned_to,
-  organizationId,
+  organization_id,
 }: AddEditTaskPayload) => {
   const body = {
     ...(title && { title }),
@@ -38,45 +47,47 @@ export const updateTaskService = async ({
     ...(description && { description }),
     ...(status && { status }),
     ...(assigned_to && { assigned_to }),
-    ...(organizationId && { organization_id: organizationId }),
+    ...(organization_id && { organization_id: organization_id }),
     action: "update-task",
   };
 
-  return await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/tasks/${taskId}`, {
-    method: "PATCH",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(body),
-    credentials: "include",
-  });
+  return await fetchWrapper(
+    `${process.env.NEXT_PUBLIC_API_URL}/tasks/${taskId}`,
+    {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+      credentials: "include",
+    }
+  );
 };
 
-export const addTaskService = async ({ title, due_date, priority, time_tracked, description, status, organizationId, assigned_to }: AddEditTaskPayload) => {
+export const addTaskService = async (data: AddEditTaskPayload) => {
   return await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/tasks`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      title,
-      due_date,
-      priority,
-      time_tracked,
-      description,
-      status,
-      assigned_to,
-      action: "create-task",
-      organization_id: organizationId,
-    }),
+    body: JSON.stringify(data),
     credentials: "include",
   });
 };
 
-export const deleteTaskService = async ({ taskId, organizationId }: { taskId: string; organizationId: number }) => {
-  return await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/tasks/${taskId}?organization_id=${organizationId}&action=delete-task`, {
-    method: "DELETE",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  });
+export const deleteTaskService = async ({
+  taskId,
+  organization_id,
+}: {
+  taskId: string;
+  organization_id: number;
+}) => {
+  return await fetchWrapper(
+    `${process.env.NEXT_PUBLIC_API_URL}/tasks/${taskId}?organization_id=${organization_id}&action=delete-task`,
+    {
+      method: "DELETE",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    }
+  );
 };

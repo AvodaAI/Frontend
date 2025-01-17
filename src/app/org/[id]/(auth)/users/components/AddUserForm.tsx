@@ -29,7 +29,7 @@ const formSchema = z.object({
   last_name: z.string().min(1, { message: "Last name is required" }),
   // status: z.string().min(1, { message: "Status is required" }),
   hire_date: z.string().min(1, { message: "hire date is required" }),
-  organization_id: z.number().min(1, { message: "Last name is required" }),
+  organization_id: z.number().min(1, { message: "Organization id is required" }),
   password: z
     .string()
     .min(8, { message: 'Password must be at least 8 characters long' })

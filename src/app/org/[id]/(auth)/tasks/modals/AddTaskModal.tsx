@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
 import { Modal } from "../../../../../components/ui/modal";
+import { addTaskService } from "@/utils/services/taskServices";
 
 export const AddTaskModal = () => {
   const { isOpen, onClose, defaultValues } = useAddTaskModal();
@@ -18,17 +19,10 @@ export const AddTaskModal = () => {
   const handleSubmit = async (data: AddEditTaskPayload) => {
     try {
       setLoading(true);
-      // const res = await addProjectService({
-      //   name: data.name,
-      //   description: data.description ?? "",
-      //   end_date: data.end_date ?? "",
-      //   organizationId: data.organizationId,
-      //   start_date: data.start_date ?? "",
-      //   status: data.status ?? "",
-      // });
+      await addTaskService(data);
       setLoading(false);
     } catch (error: any) {
-      toast.success("Something Went Wrong!");
+      toast.error("Something Went Wrong!");
     } finally {
       setLoading(false);
     }
@@ -39,20 +33,21 @@ export const AddTaskModal = () => {
     <div>
       <Modal
         title="Create Task"
-        description="Manage Task information"
+        description="Manage Task Information"
         isOpen={isOpen}
         onClose={onClose}
-        className="z-[101] w-full sm:w-[80%] h-[90%] sm:h-[700px] mt-5 overflow-y-hidden"
+        className="z-[101] w-full sm:w-[80%] h-[90%] sm:h-[750px] mt-5 overflow-y-hidden"
       >
         <AddTaskForm
           defaultValues={
             defaultValues || {
-              name: "",
+              title: "",
               description: "",
-              start_date: new Date().toISOString().slice(0, 10),
-              end_date: "",
-              status: "Not Started",
-              organizationId: orgId ? parseInt(orgId, 10) : -1,
+              due_date: new Date(Date.now() + 86400000).toISOString().slice(0, 10),
+              status: "To Do",
+              priority: "Medium",
+              assigned_to: -1,
+              organization_id: orgId ? parseInt(orgId, 10) : -1,
             }
           }
           onSubmit={handleSubmit}

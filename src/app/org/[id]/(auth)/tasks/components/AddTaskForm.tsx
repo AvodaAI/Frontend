@@ -11,20 +11,20 @@ import { Input } from "@/app/components/ui/input";
 import { Loader } from "@/app/components/ui/loader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
 import { Textarea } from "@/app/components/ui/textarea";
-import { AddEditProject } from "@/types/project";
-import { AddEditTaskPayload } from "@/types/task";
+import { getLocalStorageUsers } from "@/lib/utils";
+import { AddEditTaskPayload, Users } from "@/types/task";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const projectSchema = z.object({
-  name: z.string().min(1, { message: "Project name is required" }),
+  title: z.string().min(1, { message: "Task title is required" }),
   description: z.string().min(1, { message: "Description is required" }),
-  start_date: z.string().min(1, { message: "Start date is required" }),
-  end_date: z
-    .string().min(1, { message: "End date is required" }),
+  due_date: z.string().min(1, { message: "Due date is required" }),
+  priority: z.string().min(1, { message: "Priority is required" }),
   status: z.string().min(1, { message: "Status is required" }),
-  organizationId: z.number().min(1, { message: "Last name is required" }),
+  assigned_to: z.number().min(1, { message: "Assigned user is required" }),
+  organization_id: z.number().min(1, { message: "Organization id is required" }),
 });
 
 type FormValues = z.infer<typeof projectSchema>;
@@ -49,6 +49,8 @@ export function AddTaskForm({
     defaultValues,
   });
 
+  const users: Users[] = getLocalStorageUsers();
+
   const handleSubmit = async (data: AddEditTaskPayload) => {
     onSubmit(data);
     form.reset();
@@ -57,15 +59,15 @@ export function AddTaskForm({
   return (
     <Form {...form}>
       <form
-        // onSubmit={form.handleSubmit(handleSubmit)}
+        onSubmit={form.handleSubmit(handleSubmit)}
         className="space-y-8 w-full">
         <div className="mb-5 flex flex-col gap-5">
           <FormField
-            name="name"
+            name="title"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Project Name</FormLabel>
+                <FormLabel>Task Name</FormLabel>
                 <FormControl>
                   <Input {...field} />
                 </FormControl>
@@ -90,31 +92,52 @@ export function AddTaskForm({
               </FormItem>
             )}
           />
+
           <FormField
-            name="start_date"
+            name="assigned_to"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Start Date</FormLabel>
+                <FormLabel>Assigned To</FormLabel>
                 <FormControl>
-                  <Input type="date" {...field} />
+                  <Select
+                    onValueChange={(value) => field.onChange(Number(value))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select user" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {users.map((user, index) => (
+                        <SelectItem key={index} value={String(user.id ?? -1)}>{user.first_name} {user.last_name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <FormField
-            name="end_date"
+            name="priority"
             control={form.control}
             render={({ field }) => (
               <FormItem>
-                <FormLabel>End Date</FormLabel>
+                <FormLabel>Priority</FormLabel>
                 <FormControl>
-                  <Input
-                    type="date"
-                    {...field}
-                    min={form.getValues("start_date")}
-                  />
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select priority" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Low">Low</SelectItem>
+                      <SelectItem value="Medium">Medium</SelectItem>
+                      <SelectItem value="High">High</SelectItem>
+                      <SelectItem value="Critical">Critical</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -135,12 +158,25 @@ export function AddTaskForm({
                       <SelectValue placeholder="Select status" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="Not Started">Not Started</SelectItem>
+                      <SelectItem value="To Do">To Do</SelectItem>
                       <SelectItem value="In Progress">In Progress</SelectItem>
                       <SelectItem value="Completed">Completed</SelectItem>
-                      <SelectItem value="On Hold">On Hold</SelectItem>
+                      <SelectItem value="Blocked">Blocked</SelectItem>
                     </SelectContent>
                   </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            name="due_date"
+            control={form.control}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Due Date</FormLabel>
+                <FormControl>
+                  <Input type="date" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
