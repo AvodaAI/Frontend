@@ -72,6 +72,19 @@ export interface AuthUser {
   hire_date?: Date | string | null;
 }
 
+export interface UserOrganization {
+  organization_description: string;
+  organization_id: number;
+  organization_name: string;
+  user_city: string;
+  user_country: string;
+  user_email: string;
+  user_first_name: string;
+  user_id: number;
+  user_last_name: string;
+  user_position: string;
+}
+
 // Type for user session
 export interface SessionUser {
   id: number;

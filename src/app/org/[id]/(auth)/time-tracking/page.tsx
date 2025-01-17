@@ -37,12 +37,19 @@ const TimerPage = () => {
 
   // Load timer state from localStorage on page load
   useEffect(() => {
-    const storedState = localStorage.getItem("timerState");
-    if (storedState) {
-      const { isActive, isPaused, time } = JSON.parse(storedState);
-      setIsActive(isActive);
-      setIsPaused(isPaused);
-      setTime(time);
+    try {
+      const storedState = localStorage.getItem("timerState");
+      if (storedState) {
+        const { isActive, isPaused, time } = JSON.parse(storedState);
+        setIsActive(isActive);
+        setIsPaused(isPaused);
+        setTime(time);
+      }
+    } catch (err) {
+      console.error('Failed to load timer state:', err);
+      setIsActive(false);
+      setIsPaused(false);
+      setTime(0);
     }
     checkTimerStatus();
     fetchTasks();
@@ -72,7 +79,13 @@ const TimerPage = () => {
         setIntervalId(null);
       }
     }
-  }, [isActive, isPaused]);
+    return () => {
+      if (intervalId) {
+        clearInterval(intervalId);
+        setIntervalId(null);
+      }
+    };
+  }, [isActive, isPaused, intervalId]);
 
   const checkTimerStatus = async () => {
     setLoading(true);
