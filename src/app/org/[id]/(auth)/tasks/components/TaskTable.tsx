@@ -37,7 +37,7 @@ export function TasksTable({
   const [error, setError] = useState<string | null>(null);
 
   const handleDelete = async (id: string) => {
-    const res = await deleteTaskService({ organizationId: Number(org_id), taskId: id });
+    const res = await deleteTaskService({ organization_id: Number(org_id), taskId: id });
     if (res.ok) {
       setTasks(tasks.filter((task) => task.id !== id));
     } else {

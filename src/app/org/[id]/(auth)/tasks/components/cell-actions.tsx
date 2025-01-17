@@ -11,6 +11,7 @@ import {
 } from "@/app/components/ui/dropdown-menu";
 import { useEditTaskModal } from "@/app/org/[id]/(auth)/tasks/hooks/use-edit-task-modal";
 import { Task } from "@/types/task";
+import { deleteTaskService } from "@/utils/services/taskServices";
 import { formatToISO } from "@/utils/timeFormatHandler";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useState } from "react";
@@ -26,8 +27,8 @@ export const CellAction: React.FC<{ data: Task }> = ({ data }) => {
     try {
       setLoading(true);
       const taskId = data.id ? data.id : "-1";
-      const organizationId = data.organization_id ? data.organization_id : -1;
-      // await deleteProjectService({ organizationId, taskId })
+      const organization_id = data.organization_id ? data.organization_id : -1;
+      await deleteTaskService({ organization_id, taskId })
     } catch (error) {
       toast.error("Something Went Wrong!");
     } finally {
