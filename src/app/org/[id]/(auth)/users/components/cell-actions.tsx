@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/app/components/ui/dropdown-menu";
-import { useEditUserModal } from "@/hooks/use-edit-user-modal";
+import { useEditUserModal } from "@/app/org/[id]/(auth)/users/hooks/use-edit-user-modal";
 import { NewUser } from "@/types";
 import { deleteUserService } from "@/utils/services/userServices";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";

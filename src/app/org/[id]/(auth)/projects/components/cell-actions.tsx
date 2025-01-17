@@ -9,10 +9,10 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/app/components/ui/dropdown-menu";
-import { useEditProjectModal } from "@/hooks/use-edit-project-modal";
+import { useEditProjectModal } from "@/app/org/[id]/(auth)/projects/hooks/use-edit-project-modal";
 import { Project } from "@/types/project";
 import { deleteProjectService } from "@/utils/services/projectServices";
-import { formatTime } from "@/utils/timeFormatHandler";
+import { formatToISO } from "@/utils/timeFormatHandler";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
@@ -42,10 +42,10 @@ export const CellAction: React.FC<{ data: Project }> = ({ data }) => {
     editProjectModal.onOpen({
       name: data.name,
       description: data.description ?? "",
-      end_date: formatTime(parseInt(data.end_date ?? "")),
+      end_date: formatToISO(data.end_date ?? ""),
       organizationId: data.organizationId,
       projectId: data.id,
-      start_date: formatTime(parseInt(data.start_date ?? "")),
+      start_date: formatToISO(data.start_date ?? ""),
       status: data.projectStatus ?? "",
     });
   };

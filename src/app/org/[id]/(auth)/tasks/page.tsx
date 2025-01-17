@@ -1,7 +1,7 @@
 // src/app/org/[id]/(auth)/tasks/page.tsx
 "use client";
-import { AddTaskModal } from "@/app/components/modals/AddTaskModal";
-import { EditTaskModal } from "@/app/components/modals/EditTaskModal";
+import { AddTaskModal } from "@/app/org/[id]/(auth)/tasks/modals/AddTaskModal";
+import { EditTaskModal } from "@/app/org/[id]/(auth)/tasks/modals/EditTaskModal";
 import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
 import { useState } from "react";
 import Tasks from "./components/Tasks";

@@ -1,12 +1,12 @@
 'use client'
 import AddUserForm from "@/app/org/[id]/(auth)/users/components/AddUserForm";
-import { useAddUserModal } from "@/hooks/use-add-user-modal";
+import { useAddUserModal } from "@/app/org/[id]/(auth)/users/hooks/use-add-user-modal";
 import { NewUser } from "@/types";
 import { addUserService } from "@/utils/services/userServices";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Modal } from "../ui/modal";
+import { Modal } from "../../../../../components/ui/modal";
 
 export const AddUserModal = () => {
   const { isOpen, onClose, defaultValues } = useAddUserModal();

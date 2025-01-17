@@ -5,6 +5,7 @@ export interface Task {
   due_date?: string;
   priority?: string;
   taskStatus?: string;
+  status?: string;
   time_tracked?: number;
   assigned_user_email?: string;
   assigned_user_id?: number;

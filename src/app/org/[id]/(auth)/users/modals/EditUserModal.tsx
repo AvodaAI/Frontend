@@ -1,9 +1,9 @@
 import EditUserForm from "@/app/org/[id]/(auth)/users/components/EditUserForm";
-import { useEditUserModal } from "@/hooks/use-edit-user-modal";
+import { useEditUserModal } from "@/app/org/[id]/(auth)/users/hooks/use-edit-user-modal";
 import { UpdateUser } from "@/types";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Modal } from "../ui/modal";
+import { Modal } from "../../../../../components/ui/modal";
 import { updateUserService } from "@/utils/services/userServices";
 
 export const EditUserModal = () => {

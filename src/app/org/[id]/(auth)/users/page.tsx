@@ -2,8 +2,8 @@
 'use client'
 
 import { Container } from "@/app/components/container"
-import { AddUserModal } from "@/app/components/modals/AddUserModal"
-import { EditUserModal } from "@/app/components/modals/EditUserModal"
+import { AddUserModal } from "@/app/org/[id]/(auth)/users/modals/AddUserModal"
+import { EditUserModal } from "@/app/org/[id]/(auth)/users/modals/EditUserModal"
 import { Section } from "@/app/components/section"
 import { ErrorBoundary } from "@components/ui/error-boundary"
 import { Suspense } from "react"

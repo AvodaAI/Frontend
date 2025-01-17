@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/app/components/ui/dropdown-menu";
-import { useEditUserModal } from "@/hooks/use-edit-user-modal";
+import { useEditUserModal } from "@/app/org/[id]/(auth)/users/hooks/use-edit-user-modal";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useState } from "react";
 import { toast } from "react-hot-toast";

@@ -2,7 +2,7 @@ import { Button } from '@/app/components/ui/button';
 import { Card } from '@/app/components/ui/card';
 import { DataTable } from '@/app/components/ui/data-table';
 import { Heading } from '@/app/components/ui/heading';
-import { useAddTaskModal } from '@/hooks/use-add-task-modal';
+import { useAddTaskModal } from '@/app/org/[id]/(auth)/tasks/hooks/use-add-task-modal';
 import { Task, Users } from '@/types/task';
 import { dataFallback } from '@/utils/datafallback';
 import { getTasksService, getUsersService } from '@/utils/services/taskServices';
@@ -12,6 +12,8 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { columns } from './columns';
 import ExportTasksDataToExcel from './ExportTasksDataToExcel';
+import toast from 'react-hot-toast';
+import { formatTasks } from '@/lib/formatter';
 
 const Tasks = () => {
     const [loading, setLoading] = useState(false)
@@ -27,19 +29,28 @@ const Tasks = () => {
 
 
     const fetchTasks = async () => {
-        const res = await getTasksService(Number(id));
-        const data = await res.json();
-        console.log(data)
-        if (res.ok) {
-            setTasks(data?.data ?? []);
-        } else {
-            setError(data.error || "Error fetching tasks");
-            throw new Error(data.error || "Error fetching tasks");
+        try {
+            setLoading(true)
+            const res = await getTasksService(Number(id));
+            const data = await res.json();
+            if (res.ok) {
+                setTasks(data?.data ?? []);
+            } else {
+                setError(data.error || "Error fetching tasks");
+                throw new Error(data.error || "Error fetching tasks");
+            }
+        } catch (error) {
+            console.error("An error occurred while fetching tasks:", error);
+            toast.error("An Error Occurred While Fetching Tasks");
+        } finally {
+            setLoading(false)
         }
+
     };
 
     const fetchUsers = async () => {
         try {
+            setLoading(true)
             const response = await getUsersService(Number(id));
             if (!response.ok) {
                 const errorData = await response.json();
@@ -57,6 +68,9 @@ const Tasks = () => {
             }
         } catch (error) {
             console.error("An error occurred while fetching users:", error);
+            toast.error("An Error Occurred While Fetching Users");
+        } finally {
+            setLoading(false)
         }
     };
 
@@ -68,17 +82,7 @@ const Tasks = () => {
     const deleteSelectedProjects = () => { };
     const { onOpen } = useAddTaskModal();
 
-    const formattedTasks: Task[] = tasks.map((task: any) => ({
-        id: task.id,
-        title: dataFallback(task.title) || 'N/A',
-        assigned_user_name: task.assigned_user_name || 'Beharudin Musa',
-        description: dataFallback(task.description) || 'N/A',
-        due_date: formatDate(dataFallback(task.due_date ?? "")).formattedDate,
-        priority: dataFallback(task.priority) || 'N/A',
-        time_tracked: task.time_tracked || 0,
-        taskStatus: task.status,
-        organizationId: id,
-    }));
+    const formattedTasks = formatTasks(tasks, id);
 
     if (loading) {
         return (

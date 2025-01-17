@@ -12,6 +12,7 @@ import { columns } from './columns';
 import ExportTimeLogsDataToExcel from './ExportUsersDataToExcel';
 import { TimeLog } from '@/types/timeLog';
 import moment from 'moment';
+import { formatTimeLogs } from '@/lib/formatter';
 
 const TimeLogs = () => {
     const [timelogs, setTimelogs] = useState<any[]>([]);
@@ -49,18 +50,8 @@ const TimeLogs = () => {
 
 
     const deleteSelectedTimeLogs = () => { };
-    
-    const formattedTimeLogs: TimeLog[] = timelogs.map((project: TimeLog) => ({
-        id: project.id,
-        name: dataFallback(project.name) || 'Beharudin Musa',
-        pauses: project.pauses,
-        total_active_time: project.total_active_time || 0,
-        start_time: project.start_time,
-        end_time: project.end_time,
-        TimeLogStatus: project.TimeLogStatus,
-        organizationId: id,
-        created_at: moment(project.created_at).format('MMMM do, yyyy'),
-    }));
+
+    const formattedTimeLogs = formatTimeLogs(timelogs, id)
 
     if (loading) {
         return (

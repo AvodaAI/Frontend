@@ -1,7 +1,7 @@
 // src/app/org/[id]/(auth)/projects/page.tsx
 "use client";
-import { AddProjectModal } from "@/app/components/modals/AddProjectModal";
-import { EditProjectModal } from "@/app/components/modals/EditProjectModal";
+import { AddProjectModal } from "@/app/org/[id]/(auth)/projects/modals/AddProjectModal";
+import { EditProjectModal } from "@/app/org/[id]/(auth)/projects/modals/EditProjectModal";
 import { Alert, AlertDescription, AlertTitle } from "@/app/components/ui/alert";
 import { useState } from "react";
 import Projects from "./components/Projects";

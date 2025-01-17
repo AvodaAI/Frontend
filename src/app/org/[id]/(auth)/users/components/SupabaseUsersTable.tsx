@@ -4,18 +4,17 @@
 import { Card } from '@/app/components/ui/card';
 import { DataTable } from '@/app/components/ui/data-table';
 import { Heading } from '@/app/components/ui/heading';
-import { useAddUserModal } from '@/hooks/use-add-user-modal';
-import { NewUser } from '@/types';
-import { dataFallback } from '@/utils/datafallback';
+import { useAddUserModal } from '@/app/org/[id]/(auth)/users/hooks/use-add-user-modal';
+import { roles, userStatuses } from '@/data/data';
+import { formatUsers } from '@/lib/formatter';
 import { getUsers } from '@/utils/services/userServices';
-import { formatUnixDate } from '@/utils/unixdate';
 import { Button } from '@components/ui/button';
 import { Download, Loader2, Trash, UserPlus } from 'lucide-react';
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import ExportUsersDataToExcel from './ExportUsersDataToExcel';
 import { columns } from './columns';
-import { roles, userStatuses } from '@/data/data';
 
 export default function SupabaseUsersTable() {
   const [users, setUsers] = useState([])
@@ -29,9 +28,18 @@ export default function SupabaseUsersTable() {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const res = await getUsers(id)
-      const users = await res.json()
-      setUsers(users.users ?? [])
+      try {
+        setLoading(true)
+        const res = await getUsers(id)
+        const users = await res.json()
+        setUsers(users.users ?? [])
+      } catch (error) {
+        setError(true)
+        toast.error('Failed To Fetch Users')
+      } finally {
+        setLoading(false)
+      }
+
     }
     fetchUsers();
   }, [])
@@ -39,20 +47,8 @@ export default function SupabaseUsersTable() {
   const deleteselectedUsers = () => { };
   const { onOpen } = useAddUserModal();
 
-  const formattedUsers: NewUser[] = users.map((user: any) => ({
-    id: user.user_id,
-    first_name: dataFallback(user.user_first_name) || 'N/A',
-    last_name: dataFallback(user.user_last_name) || 'N/A',
-    email: user.user_email,
-    role: 'employee',
-    hire_date: "2024-12-16T10:06:26.129Z",
-    status: 'active',
-    is_invite: true,
-    created_at: dataFallback(formatUnixDate(new Date(user.user_created_at).getTime())) || 'N/A',
-    last_login: dataFallback(user.user_last_login ? formatUnixDate(new Date(user.user_last_login).getTime()) : 'Never'),
-    organization_id: user.organization_id,
-    organization_name: user.organization_name
-  }));
+  const formattedUsers = formatUsers(users)
+
   if (loading) {
     return (
       <div className="flex items-center justify-center p-8">

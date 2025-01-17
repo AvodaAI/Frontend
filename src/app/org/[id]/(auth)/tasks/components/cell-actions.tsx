@@ -9,7 +9,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/app/components/ui/dropdown-menu";
-import { useEditTaskModal } from "@/hooks/use-edit-task-modal";
+import { useEditTaskModal } from "@/app/org/[id]/(auth)/tasks/hooks/use-edit-task-modal";
 import { Task } from "@/types/task";
 import { Edit, MoreHorizontal, Trash } from "lucide-react";
 import { useState } from "react";

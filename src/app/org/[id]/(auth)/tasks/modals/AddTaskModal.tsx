@@ -1,32 +1,31 @@
 'use client'
-import { AddProjectForm } from "@/app/org/[id]/(auth)/projects/components/AddProjectForm";
-import { useAddProjectModal } from "@/hooks/use-add-project-modal";
-import { AddEditProject } from "@/types/project";
+import { AddTaskForm } from "@/app/org/[id]/(auth)/tasks/components/AddTaskForm";
+import { useAddTaskModal } from "@/app/org/[id]/(auth)/tasks/hooks/use-add-task-modal";
+import { AddEditTaskPayload } from "@/types/task";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import toast from "react-hot-toast";
-import { Modal } from "../ui/modal";
-import { addProjectService } from "@/utils/services/projectServices";
+import { Modal } from "../../../../../components/ui/modal";
 
-export const AddProjectModal = () => {
-  const { isOpen, onClose, defaultValues } = useAddProjectModal();
+export const AddTaskModal = () => {
+  const { isOpen, onClose, defaultValues } = useAddTaskModal();
   const [loading, setLoading] = useState(false);
   const params = useParams();
 
   // Ensure orgId is a string
   const orgId = Array.isArray(params.id) ? params.id[0] : params.id;
 
-  const handleSubmit = async (data: AddEditProject) => {
+  const handleSubmit = async (data: AddEditTaskPayload) => {
     try {
       setLoading(true);
-      const res = await addProjectService({
-        name: data.name,
-        description: data.description ?? "",
-        end_date: data.end_date ?? "",
-        organizationId: data.organizationId,
-        start_date: data.start_date ?? "",
-        status: data.status ?? "",
-      });
+      // const res = await addProjectService({
+      //   name: data.name,
+      //   description: data.description ?? "",
+      //   end_date: data.end_date ?? "",
+      //   organizationId: data.organizationId,
+      //   start_date: data.start_date ?? "",
+      //   status: data.status ?? "",
+      // });
       setLoading(false);
     } catch (error: any) {
       toast.success("Something Went Wrong!");
@@ -39,13 +38,13 @@ export const AddProjectModal = () => {
   return (
     <div>
       <Modal
-        title="Create Project"
-        description="Manage Project information"
+        title="Create Task"
+        description="Manage Task information"
         isOpen={isOpen}
         onClose={onClose}
         className="z-[101] w-full sm:w-[80%] h-[90%] sm:h-[700px] mt-5 overflow-y-hidden"
       >
-        <AddProjectForm
+        <AddTaskForm
           defaultValues={
             defaultValues || {
               name: "",

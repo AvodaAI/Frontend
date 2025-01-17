@@ -15,7 +15,7 @@ export const updateUserService = async (data: UpdateUser) => {
   return await fetchWrapper(
     `${process.env.NEXT_PUBLIC_API_URL}/users/${data.id}`,
     {
-      method: "PuT",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },

@@ -3,7 +3,7 @@ import { Card } from '@/app/components/ui/card';
 import { DataTable } from '@/app/components/ui/data-table';
 import { Heading } from '@/app/components/ui/heading';
 import { projectStatuses } from '@/data/data';
-import { useAddProjectModal } from '@/hooks/use-add-project-modal';
+import { useAddProjectModal } from '@/app/org/[id]/(auth)/projects/hooks/use-add-project-modal';
 import { Project } from '@/types/project';
 import { dataFallback } from '@/utils/datafallback';
 import { getProjects } from '@/utils/services/projectServices';
@@ -14,6 +14,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { columns } from './columns';
 import ExportProjectsDataToExcel from './ExportProjectsDataToExcel';
+import { formatProjects } from '@/lib/formatter';
 
 const Projects = () => {
     const [projects, setProjects] = useState([])
@@ -27,14 +28,24 @@ const Projects = () => {
 
     useEffect(() => {
         const fetchProjects = async () => {
-            const res = await getProjects(id)
-            const projects = await res.json()
-            if (res.ok) {
-                setProjects(projects.data ?? []);
-            } else {
-                toast.error(projects.error || "Error fetching projects");
-                throw new Error(projects.error || "Error fetching projects");
+            try {
+                setLoading(true)
+                const res = await getProjects(id)
+                const projects = await res.json()
+                if (res.ok) {
+                    setProjects(projects.data ?? []);
+                } else {
+                    toast.error(projects.error || "Error fetching projects");
+                    throw new Error(projects.error || "Error fetching projects");
+                }
+            } catch (error) {
+                setError(true)
+                toast.error('Failed To Fetch Users')
             }
+            finally {
+                setLoading(false);
+            }
+
         }
         fetchProjects();
     }, [])
@@ -42,16 +53,7 @@ const Projects = () => {
     const deleteSelectedProjects = () => { };
     const { onOpen } = useAddProjectModal();
 
-    const formattedProjects: Project[] = projects.map((project: any) => ({
-        id: project.id,
-        name: dataFallback(project.name) || 'N/A',
-        description: dataFallback(project.description) || 'N/A',
-        start_date: formatDate(dataFallback(project.start_date ?? "")).formattedDate,
-        end_date: formatDate(dataFallback(project.end_date ?? "")).formattedDate,
-        created_by: dataFallback(project.created_by) || 'N/A',
-        projectStatus: project.status,
-        organizationId: id,
-    }));
+    const formattedProjects = formatProjects(projects, id)
 
     if (loading) {
         return (
