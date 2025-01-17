@@ -25,7 +25,9 @@ export default function InviteUser() {
         setError("Invitation Link Expired.")
         redirect("/")
       }
-      setUserData(res.data.user);
+      else {
+        setUserData(res.data.user);
+      }
     }).catch((err) => {
       redirect("/")
     })
