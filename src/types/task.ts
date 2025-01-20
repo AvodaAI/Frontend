@@ -12,6 +12,8 @@ export interface Task {
   organization_id?: number;
   assigned_user_name?: string;
   assigned_to?: number;
+  project_id?: string;
+  project_name?: string;
 }
 
 export interface Users {
@@ -45,12 +47,16 @@ export interface TaskFormProps {
 
 export interface AddEditTaskPayload {
   taskId?: string;
-  title: string;
-  description?: string;
-  due_date?: string;
-  priority?: string;
-  status?: string;
-  time_tracked?: string;
+  tasks: {
+    title: string;
+    description?: string;
+    due_date?: string;
+    priority?: string;
+    status?: string;
+    time_tracked?: string;
+    assigned_to?: number;
+    project_name?: string;
+    project_id?: string;
+  }[];
   organization_id: number;
-  assigned_to?: number;
 }

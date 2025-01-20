@@ -34,7 +34,7 @@ const Tasks = () => {
             const res = await getTasksService(Number(id));
             const data = await res.json();
             if (res.ok) {
-                setTasks(data?.data ?? []);
+                setTasks(data?.tasks ?? []);
             } else {
                 setError(data.error || "Error fetching tasks");
                 throw new Error(data.error || "Error fetching tasks");
