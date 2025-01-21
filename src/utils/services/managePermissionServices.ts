@@ -10,7 +10,7 @@ export const updatePermissionService = async ({
   permissionId,
   organizationId,
 }: {
-  permissionsObject: Record;
+  permissionsObject: Record<string, boolean>;
   permissionId: string;
   organizationId: number;
 }) => {

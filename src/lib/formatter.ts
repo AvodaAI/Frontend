@@ -17,14 +17,8 @@ export const formatUsers = (users: NewUser[]) =>
     hire_date: "2024-12-16T10:06:26.129Z",
     status: "active",
     is_invite: true,
-    created_at:
-      dataFallback(formatUnixDate(new Date(user.user_created_at).getTime())) ||
-      "N/A",
-    last_login: dataFallback(
-      user.user_last_login
-        ? formatUnixDate(new Date(user.user_last_login).getTime())
-        : "Never"
-    ),
+    created_at: dataFallback(formatUnixDate(new Date(user.user_created_at).getTime())) || "N/A",
+    last_login: dataFallback(user.user_last_login ? formatUnixDate(new Date(user.user_last_login).getTime()) : "Never"),
     organization_id: user.organization_id,
     organization_name: user.organization_name,
   }));
@@ -34,8 +28,7 @@ export const formatProjects = (projects: Project[], id: number) =>
     id: project.id,
     name: dataFallback(project.name) || "N/A",
     description: dataFallback(project.description) || "N/A",
-    start_date: formatDate(dataFallback(project.start_date ?? ""))
-      .formattedDate,
+    start_date: formatDate(dataFallback(project.start_date ?? "")).formattedDate,
     end_date: formatDate(dataFallback(project.end_date ?? "")).formattedDate,
     created_by: dataFallback(project.created_by) || "N/A",
     projectStatus: project.status,
@@ -54,6 +47,8 @@ export const formatTasks = (tasks: Task[], id: number) =>
     time_tracked: task.time_tracked || 0,
     taskStatus: task.status,
     organization_id: id,
+    project_id: task.project_id || "",
+    project_name: task.project_name || "N/A",
   }));
 
 export const formatTimeLogs = (timeLogs: TimeLog[], id: number) =>
