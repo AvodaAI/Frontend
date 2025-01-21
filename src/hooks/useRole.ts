@@ -47,7 +47,7 @@ export function useUserRole() {
   }, []);
 
   useEffect(() => {
-    if (!user) return; // If user is not yet set, don't fetch role
+    if (!user || !user.email) return; // If user is not yet set, don't fetch role
 
     // Fetch user's role from public metadata or database
     const fetchRole = async () => {
