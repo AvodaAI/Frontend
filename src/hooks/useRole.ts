@@ -54,7 +54,7 @@ export function useUserRole() {
       const { data, error } = await supabase
         .from("users") // Assuming the table is named "users"
         .select("*") // Assuming "role" column stores the user role
-        .eq("auth_id", user?.id)
+        .eq("email", user?.email ?? "")
         .single();
 
       if (error) {
