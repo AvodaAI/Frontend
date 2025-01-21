@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/ui/tabs";
 import { SignIn } from "./SignIn";
 import { SignUp } from "./SignUp";
@@ -10,9 +10,11 @@ import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
 import Image from "next/image";
 import googleLogo from "../../../../public/assets/google-logo.png";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 
 const AuthWrapper = () => {
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
 
   const handleGoogleLogin = async () => {
     try {
@@ -73,6 +75,13 @@ const AuthWrapper = () => {
           Continue with Google
         </Button>
       </div>
+
+      {error && (
+        <Alert variant="destructive">
+          <AlertTitle>Error</AlertTitle>
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
     </div>
   );
 };
