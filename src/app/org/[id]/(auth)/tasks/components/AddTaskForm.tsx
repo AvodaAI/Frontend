@@ -1,192 +1,260 @@
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/app/components/ui/table";
 import { Button } from "@/app/components/ui/button";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "@/app/components/ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "@/app/components/ui/form";
 import { Input } from "@/app/components/ui/input";
-import { Loader } from "@/app/components/ui/loader";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/app/components/ui/select";
 import { Textarea } from "@/app/components/ui/textarea";
-import { getLocalStorageUsers } from "@/lib/utils";
-import { AddEditTaskPayload, Users } from "@/types/task";
+import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
 import { z } from "zod";
+import { Plus, Trash } from "lucide-react";
+import { getLocalStorageUsers } from "@/lib/utils";
+import { Users } from "@/types/task";
+import { Project } from "@/types/project";
 
 const projectSchema = z.object({
-  title: z.string().min(1, { message: "Task title is required" }),
-  description: z.string().min(1, { message: "Description is required" }),
-  due_date: z.string().min(1, { message: "Due date is required" }),
-  priority: z.string().min(1, { message: "Priority is required" }),
-  status: z.string().min(1, { message: "Status is required" }),
-  assigned_to: z.number().min(1, { message: "Assigned user is required" }),
-  organization_id: z.number().min(1, { message: "Organization id is required" }),
+  tasks: z.array(
+    z.object({
+      title: z.string().min(1, { message: "Task title is required" }),
+      description: z.string().min(1, { message: "Description is required" }),
+      due_date: z.string().optional(),
+      priority: z.string().min(1, { message: "Priority is required" }),
+      status: z.string().min(1, { message: "Status is required" }),
+      assigned_to: z.number().min(1, { message: "Assigned user is required" }),
+      project_name: z.string().min(1, { message: "Project is required" }),
+    })
+  ),
+  organization_id: z.number().min(1, { message: "Organization ID is required" }),
 });
 
 type FormValues = z.infer<typeof projectSchema>;
 
 export interface AddTaskProps {
-  defaultValues: Partial<FormValues>;
-  onSubmit: (data: AddEditTaskPayload) => void;
+  orgId?: string;
+  projects: Project[];
+  onSubmit: (data: FormValues) => void;
   loading: boolean;
   onClose: () => void;
   buttonTitle: string;
 }
 
-export function AddTaskForm({
-  defaultValues,
-  onSubmit,
-  loading,
-  onClose,
-  buttonTitle,
-}: AddTaskProps) {
+export const AddTaskForm = ({ orgId, onSubmit, loading, onClose, buttonTitle, projects }: AddTaskProps) => {
   const form = useForm<FormValues>({
     resolver: zodResolver(projectSchema),
-    defaultValues,
+    defaultValues: {
+      tasks: [
+        {
+          title: "",
+          description: "",
+          due_date: "",
+          status: "To Do",
+          priority: "Medium",
+          project_name: "",
+          assigned_to: -1,
+        },
+      ],
+      organization_id: orgId ? parseInt(orgId, 10) : -1,
+    },
   });
 
   const users: Users[] = getLocalStorageUsers();
 
-  const handleSubmit = async (data: AddEditTaskPayload) => {
-    onSubmit(data);
-    form.reset();
-  };
+  const { fields, append, remove } = useFieldArray({
+    control: form.control,
+    name: "tasks",
+  });
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(handleSubmit)}
-        className="space-y-8 w-full">
-        <div className="mb-5 flex flex-col gap-5">
-          <FormField
-            name="title"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Task Name</FormLabel>
-                <FormControl>
-                  <Input {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="description"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                  <Textarea
-                    rows={4}
-                    {...field}
-                    disabled={loading}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 w-full">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="min-w-36">Title</TableHead>
+              <TableHead className="min-w-36">Description</TableHead>
+              <TableHead className="min-w-36">Assigned To</TableHead>
+              <TableHead className="min-w-36">Project</TableHead>
+              <TableHead className="min-w-36">Priority</TableHead>
+              <TableHead className="min-w-36">Status</TableHead>
+              <TableHead className="min-w-36">Due Date</TableHead>
+              <TableHead className="min-w-36">Actions</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {fields.map((item, index) => (
+              <TableRow key={item.id}>
+                <TableCell>
+                  <FormField
+                    name={`tasks.${index}.title`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormControl>
+                        <FormItem>
+                          <Input {...field} placeholder="Task title" disabled={loading} />
+                          <FormMessage />
+                        </FormItem>
+                      </FormControl>
+                    )}
                   />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            name="assigned_to"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Assigned To</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={(value) => field.onChange(Number(value))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select user" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {users.map((user, index) => (
-                        <SelectItem key={index} value={String(user.id ?? -1)}>{user.first_name} {user.last_name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="priority"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Priority</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select priority" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Low">Low</SelectItem>
-                      <SelectItem value="Medium">Medium</SelectItem>
-                      <SelectItem value="High">High</SelectItem>
-                      <SelectItem value="Critical">Critical</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="status"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Status</FormLabel>
-                <FormControl>
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value || ""}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="To Do">To Do</SelectItem>
-                      <SelectItem value="In Progress">In Progress</SelectItem>
-                      <SelectItem value="Completed">Completed</SelectItem>
-                      <SelectItem value="Blocked">Blocked</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-          <FormField
-            name="due_date"
-            control={form.control}
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Due Date</FormLabel>
-                <FormControl>
-                  <Input type="date" {...field} />
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-        </div>
-        <div className="pt-6 space-x-2 flex items-center justify-center w-full">
+                </TableCell>
+                <TableCell>
+                  <FormField
+                    name={`tasks.${index}.description`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormControl>
+                        <FormItem>
+                          <Textarea {...field} placeholder="Description" rows={1} disabled={loading} />
+                          <FormMessage />
+                        </FormItem>
+                      </FormControl>
+                    )}
+                  />
+                </TableCell>
+                <TableCell>
+                  <FormField
+                    name={`tasks.${index}.assigned_to`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormControl>
+                        <FormItem>
+                          <Select onValueChange={(value) => field.onChange(Number(value))}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select user" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {users.map((user, index) => (
+                                <SelectItem key={index} value={String(user.id ?? -1)}>
+                                  {user.first_name} {user.last_name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      </FormControl>
+                    )}
+                  />
+                </TableCell>
+                <TableCell>
+                  <FormField
+                    name={`tasks.${index}.project_name`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormControl>
+                        <FormItem>
+                          <Select onValueChange={(value) => field.onChange(value)}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select project" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {projects.map((project: Project) => (
+                                <SelectItem key={project.id} value={project.id ?? ""}>
+                                  {project.name}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      </FormControl>
+                    )}
+                  />
+                </TableCell>
+                <TableCell>
+                  <FormField
+                    name={`tasks.${index}.priority`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormControl>
+                        <FormItem>
+                          <Select onValueChange={field.onChange}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Priority" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="Low">Low</SelectItem>
+                              <SelectItem value="Medium">Medium</SelectItem>
+                              <SelectItem value="High">High</SelectItem>
+                              <SelectItem value="Critical">Critical</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      </FormControl>
+                    )}
+                  />
+                </TableCell>
+                <TableCell>
+                  <FormField
+                    name={`tasks.${index}.status`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormControl>
+                        <FormItem>
+                          <Select onValueChange={field.onChange}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Status" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="To Do">To Do</SelectItem>
+                              <SelectItem value="In Progress">In Progress</SelectItem>
+                              <SelectItem value="Completed">Completed</SelectItem>
+                            </SelectContent>
+                          </Select>
+                          <FormMessage />
+                        </FormItem>
+                      </FormControl>
+                    )}
+                  />
+                </TableCell>
+                <TableCell>
+                  <FormField
+                    name={`tasks.${index}.due_date`}
+                    control={form.control}
+                    render={({ field }) => (
+                      <FormControl>
+                        <FormItem>
+                          <Input type="date" {...field} disabled={loading} />
+                          <FormMessage />
+                        </FormItem>
+                      </FormControl>
+                    )}
+                  />
+                </TableCell>
+                <TableCell>
+                  <Button type="button" variant="ghost" onClick={() => remove(index)} disabled={loading || fields.length === 1}>
+                    <Trash size={16} />
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+        <div className=" flex justify-end">
           <Button
             type="button"
-            variant={'ghost'}
+            variant="outline"
+            onClick={() =>
+              append({
+                title: "",
+                description: "",
+                due_date: "",
+                status: "To Do",
+                priority: "Medium",
+                assigned_to: -1,
+                project_name: "",
+              })
+            }
+            disabled={loading}
+          >
+            <Plus size={16} /> Add Task
+          </Button>
+        </div>
+        <div className="flex justify-end gap-4">
+          <Button
+            type="button"
+            variant="ghost"
             onClick={() => {
               form.reset();
               onClose();
@@ -194,16 +262,11 @@ export function AddTaskForm({
           >
             Cancel
           </Button>
-          <Button
-            type="submit"
-            disabled={loading}
-            className={`bg-blue-500 text-white hover:bg-blue-500 ${loading ? "cursor-not-allowed" : ""
-              }`}
-          >
-            {loading && <Loader color="#ffffff" size={15} />} {buttonTitle}
+          <Button type="submit" disabled={loading}>
+            {buttonTitle}
           </Button>
         </div>
       </form>
     </Form>
   );
-}
+};
