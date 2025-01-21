@@ -149,7 +149,7 @@ export const AddTaskForm = ({ orgId, onSubmit, loading, onClose, buttonTitle, pr
                             </SelectTrigger>
                             <SelectContent>
                               {projects.map((project: Project) => (
-                                <SelectItem key={project.id} value={String(project.id ?? -1)}>
+                                <SelectItem key={project.id} value={project.id ?? ""}>
                                   {project.name}
                                 </SelectItem>
                               ))}
