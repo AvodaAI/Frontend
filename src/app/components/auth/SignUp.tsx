@@ -6,6 +6,7 @@ import { Input } from '@components/ui/input'
 import { Label } from '@components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import { Loader2 } from 'lucide-react'
+import { EmailInput, PasswordInput } from '@components/auth/fields'
 
 export function SignUp() {
   const [email, setEmail] = useState('')
@@ -44,26 +45,10 @@ export function SignUp() {
   return (
     <form onSubmit={handleSignUp} className="space-y-4">
       <div>
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <EmailInput value={email} onChange={(e) => setEmail(e.target.value)} />
+        <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />
       </div>
-      <div>
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
-      <Button type="submit" disabled={loading}>
+      <Button type="submit" disabled={loading || !email || !password} pointer className="w-full">
         {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Sign Up'}
       </Button>
       {error && (

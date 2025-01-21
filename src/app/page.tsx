@@ -8,6 +8,8 @@ import { Container } from "@components/container";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { supabase } from "@/utils/supabase/supabaseClient";
+import { ScrollArea, ScrollBar } from "@components/ui/scroll-area";
+import { UserRound, UsersRound } from "lucide-react";
 
 export default async function Home() {
   const cookieStore = await cookies();
@@ -71,10 +73,13 @@ export default async function Home() {
             <div className="max-w-sm mx-auto">
               <h1 className="text-2xl font-bold mb-5 text-center">Authentication</h1>
               <Tabs defaultValue="signin">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="signin">Sign In</TabsTrigger>
-                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
-                </TabsList>
+                <ScrollArea>
+                  <TabsList className="grid w-full grid-cols-2 mb-3">
+                    <TabsTrigger value="signin"><UsersRound size={16} strokeWidth={2} aria-hidden="true" className="-ms-0.5 me-1.5 opacity-60" />Sign In</TabsTrigger>
+                    <TabsTrigger value="signup"><UserRound size={16} strokeWidth={2} aria-hidden="true" className="-ms-0.5 me-1.5 opacity-60" />Sign Up</TabsTrigger>
+                  </TabsList>
+                  <ScrollBar orientation="horizontal" />
+                </ScrollArea>
                 <TabsContent value="signin">
                   <SignIn />
                 </TabsContent>

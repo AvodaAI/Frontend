@@ -3,11 +3,10 @@
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { Button } from '@components/ui/button'
-import { Input } from '@components/ui/input'
-import { Label } from '@components/ui/label'
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert'
 import { Loader2 } from 'lucide-react'
 import { fetchWrapper } from '@/utils/fetchWrapper'
+import { EmailInput, PasswordInput } from '@components/auth/fields'
 
 export function SignIn() {
   const [email, setEmail] = useState('')
@@ -52,28 +51,18 @@ export function SignIn() {
   }
 
   return (
-    <form onSubmit={handleSignIn} className="space-y-4">
+    <form onSubmit={handleSignIn} className="space-y-4" noValidate>
       <div>
-        <Label htmlFor="email">Email</Label>
-        <Input
-          id="email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
+        <div className="relative">
+          <EmailInput value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
+        <div className="relative">
+          <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} />
+        </div>
       </div>
       <div>
-        <Label htmlFor="password">Password</Label>
-        <Input
-          id="password"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
       </div>
-      <Button type="submit" disabled={loading}>
+      <Button type="submit" disabled={loading || !email || !password} pointer className="w-full">
         {loading ? <Loader2 className="h-5 w-5 animate-spin" /> : 'Sign In'}
       </Button>
       {error && (
