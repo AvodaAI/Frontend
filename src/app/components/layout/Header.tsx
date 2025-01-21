@@ -79,6 +79,10 @@ export function Header() {
 
       if (response.ok) {
         const data = await response.json();
+        const authTokenKey = Object.keys(localStorage).find((key) => key.endsWith('-auth-token'));
+        if (authTokenKey) {
+          localStorage.removeItem(authTokenKey);
+        }
         if (data.success) window.location.href = '/';
       } else {
         throw new Error(`Signout failed: ${response.status}`);
