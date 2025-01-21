@@ -15,10 +15,17 @@ const AuthWrapper = () => {
   const router = useRouter();
 
   const handleGoogleLogin = async () => {
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-    });
-    if (error) console.error("Error logging in with Google:", error.message);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: "google",
+      });
+      if (error) {
+        setError(error.message);
+        return;
+      }
+    } catch (err) {
+      setError("Failed to login with Google. Please try again.");
+    }
   };
 
   useEffect(() => {
