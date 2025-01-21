@@ -20,9 +20,18 @@ export const AddTaskModal = () => {
 
     useEffect(() => {
       const fetchProject = async () => {
-        const response = await getProjects(Number(orgId))
-        const data = await response.json()
-        setProjects(data.data)
+        try {
+          const response = await getProjects(Number(orgId))
+          const data = await response.json()
+          if (response.ok) {
+            setProjects(data.data)
+          } else {
+            toast.error("Failed to load projects")
+          }
+        } catch (error) {
+          toast.error("Error loading projects")
+          console.error(error)
+        }
       }
       fetchProject()
     }, [])
