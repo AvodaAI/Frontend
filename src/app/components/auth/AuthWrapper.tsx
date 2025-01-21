@@ -22,7 +22,7 @@ const AuthWrapper = () => {
   };
 
   useEffect(() => {
-    supabase.auth.onAuthStateChange(async (event, session) => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       if (session) {
         const email = session.user.user_metadata.email;
         const name = session.user.user_metadata.name;
@@ -34,6 +34,7 @@ const AuthWrapper = () => {
         router.replace("/org");
       }
     });
+    return () => subscription.unsubscribe();
   }, []);
 
   return (
