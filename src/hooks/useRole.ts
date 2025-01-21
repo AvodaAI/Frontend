@@ -47,14 +47,14 @@ export function useUserRole() {
   }, []);
 
   useEffect(() => {
-    if (!user) return; // If user is not yet set, don't fetch role
+    if (!user || !user.email) return; // If user is not yet set, don't fetch role
 
     // Fetch user's role from public metadata or database
     const fetchRole = async () => {
       const { data, error } = await supabase
         .from("users") // Assuming the table is named "users"
         .select("*") // Assuming "role" column stores the user role
-        .eq("auth_id", user?.id)
+        .eq("email", user?.email ?? "")
         .single();
 
       if (error) {
