@@ -8,6 +8,7 @@ import { Container } from "@components/container";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { supabase } from "@/utils/supabase/supabaseClient";
+import AuthWrapper from "./components/auth/AuthWrapper";
 
 export default async function Home() {
   const cookieStore = await cookies();
@@ -68,21 +69,7 @@ export default async function Home() {
         </Section>
         <Section>
           <Container>
-            <div className="max-w-sm mx-auto">
-              <h1 className="text-2xl font-bold mb-5 text-center">Authentication</h1>
-              <Tabs defaultValue="signin">
-                <TabsList className="grid w-full grid-cols-2">
-                  <TabsTrigger value="signin">Sign In</TabsTrigger>
-                  <TabsTrigger value="signup">Sign Up</TabsTrigger>
-                </TabsList>
-                <TabsContent value="signin">
-                  <SignIn />
-                </TabsContent>
-                <TabsContent value="signup">
-                  <SignUp />
-                </TabsContent>
-              </Tabs>
-            </div>
+            <AuthWrapper />
           </Container>
         </Section>
       </main>
