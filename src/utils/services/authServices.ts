@@ -1,7 +1,7 @@
 import { fetchWrapper } from "../fetchWrapper";
 
 export const googleAuthService = async ({ name, email, access_token }: { name: string; email: string; access_token: string }) => {
-  return await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/auth/google-login`, {
+  const response = await fetchWrapper(`${process.env.NEXT_PUBLIC_API_URL}/auth/google-login`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -13,4 +13,8 @@ export const googleAuthService = async ({ name, email, access_token }: { name: s
     }),
     credentials: "include",
   });
+  if (!response.ok) {
+    throw new Error('Failed to authenticate with Google');
+  }
+  return response;
 };
