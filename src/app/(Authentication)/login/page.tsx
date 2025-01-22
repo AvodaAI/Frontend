@@ -10,7 +10,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { Icon } from '@iconify-icon/react'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { motion } from 'framer-motion'
-import { Eye, EyeOff } from 'lucide-react'
+import { AtSign, Eye, EyeOff } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -31,11 +31,8 @@ export default function AuthPage() {
     const router = useRouter()
     const supabase = createClientComponentClient()
 
-
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-
-
 
     const form = useForm<LevelFormValues>({
         resolver: zodResolver(formSchema),
@@ -82,7 +79,6 @@ export default function AuthPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="w-full max-w-md space-y-4 bg-white px-10 rounded-2xl shadow-sm py-20"
         >
             <div>
                 <div className='flex flex-col items-center'>
@@ -117,14 +113,13 @@ export default function AuthPage() {
                                 name="email"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Email:</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="text"
-                                                // placeholder="johndoe@example.com"
-                                                disabled={loading}
-                                                {...field}
-                                            />
+                                            <div className="relative">
+                                                <Input className="peer ps-9" placeholder="Email" type="email" disabled={loading} {...field} />
+                                                <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
+                                                    <AtSign size={16} strokeWidth={2} aria-hidden="true" />
+                                                </div>
+                                            </div>
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -135,13 +130,14 @@ export default function AuthPage() {
                                 name="password"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Password:</FormLabel>
                                         <FormControl>
                                             <div className="flex items-center space-x-2 relative">
                                                 <NoIconInput
                                                     type={showPassword ? "text" : "password"}
                                                     {...field}
                                                     disabled={loading}
+                                                    placeholder="Password"
+                                                    className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50"
                                                 />
                                                 <span
                                                     className="absolute right-4"
@@ -156,9 +152,9 @@ export default function AuthPage() {
                                                     )}
                                                 </span>
                                             </div>
-                                        </FormControl>
+                                        </FormControl >
                                         <FormMessage />
-                                    </FormItem>
+                                    </FormItem >
                                 )}
                             />
                             <div className="flex items-center justify-between">
@@ -168,7 +164,7 @@ export default function AuthPage() {
                                         htmlFor="terms"
                                         className="text-sm font-light leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                     >
-                                        Remember me
+                                        Remember Me
                                     </label>
                                 </div>
                                 <Link
@@ -193,7 +189,7 @@ export default function AuthPage() {
                                 Login
                             </Button>
                             <p className="text-sm font-light">
-                                Don't you have an account?
+                                Don&apos;t you have an account?
                                 <Link
                                     href={"/signup"}
                                     className="font-medium ml-2 text-blue-500 hover:underline dark:text-blue-500"

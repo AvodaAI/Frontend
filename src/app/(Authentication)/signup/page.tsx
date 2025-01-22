@@ -106,7 +106,6 @@ export default function AuthPage() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
-            className="w-full max-w-md space-y-4 bg-white px-10 rounded-2xl shadow-sm py-20"
         >
             <div>
                 <div>
@@ -120,18 +119,20 @@ export default function AuthPage() {
                         <Link href="login">Login</Link>
                     </h3>
                 </div>
-                <div className='w-full border-2 border-[#D9D9D9] text-secondary flex justify-center items-center rounded-lg mt-6 p-1 cursor-pointer' onClick={() => handleSocialAuth('google')}>
-                    <div className='flex gap-2 items-center'>
-                        <Icon icon="flat-color-icons:google" width="30" height="30" />
-                        <span>Signup using Google</span>
-                    </div>
+                <div className='mt-4'>
+                    <Button
+                        variant={"outline"}
+                        className="w-full justify-center" onClick={() => handleSocialAuth('google')}
+                    >Signup using Google
+                        <Icon icon="flat-color-icons:google" width="20" height="20" />
+                    </Button>
                 </div>
-                <div className="relative mt-6">
+                <div className="relative mt-5 mb-2">
                     <div className="absolute inset-0 flex items-center">
                         <div className="w-full border-t border-muted-foreground"></div>
                     </div>
                     <div className="relative flex justify-center text-sm">
-                        <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
+                        <span className="bg-background px-2 text-muted-foreground">Or Continue with Email</span>
                     </div>
                 </div>
             </div>
